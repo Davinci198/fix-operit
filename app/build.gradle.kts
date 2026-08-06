@@ -430,7 +430,7 @@ kotlin {
 
 dependencies {
     implementation("com.github.jelmerk:hnswlib-core:1.2.1")
-    implementation(project(":dragonbones"))
+    implementation(files("libs/dragonbones-release.aar"))
     implementation(project(":terminal"))
     implementation(project(":mnn"))
     implementation(project(":llama"))

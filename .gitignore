@@ -22,6 +22,7 @@ build
 /app/src/main/assets/subpack
 /app/libs/*
 !/app/libs/.keep
+!/app/libs/dragonbones-release.aar
 
 .env
 .env.*
