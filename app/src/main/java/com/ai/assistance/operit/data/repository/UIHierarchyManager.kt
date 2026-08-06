@@ -16,6 +16,7 @@ import androidx.core.content.FileProvider
 import com.ai.assistance.operit.R
 import com.ai.assistance.operit.core.tools.system.AccessibilityProviderInstaller
 import com.ai.assistance.operit.provider.IAccessibilityProvider
+import com.ai.assistance.operit.util.SafeBinder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -69,7 +70,6 @@ object UIHierarchyManager {
             connectionContinuation?.invoke(true)
             connectionContinuation = null
         }
-
         override fun onServiceDisconnected(name: ComponentName?) {
             AppLogger.d(TAG, "无障碍服务提供者已断开")
             accessibilityProvider = null
@@ -78,6 +78,26 @@ object UIHierarchyManager {
             connectionContinuation = null
         }
     }
+
+    /**
+     * Execută un apel sigur spre providerul de accesibilitate via Binder.
+     *
+     * FIX ANR (eroare -74 "sent binder code 2 to frozen apps"): înainte de a trimite apelul,
+     * verificăm `isBinderAlive()/pingBinder()` și tratăm DeadObjectException, ca sa nu așteptăm
+     * un bind către un proces înghețat/mort (care altfel poate bloca main thread-ul).
+     */
+    private inline fun <T> accessibilityProviderSafeCall(
+        crossinline block: (IAccessibilityProvider) -> T?
+    ): T? {
+        return SafeBinder.safeBinderCall(
+            { accessibilityProvider?.asBinder() },
+            onFailure = { /* -74 / frozen: drop call in siguranță, fara blocare */ }
+        ) { _ ->
+            block(accessibilityProvider!!)
+        }
+    }
+
+
 
     /**
      * 从应用内assets目录中提取无障碍服务提供者APK文件。
@@ -311,6 +331,7 @@ object UIHierarchyManager {
             return ""
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return ""
             accessibilityProvider?.uiHierarchy ?: ""
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "从提供者获取UI层次结构失败", e)
@@ -366,6 +387,7 @@ object UIHierarchyManager {
             return false
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.performClick(x, y) ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "请求点击操作失败", e)
@@ -379,6 +401,7 @@ object UIHierarchyManager {
             return false
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.performLongPress(x, y) ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "长按点击操作失败", e)
@@ -395,6 +418,7 @@ object UIHierarchyManager {
                 return false
             }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.performSwipe(startX, startY, endX, endY, duration) ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "请求滑动操作失败", e)
@@ -411,6 +435,7 @@ object UIHierarchyManager {
             return false
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.performGlobalAction(actionId) ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "请求全局操作失败", e)
@@ -427,6 +452,7 @@ object UIHierarchyManager {
             return null
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return null
             accessibilityProvider?.findFocusedNodeId()
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "请求查找焦点节点ID失败", e)
@@ -443,6 +469,7 @@ object UIHierarchyManager {
             return false
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.setTextOnNode(nodeId, text) ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "请求设置文本失败", e)
@@ -462,6 +489,7 @@ object UIHierarchyManager {
             return false
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.takeScreenshot(path, format) ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "请求截取屏幕截图失败", e)
@@ -478,6 +506,7 @@ object UIHierarchyManager {
             return false
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return false
             accessibilityProvider?.isAccessibilityServiceEnabled ?: false
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "检查无障碍服务状态失败", e)
@@ -494,6 +523,7 @@ object UIHierarchyManager {
             return null
         }
         return try {
+            if (!SafeBinder.isAlive(accessibilityProvider?.asBinder())) return null
             accessibilityProvider?.currentActivityName
         } catch (e: RemoteException) {
             AppLogger.e(TAG, "从提供者获取Activity名称失败", e)

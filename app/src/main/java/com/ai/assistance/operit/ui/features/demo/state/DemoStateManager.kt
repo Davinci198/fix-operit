@@ -28,7 +28,10 @@ import com.ai.assistance.operit.core.tools.system.AccessibilityProviderInstaller
 import com.ai.assistance.operit.core.tools.system.ShizukuAuthorizer
 import com.ai.assistance.operit.core.tools.system.Terminal
 import com.ai.assistance.operit.data.mcp.plugins.MCPSharedSession
+import com.ai.assistance.operit.util.SafeBinder
 import com.ai.assistance.operit.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val TAG = "DemoStateManager"
 
@@ -273,13 +276,16 @@ class DemoStateManager(private val context: Context, private val coroutineScope:
      * 检查NodeJS和Python环境状态
      */
     suspend fun refreshNodejsPythonEnvironment() {
+        // FIX ANR: getOrCreateSharedSession lanseaza login_ubuntu/proot si executeCommand
+        // asteapta rezultatul; mutam tot fluxul pe Dispatchers.IO ca sa nu blocheze main thread.
+        withContext(Dispatchers.IO) {
         try {
             val sessionId = MCPSharedSession.getOrCreateSharedSession(context)
             if (sessionId == null) {
                 isPnpmInstalled.value = false
                 isPythonInstalled.value = false
                 isNodejsPythonEnvironmentReady.value = false
-                return
+                return@withContext
             }
 
             val terminal = Terminal.getInstance(context)
@@ -326,6 +332,7 @@ class DemoStateManager(private val context: Context, private val coroutineScope:
             isPythonInstalled.value = false
             isNodejsPythonEnvironmentReady.value = false
         }
+        } // end withContext(Dispatchers.IO)
     }
 }
 
@@ -345,7 +352,9 @@ suspend fun refreshPermissionsAndStatus(
     updateAccessibilityServiceEnabled: (Boolean) -> Unit
 ) {
     AppLogger.d(TAG, "刷新应用权限状态...")
-
+    // FIX ANR: tot fluxul de I/O (Shizuku binder, terminal/login_ubuntu, bindService) se muta
+    // pe Dispatchers.IO, pentru a NU bloca main thread-ul (eroare -74 / Input dispatching timeout).
+    return withContext(Dispatchers.IO) {
     // 检查Shizuku安装、运行和权限状态
     val isShizukuInstalled = ShizukuAuthorizer.isShizukuInstalled(context)
     val isShizukuRunning = ShizukuAuthorizer.isShizukuServiceRunning()
@@ -449,6 +458,7 @@ suspend fun refreshPermissionsAndStatus(
     val hasAccessibilityServiceEnabled =
         UIHierarchyManager.isAccessibilityServiceEnabled(context)
     updateAccessibilityServiceEnabled(hasAccessibilityServiceEnabled)
+    } // end withContext(Dispatchers.IO)
 }
 
 /** Data class to hold all UI state */
