@@ -265,7 +265,9 @@ jobs:
           if [[ "$JVM_REQUIRED" == "true" || "$FULL_REQUIRED" == "true" ]]; then
             packages+=("platform-tools" "platforms;android-34" "platforms;android-36")
           fi
-          if [[ "$FULL_REQUIRED" == "true" ]]; then
+          if [[ "$FULL_REQUIRED" == "true" || "$JVM_REQUIRED" == "true" ]]; then
+            # ripgrep nativ e construit și în modul JVM (android_jvm=true),
+            # deci NDK-ul e necesar și acolo, nu doar la build-ul complet.
             packages+=("ndk;$ANDROID_NDK_VERSION" "cmake;$ANDROID_CMAKE_VERSION")
           fi
           sdkmanager --install "${packages[@]}"
