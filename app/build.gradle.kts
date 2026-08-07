@@ -308,7 +308,7 @@ android {
     }
     flavorDimensions += "dist"
     productFlavors {
-        create("main") {
+        create("standard") {
             dimension = "dist"
         }
         create("clone") {

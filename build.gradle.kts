@@ -23,7 +23,7 @@ tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
 
-tasks.register("assembleDebugClone") {
-    dependsOn(":app:assembleClone")
+tasks.register("assembleStandardClone") {
+    dependsOn(":app:assembleStandardDebug")
     description = "Build the clone (co-installable) debug APK with package name suffix .clone"
 }

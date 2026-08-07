@@ -9,11 +9,11 @@ on:
         default: ':app:assembleCloneDebug'
         type: choice
         options:
-          - assembleDebug
-          - ':app:assembleDebug'
+          - assembleStandardDebug
+          - ':app:assembleStandardDebug'
           - ':app:assembleCloneDebug'
           - ':app:assembleCloneRelease'
-          - ':app:assembleNightly'
+          - ':app:assembleStandardNightly'
           - ':app:assembleClone'
           - ':app:bundleRelease'
       run_unit_tests:

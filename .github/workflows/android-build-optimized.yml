@@ -11,7 +11,7 @@ on:
         options:
           - ':app:assembleCloneDebug'
           - ':app:assembleCloneRelease'
-          - ':app:assembleDebug'
+          - ':app:assembleStandardDebug'
       run_unit_tests:
         required: false
         default: false
