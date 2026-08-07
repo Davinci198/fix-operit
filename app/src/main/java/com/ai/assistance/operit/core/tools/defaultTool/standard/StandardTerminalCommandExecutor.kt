@@ -109,19 +109,26 @@ class StandardTerminalCommandExecutor(private val context: Context) {
 
                 val terminal = Terminal.getInstance(context)
 
-                // 检查会话是否存在
-                if (terminal.terminalState.value.sessions.none { it.id == sessionId }) {
-                    // 如果会话不存在，也从我们的映射中移除
-                    sessionNameToIdMap.entries.removeIf { it.value == sessionId }
-                    return@runBlocking ToolResult(
-                        toolName = tool.name,
-                        success = false,
-                        result = StringResultData(""),
-                        error = context.getString(R.string.terminal_error_session_not_exist, sessionId)
-                    )
+                // 检查会话是否存在，若不存在则自动恢复（self-healing）
+                var effectiveSessionId = sessionId
+                if (terminal.terminalState.value.sessions.none { it.id == effectiveSessionId }) {
+                    AppLogger.w(TAG, "Session $effectiveSessionId not found, attempting auto-recovery")
+                    val recovered = recoverSession(terminal, effectiveSessionId)
+                    if (recovered == null) {
+                        // 如果无法恢复，也从我们的映射中移除
+                        sessionNameToIdMap.entries.removeIf { it.value == effectiveSessionId }
+                        return@runBlocking ToolResult(
+                            toolName = tool.name,
+                            success = false,
+                            result = StringResultData(""),
+                            error = context.getString(R.string.terminal_error_session_not_exist, effectiveSessionId)
+                        )
+                    }
+                    effectiveSessionId = recovered
+                    AppLogger.w(TAG, "Session auto-recovered to new id: $effectiveSessionId")
                 }
 
-                val outputFlow = terminal.executeCommandFlow(sessionId, command)
+                val outputFlow = terminal.executeCommandFlow(effectiveSessionId, command)
 
                 if (outputFlow != null) {
                     val events = mutableListOf<String>()
@@ -146,7 +153,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                         }
                     } catch (e: TimeoutCancellationException) {
                         AppLogger.w(TAG, "Command execution timed out after ${timeout}ms")
-                        cancelTimedOutCommand(terminal, sessionId)
+                        cancelTimedOutCommand(terminal, effectiveSessionId)
                         hasCompleted = true
                         exitCode = -1
                         didTimeout = true
@@ -168,7 +175,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                                     command = command,
                                     output = fullOutput,
                                     exitCode = exitCode,
-                                    sessionId = sessionId,
+                                    sessionId = effectiveSessionId,
                                     timedOut = didTimeout
                             ),
                             error = errorMessage
@@ -190,6 +197,41 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                         error = context.getString(R.string.terminal_error_execute_command, e.message ?: "")
                 )
             }
+        }
+    }
+
+    /**
+     * 尝试恢复一个已失效的终端会话。
+     * 优先复用同名会话；否则创建同名新会话，并更新名称映射。
+     * @return 可用的 sessionId；无法恢复时返回 null
+     */
+    private suspend fun recoverSession(terminal: Terminal, deadSessionId: String): String? {
+        return try {
+            // 1. 根据失效的 sessionId 反查其会话名
+            val sessionName =
+                sessionNameToIdMap.entries
+                    .firstOrNull { it.value == deadSessionId }
+                    ?.key
+
+            // 2. 尝试查找同名的活跃会话
+            if (sessionName != null) {
+                val activeByName =
+                    terminal.terminalState.value.sessions.find { it.title == sessionName }
+                if (activeByName != null) {
+                    sessionNameToIdMap[sessionName] = activeByName.id
+                    return activeByName.id
+                }
+            }
+
+            // 3. 用原会话名（或默认名）创建新会话
+            val name = sessionName ?: "terminal-recovered-${System.currentTimeMillis()}"
+            val newSessionId = terminal.createSession(name)
+            sessionNameToIdMap[name] = newSessionId
+            AppLogger.w(TAG, "Recovered terminal session '$name' -> $newSessionId (was $deadSessionId)")
+            newSessionId
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Session recovery failed for $deadSessionId", e)
+            null
         }
     }
 
@@ -220,17 +262,25 @@ class StandardTerminalCommandExecutor(private val context: Context) {
 
             val terminal = Terminal.getInstance(context)
 
-            if (terminal.terminalState.value.sessions.none { it.id == sessionId }) {
-                sessionNameToIdMap.entries.removeIf { it.value == sessionId }
-                emit(
-                    ToolResult(
-                        toolName = tool.name,
-                        success = false,
-                        result = StringResultData(""),
-                        error = context.getString(R.string.terminal_error_session_not_exist, sessionId)
+            // 检查会话是否存在，若不存在则自动恢复（self-healing）
+            var effectiveSessionId = sessionId
+            if (terminal.terminalState.value.sessions.none { it.id == effectiveSessionId }) {
+                AppLogger.w(TAG, "Stream: session $effectiveSessionId not found, attempting auto-recovery")
+                val recovered = recoverSession(terminal, effectiveSessionId)
+                if (recovered == null) {
+                    sessionNameToIdMap.entries.removeIf { it.value == effectiveSessionId }
+                    emit(
+                        ToolResult(
+                            toolName = tool.name,
+                            success = false,
+                            result = StringResultData(""),
+                            error = context.getString(R.string.terminal_error_session_not_exist, effectiveSessionId)
+                        )
                     )
-                )
-                return@flow
+                    return@flow
+                }
+                effectiveSessionId = recovered
+                AppLogger.w(TAG, "Stream: session auto-recovered to new id: $effectiveSessionId")
             }
 
             emit(
@@ -241,7 +291,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                         TerminalStreamEventData(
                             type = "start",
                             command = command,
-                            sessionId = sessionId,
+                            sessionId = effectiveSessionId,
                             chunkIndex = 0,
                             receivedChars = 0
                         ),
@@ -249,7 +299,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                 )
             )
 
-            val outputFlow = terminal.executeCommandFlow(sessionId, command)
+            val outputFlow = terminal.executeCommandFlow(effectiveSessionId, command)
             val events = mutableListOf<String>()
             var completionOutput: String? = null
             var exitCode = 0
@@ -283,7 +333,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                                     TerminalStreamEventData(
                                         type = "chunk",
                                         command = command,
-                                        sessionId = sessionId,
+                                        sessionId = effectiveSessionId,
                                         chunk = chunk,
                                         chunkIndex = chunkIndex,
                                         receivedChars = receivedChars
@@ -296,7 +346,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                 }
             } catch (e: TimeoutCancellationException) {
                 AppLogger.w(TAG, "Command execution timed out after ${timeout}ms")
-                cancelTimedOutCommand(terminal, sessionId)
+                cancelTimedOutCommand(terminal, effectiveSessionId)
                 hasCompleted = true
                 exitCode = -1
                 didTimeout = true
@@ -319,7 +369,7 @@ class StandardTerminalCommandExecutor(private val context: Context) {
                             command = command,
                             output = fullOutput,
                             exitCode = exitCode,
-                            sessionId = sessionId,
+                            sessionId = effectiveSessionId,
                             timedOut = didTimeout
                         ),
                     error = errorMessage
