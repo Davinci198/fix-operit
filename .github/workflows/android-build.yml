@@ -158,10 +158,6 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            ~/.gradle/caches/modules-2
-            app/.cxx
-            avator/.cxx
-            **/.cxx
           key: gradle-opt-ndk27-${{ runner.os }}-${{ hashFiles('**/*.gradle*', 'gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-opt-ndk27-${{ runner.os }}-
@@ -199,6 +195,10 @@ jobs:
       - name: Prepare Android dependencies
         run: |
           python3 ci/script/prepare_android_dependencies.py \
+            --profile full \
+            --archives "$MANUAL_DEPS_DIR" \
+            --repository "$GITHUB_WORKSPACE" \
+            --clean || python3 ci/script/prepare_android_dependencies.py \
             --profile full \
             --archives "$MANUAL_DEPS_DIR" \
             --repository "$GITHUB_WORKSPACE"
@@ -270,6 +270,14 @@ jobs:
         run: |
           set -euo pipefail
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Clean corrupted CXX cache
+        run: |
+          rm -rf app/.cxx
+          rm -rf app/src/main/cpp/.cxx
+          rm -rf app/build/intermediates/cxx
+          rm -rf ~/.gradle/caches/modules-2/files-2.1/io.github.operit
+          echo "CXX cache cleaned"
 
       - name: Run Gradle build
         id: gradle-build

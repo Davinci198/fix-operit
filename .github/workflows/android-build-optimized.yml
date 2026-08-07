@@ -89,7 +89,6 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            app/.cxx
           key: gradle-clone-ndk27-${{ hashFiles('**/*.gradle*') }}
           restore-keys: gradle-clone-ndk27-
 
@@ -109,7 +108,7 @@ jobs:
         run: bash ci/script/download_android_dependencies.sh full "manual-deps"
 
       - name: Prepare deps
-        run: python3 ci/script/prepare_android_dependencies.py --profile full --archives "manual-deps" --repository "$GITHUB_WORKSPACE"
+        run: python3 ci/script/prepare_android_dependencies.py --profile full --archives "manual-deps" --repository "$GITHUB_WORKSPACE" --clean || python3 ci/script/prepare_android_dependencies.py --profile full --archives "manual-deps" --repository "$GITHUB_WORKSPACE"
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -128,6 +127,14 @@ jobs:
 
       - name: Configure SDK
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Clean corrupted CXX cache
+        run: |
+          rm -rf app/.cxx
+          rm -rf app/src/main/cpp/.cxx
+          rm -rf app/build/intermediates/cxx
+          rm -rf ~/.gradle/caches/modules-2/files-2.1/io.github.operit
+          echo "CXX cache cleaned"
 
       - name: Build CLONE APK
         run: |
