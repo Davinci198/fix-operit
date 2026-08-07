@@ -307,12 +307,18 @@ android {
 
     }
 
-    flavorDimensions("dist")
+    flavorDimensions("dist\)
     productFlavors {
         create("main") {
             dimension = "dist"
-            // app-ul principal pastreaza ID-ul original com.ai.assistance.operit
         }
+        create("clone") {
+            dimension = "dist"
+            applicationIdSuffix = ".clone"
+            versionNameSuffix = "-clone"
+            resValue("string", "app_name", "Fix Operit Clone")
+        }
+    }
         create("clone") {
 matchingFallbacks += listOf("main")
             dimension = "dist"
