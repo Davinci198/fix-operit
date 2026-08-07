@@ -307,13 +307,14 @@ android {
 
     }
 
-    flavorDimensions += "dist"
+    flavorDimensions("dist")
     productFlavors {
         create("main") {
             dimension = "dist"
             // app-ul principal pastreaza ID-ul original com.ai.assistance.operit
         }
         create("clone") {
+matchingFallbacks += listOf("main")
             dimension = "dist"
             applicationIdSuffix = ".clone"
             versionNameSuffix = "-clone"
