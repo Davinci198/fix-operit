@@ -19,7 +19,8 @@ import android.os.IBinder
  */
 object SafeBinder {
 
-    private const val TAG = "SafeBinder"
+    @PublishedApi
+    internal const val TAG = "SafeBinder"
 
     /**
      * Verifică dacă un binder proxy este încă conectat și răspunde (evită erorile -74).
@@ -57,8 +58,9 @@ object SafeBinder {
             onFailure()
             return null
         }
+        val b = binder ?: return null
         return try {
-            block(binder)
+            block(b)
         } catch (e: DeadObjectException) {
             AppLogger.w(TAG, "Binder call failed: DeadObjectException - error -74 equivalent", e)
             onFailure()
