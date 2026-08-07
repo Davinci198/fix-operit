@@ -75,6 +75,7 @@ jobs:
 
       - name: Fix Gradle mirror (aliyun -> official)
         run: |
+          # shellcheck disable=SC2129
           echo "Before:"
           cat gradle/wrapper/gradle-wrapper.properties
           # 1) Remove any backslash before ':' (broken URL like https\://...)
@@ -237,6 +238,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # shellcheck disable=SC2129
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           # Set up release signing when secrets are present
           if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
