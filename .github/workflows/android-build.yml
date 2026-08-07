@@ -21,38 +21,6 @@ on:
         required: false
         default: false
         type: boolean
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/android-build.yml
-      - .gitmodules
-      - .npmrc
-      - app/**
-      - build.gradle.kts
-      - ci/script/download_android_dependencies.sh
-      - ci/script/prepare_android_dependencies.py
-      - cmake/**
-      - avator/**
-      - examples/**
-      - gradle/**
-      - gradle.properties
-      - gradlew
-      - gradlew.bat
-      - llm/**
-      - package.json
-      - package-lock.json
-      - npm-shrinkwrap.json
-      - pnpm-workspace.yaml
-      - quickjs/**
-      - settings.gradle.kts
-      - showerclient/**
-      - terminal/**
-      - terminal
-      - tools/native_ripgrep/**
-      - tools/packages_whitelist.txt
-      - tools/example_packages/sync_example_packages.py
-      - web-chat/**
-
 concurrency:
   group: android-build-${{ github.event_name }}-${{ github.ref }}-${{ github.event.inputs.gradle_task }}
   cancel-in-progress: true
