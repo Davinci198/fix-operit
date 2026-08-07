@@ -307,6 +307,20 @@ android {
 
     }
 
+    flavorDimensions += "dist"
+    productFlavors {
+        create("main") {
+            dimension = "dist"
+            // app-ul principal pastreaza ID-ul original com.ai.assistance.operit
+        }
+        create("clone") {
+            dimension = "dist"
+            applicationIdSuffix = ".clone"
+            versionNameSuffix = "-clone"
+            resValue("string", "app_name", "Fix Operit Clone")
+        }
+    }
+
     buildTypes {
         val releaseSigningConfig = signingConfigs.findByName("release")
 
@@ -325,15 +339,6 @@ android {
             if (releaseSigningConfig != null) {
                 signingConfig = releaseSigningConfig
             }
-        }
-        create("clone") {
-            initWith(getByName("debug"))
-            applicationIdSuffix = ".clone"
-            if (releaseSigningConfig != null) {
-                signingConfig = releaseSigningConfig
-            }
-            matchingFallbacks += listOf("debug")
-            resValue("string", "app_name", "Operit Clone")
         }
         create("nightly") {
             isMinifyEnabled = false
@@ -356,10 +361,10 @@ android {
                 output.outputFileName = "app-nightly.apk"
             }
         }
-        if (buildType.name == "clone") {
+        if (flavorName == "clone") {
             outputs.all {
                 val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-                output.outputFileName = "app-clone.apk"
+                output.outputFileName = "app-clone-${buildType.name}.apk"
             }
         }
     }
