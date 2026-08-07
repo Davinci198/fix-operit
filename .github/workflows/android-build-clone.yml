@@ -137,6 +137,7 @@ jobs:
           rm -rf app/src/main/cpp/.cxx
           rm -rf app/build/intermediates/cxx
           rm -rf app/build/.cxx
+          # shellcheck disable=SC2012
           ls -la app/src/main/cpp/ | head -20
 
       - name: Setup DragonBones Prebuilt AAR
@@ -171,6 +172,7 @@ jobs:
           if [ -z "${TASK:-}" ]; then TASK=":app:assembleCloneRelease"; fi
           echo "Building $TASK as com.ai.assistance.operit.clone"
           chmod +x ./gradlew
+          # shellcheck disable=SC2086
           ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -Xms2g" | tee gradle.log
 
       - name: Upload APK Clone
