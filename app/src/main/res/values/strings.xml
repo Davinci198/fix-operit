@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Operit AI</string>
+    <string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">用于获取UI层次结构，为AI助手提供更快速的界面分析能力，不会收集或存储任何个人信息。</string>
     
     <!-- 模型选择器相关 -->
@@ -583,9 +583,9 @@
     <string name="termux_setup_guide">Termux 设置向导</string>
     
     <!-- About Screen -->
-    <string name="about_title">关于 Operit AI</string>
+    <string name="about_title">关于 RO-Operit</string>
     <string name="about_version">版本: %1$s</string>
-    <string name="about_description">Operit AI是一个智能助手应用，能够帮助用户更高效地使用设备，提供界面分析、聊天对话等功能。</string>
+    <string name="about_description">RO-Operit是一个智能助手应用，能够帮助用户更高效地使用设备，提供界面分析、聊天对话等功能。</string>
     <string name="about_developer">开发者: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">联系我们: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -608,7 +608,7 @@
     <string name="network_status_label">网络状态</string>
 
     <!-- Configuration Screen -->
-    <string name="config_title">Operit AI 助手</string>
+    <string name="config_title">RO-Operit 助手</string>
     <string name="config_description">使用 DeepSeek API Key，或配置其他模型服务</string>
     <string name="config_api_key_label">API密钥</string>
     <string name="config_api_key_placeholder">DeepSeek API密钥</string>
@@ -5181,7 +5181,7 @@
     <string name="default_assistant_guide_step1_title">设置为默认助理</string>
     <string name="default_assistant_guide_step1_desc">将 Operit 设置为系统的默认数字助理应用</string>
     <string name="default_assistant_guide_step1_detail1">• 打开系统设置 → 应用 → 默认应用 → 数字助理应用</string>
-    <string name="default_assistant_guide_step1_detail2">• 在助手应用列表中找到并选择"Operit AI"</string>
+    <string name="default_assistant_guide_step1_detail2">• 在助手应用列表中找到并选择"RO-Operit"</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: 设置 → 应用 → 默认应用 → 数字助理应用 → 默认数字助理应用</string>
     <string name="default_assistant_guide_open_settings">打开助理设置</string>
     
@@ -5213,7 +5213,7 @@
     <string name="default_assistant_guide_troubleshooting_content">如果在列表中找不到Operit，请确保：\n\n• 应用已正确安装且未被禁用\n• 已授予必要的权限（麦克风、悬浮窗等）\n• 尝试重启设备后再次设置\n\n部分定制系统可能限制第三方应用作为默认助手，如遇此情况，您仍可通过应用内的悬浮窗功能使用Operit。</string>
     
     <!-- Voice Interaction Service -->
-    <string name="voice_interaction_service_name">Operit AI 助手</string>
+    <string name="voice_interaction_service_name">RO-Operit 助手</string>
     <string name="voice_interaction_service_summary">智能语音助手服务</string>
 
     <!-- Tool Permission Settings -->
@@ -5501,7 +5501,7 @@
     <string name="start_with_new_chat_description">开启后，每次启动应用都会进入一个新的空白聊天界面，不再自动打开上一次聊天。</string>
     <string name="software_identity_title">软件标识</string>
     <string name="software_identity_description">更改侧边栏顶部显示的软件标识。</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">灵枢 AI</string>
     <string name="reset_all_display_settings">重置所有显示设置</string>
     <string name="ui_accessibility_mode">无障碍适配模式</string>
@@ -7388,7 +7388,7 @@
     <string name="html_export_updated">更新</string>
     <string name="html_export_group">分组</string>
     <string name="html_export_message_count">消息数</string>
-    <string name="html_export_footer">导出自 Operit AI Assistant</string>
+    <string name="html_export_footer">导出自 RO-Operit Assistant</string>
 
     <!-- MnnModelDownloadManager (新增) -->
     <string name="mnn_no_cache_data">无缓存数据</string>

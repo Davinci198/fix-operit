@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Operit AI</string>
+    <string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">UI 계층 구조를 가져오는 데 사용되며 AI 보조자에게 더 빠른 인터페이스 분석 기능을 제공하며 개인 정보를 수집하거나 저장하지 않습니다.</string>
     <string name="model_selector_title">모델 구성 선택</string>
     <string name="model_selector_toggle">모델 선택기 표시</string>
@@ -536,9 +536,9 @@
     <string name="install_termux_failed">Termux 설치 실패</string>
     <string name="open_termux">Termux 열기</string>
     <string name="termux_setup_guide">Termux 설정 가이드</string>
-    <string name="about_title">Operit AI 소개</string>
+    <string name="about_title">RO-Operit 소개</string>
     <string name="about_version">버전: %1$s</string>
-    <string name="about_description">Operit AI는 인터페이스 분석, 채팅 대화 등을 제공하여 사용자가 장치를 보다 효율적으로 사용할 수 있도록 돕는 지능형 보조 애플리케이션입니다.</string>
+    <string name="about_description">RO-Operit는 인터페이스 분석, 채팅 대화 등을 제공하여 사용자가 장치를 보다 효율적으로 사용할 수 있도록 돕는 지능형 보조 애플리케이션입니다.</string>
     <string name="about_developer">개발자: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">연락처: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -557,7 +557,7 @@
     <string name="network_unavailable">네트워크 연결이 불가능합니다. 네트워크 설정을 확인하세요.</string>
     <string name="network_status">네트워크 상태: %1$s</string>
     <string name="network_status_label">네트워크 상태</string>
-    <string name="config_title">Operit AI 도우미</string>
+    <string name="config_title">RO-Operit 도우미</string>
     <string name="config_description">DeepSeek API 키를 사용하거나 다른 모델 서비스를 구성하세요</string>
     <string name="config_api_key_label">API 키</string>
     <string name="config_api_key_placeholder">DeepSeek API 키</string>
@@ -4493,7 +4493,7 @@
     <string name="default_assistant_guide_step1_title">시스템 설정 열기</string>
     <string name="default_assistant_guide_step1_desc">먼저 Android 시스템 설정 인터페이스로 들어가야 합니다.</string>
     <string name="default_assistant_guide_step1_detail1">• 시스템 설정 → 앱 → 기본 앱 → 디지털 보조 앱 열기</string>
-    <string name="default_assistant_guide_step1_detail2">• 보조 앱 목록에서 "Operit AI"를 찾아 선택하세요.</string>
+    <string name="default_assistant_guide_step1_detail2">• 보조 앱 목록에서 "RO-Operit"를 찾아 선택하세요.</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: 설정 → 앱 → 기본 앱 → 디지털 보조 앱 → 기본 디지털 보조 앱</string>
     <string name="default_assistant_guide_open_settings">설정 열기</string>
     <string name="default_assistant_guide_open_gesture_settings">제스처 설정 열기</string>
@@ -4509,13 +4509,13 @@
     <string name="default_assistant_guide_step4_detail1">• 홈 버튼(홈 화면 버튼)을 길게 누르면 Operit 음성 지원이 호출됩니다.</string>
     <string name="default_assistant_guide_step4_detail2">• 음성 깨우기가 지원되는 경우 \"Hey Google\" 또는 기기에 지정된 깨우기 단어를 말하면 Operit가 실행될 수도 있습니다.</string>
     <string name="default_assistant_guide_step3_title">Operit 선택</string>
-    <string name="default_assistant_guide_step3_desc">보조 앱 목록에서 Operit AI를 선택하세요.</string>
-    <string name="default_assistant_guide_step3_detail1">• 사용 가능한 보조 앱 목록에서 \"Operit AI\"를 찾으세요.</string>
+    <string name="default_assistant_guide_step3_desc">보조 앱 목록에서 RO-Operit를 선택하세요.</string>
+    <string name="default_assistant_guide_step3_detail1">• 사용 가능한 보조 앱 목록에서 \"RO-Operit\"를 찾으세요.</string>
     <string name="default_assistant_guide_step3_detail2">• 탭하여 선택하면 시스템이 Operit를 기본 보조자로 설정합니다.</string>
     <string name="default_assistant_guide_step3_detail3">• 말하거나 입력하여 어시스턴트와 상호작용할 수 있습니다.</string>
     <string name="default_assistant_guide_troubleshooting_title">문제가 있나요?</string>
     <string name="default_assistant_guide_troubleshooting_content">목록에서 Operit을 찾을 수 없는 경우 다음을 확인하세요. \n\n• 앱이 제대로 설치되었으며 비활성화되지 않았는지 \n• 필요한 권한이 부여되었습니다(마이크, 오버레이 등)\n• 장치를 다시 시작하고 다시 설정해 보세요\n\n일부 맞춤 시스템 타사 앱이 기본 도우미로 설정되는 것을 제한할 수 있습니다. 이러한 상황이 발생하더라도 앱 내 플로팅 창 기능을 통해 Operit를 계속 사용할 수 있습니다.</string>
-    <string name="voice_interaction_service_name">Operit AI 도우미</string>
+    <string name="voice_interaction_service_name">RO-Operit 도우미</string>
     <string name="voice_interaction_service_summary">지능형 음성비서 서비스</string>
     <string name="tool_permissions_title">도구 권한</string>
     <string name="tool_permissions_description">기본적으로 모든 도구는 \'요청\' 권한이 필요합니다. 아래에서 예외를 추가할 수 있습니다.</string>
@@ -4774,7 +4774,7 @@
     <string name="enable_navigation_animation_description">휴대폰 사이드바와 페이지 전환 모두에 향상된 애니메이션 세트를 켭니다. 더 단순한 내비게이션 모션을 사용하려면 이 기능을 끄세요.</string>
     <string name="software_identity_title">소프트웨어 ID</string>
     <string name="software_identity_description">사이드바 상단에 표시된 소프트웨어 ID를 변경하세요.</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">링슈 AI</string>
     <string name="reset_all_display_settings">모든 디스플레이 설정 재설정</string>
     <string name="ui_accessibility_mode">접근성 모드</string>
@@ -6463,7 +6463,7 @@
     <string name="html_export_updated">업데이트됨</string>
     <string name="html_export_group">그룹</string>
     <string name="html_export_message_count">메시지 수</string>
-    <string name="html_export_footer">Operit AI Assistant에서 내보냄</string>
+    <string name="html_export_footer">RO-Operit Assistant에서 내보냄</string>
     <string name="mnn_no_cache_data">캐시 데이터 없음</string>
     <string name="mnn_response_empty">응답 본문이 비어 있습니다.</string>
     <string name="mnn_fetch_repo_files_failed">저장소 파일 목록을 가져오지 못했습니다: %1$s</string>

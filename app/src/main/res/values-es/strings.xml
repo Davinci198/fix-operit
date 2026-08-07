@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Operit AI</string>
+    <string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">Se utiliza para obtener la jerarquía de la interfaz de usuario, proporcionando al asistente de IA capacidades de análisis de interfaz más rápidas. No recopilará ni almacenará ninguna información personal.</string>
 
     <!-- Navigation -->
@@ -83,9 +83,9 @@
     <string name="termux_wizard_title">Asistente de configuración de Termux</string>
 
     <!-- About Screen -->
-    <string name="about_title">Acerca de Operit AI</string>
+    <string name="about_title">Acerca de RO-Operit</string>
     <string name="about_version">Versión: %1$s</string>
-    <string name="about_description">Operit AI es una aplicación de asistente inteligente que ayuda a los usuarios a utilizar sus dispositivos de manera más eficiente, proporcionando funciones como análisis de interfaz y chat.</string>
+    <string name="about_description">RO-Operit es una aplicación de asistente inteligente que ayuda a los usuarios a utilizar sus dispositivos de manera más eficiente, proporcionando funciones como análisis de interfaz y chat.</string>
     <string name="about_developer">Desarrollador: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">Contáctenos: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -1845,7 +1845,7 @@
     <string name="app_logo_description">Icono de la aplicación</string>
     <string name="github_star_description">Estrella de GitHub</string>
     <string name="network_status_label">Estado de red</string>
-    <string name="config_title">Asistente Operit AI</string>
+    <string name="config_title">Asistente RO-Operit</string>
     <string name="config_description">Usa una clave API de DeepSeek o configura otro servicio de modelos</string>
     <string name="config_api_key_label">Clave API</string>
     <string name="config_api_key_placeholder">Clave API de DeepSeek</string>
@@ -4510,7 +4510,7 @@ Ahora puede usar el modo AutoGLM en la interfaz de conversación.</string>
     <string name="default_assistant_guide_step3_detail3">• Puede intentar hablar o escribir texto para interactuar con el asistente.</string>
     <string name="default_assistant_guide_troubleshooting_title">¿Problemas?</string>
     <string name="default_assistant_guide_troubleshooting_content">Si no encuentra Operit en la lista, asegúrese de que:\n\n• La aplicación esté instalada correctamente y no esté deshabilitada.\n• Se hayan concedido los permisos necesarios (micrófono, ventana flotante, etc.).\n• Intente reiniciar el dispositivo y configurarlo de nuevo.\n\nAlgunos sistemas personalizados pueden restringir aplicaciones de terceros como asistente predeterminado. En ese caso, aún puede usar Operit mediante la función de ventana flotante dentro de la aplicación.</string>
-    <string name="voice_interaction_service_name">Asistente Operit AI</string>
+    <string name="voice_interaction_service_name">Asistente RO-Operit</string>
     <string name="voice_interaction_service_summary">Servicio de asistente de voz inteligente</string>
     <string name="tool_permissions_title">Permisos de herramientas</string>
     <string name="tool_permissions_description">De forma predeterminada, todas las herramientas requieren su "consulta". Puede agregar excepciones a continuación.</string>
@@ -4729,7 +4729,7 @@ Ahora puede usar el modo AutoGLM en la interfaz de conversación.</string>
     <string name="default_assistant_guide_step1_title">Configurar como asistente predeterminado</string>
     <string name="default_assistant_guide_step1_desc">Configurar Operit como la aplicación de asistente digital predeterminada del sistema</string>
     <string name="default_assistant_guide_step1_detail1">• Abre Configuración del sistema → Aplicaciones → Aplicaciones predeterminadas → Aplicación de asistente digital</string>
-    <string name="default_assistant_guide_step1_detail2">• En la lista de aplicaciones de asistente, busca y selecciona "Operit AI"</string>
+    <string name="default_assistant_guide_step1_detail2">• En la lista de aplicaciones de asistente, busca y selecciona "RO-Operit"</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: Configuración → Aplicaciones → Aplicaciones predeterminadas → Aplicación de asistente digital → Aplicación de asistente digital predeterminada</string>
     <string name="default_assistant_guide_open_settings">Abrir configuración del asistente</string>
     <string name="default_assistant_guide_open_gesture_settings">Abrir configuración de gestos</string>
@@ -4837,7 +4837,7 @@ Ahora puede usar el modo AutoGLM en la interfaz de conversación.</string>
     <string name="keep_screen_on_description">Mantener la pantalla encendida para evitar que se bloquee automáticamente durante la conversación</string>
     <string name="software_identity_title">Identidad del software</string>
     <string name="software_identity_description">Cambiar la identidad del software que se muestra en la parte superior de la barra lateral.</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">Lingshu AI</string>
     <string name="reset_all_display_settings">Restablecer toda la configuración de pantalla</string>
     <string name="ui_accessibility_mode">Modo de accesibilidad</string>
@@ -6198,7 +6198,7 @@ Ahora puede usar el modo AutoGLM en la interfaz de conversación.</string>
     <string name="html_export_updated">Actualizado</string>
     <string name="html_export_group">Grupo</string>
     <string name="html_export_message_count">Mensajes</string>
-    <string name="html_export_footer">Exportado desde Operit AI Assistant</string>
+    <string name="html_export_footer">Exportado desde RO-Operit Assistant</string>
     <string name="mnn_no_cache_data">Sin datos en caché</string>
     <string name="mnn_response_empty">El cuerpo de la respuesta está vacío</string>
     <string name="mnn_fetch_repo_files_failed">Error al obtener la lista de archivos del repositorio: %1$s</string>

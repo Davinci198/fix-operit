@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources><string name="app_name">Operar IA</string>
+<resources><string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">Ele é usado para obter a hierarquia da IU e fornecer recursos de análise de interface mais rápidos para o assistente de IA. Nenhuma informação pessoal será coletada ou armazenada.</string>
     <string name="model_selector_title">Selecione a configuração do modelo</string>
     <string name="model_selector_toggle">Mostrar seletor de modelo</string>
@@ -527,9 +527,9 @@
     <string name="install_termux_failed">A instalação do Termux falhou</string>
     <string name="open_termux">Abra o Termux</string>
     <string name="termux_setup_guide">Assistente de configuração Termux</string>
-    <string name="about_title">Sobre a Operit AI</string>
+    <string name="about_title">Sobre a RO-Operit</string>
     <string name="about_version">Versão: %1$s</string>
-    <string name="about_description">Operit AI é um aplicativo assistente inteligente que pode ajudar os usuários a usar os dispositivos com mais eficiência, fornecendo análise de interface, diálogo de chat e outras funções.</string>
+    <string name="about_description">RO-Operit é um aplicativo assistente inteligente que pode ajudar os usuários a usar os dispositivos com mais eficiência, fornecendo análise de interface, diálogo de chat e outras funções.</string>
     <string name="about_developer">Desenvolvedor: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">Contate-nos: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -4129,7 +4129,7 @@ Agora é possível usar o modo AutoGLM na interface de diálogo.</string>
     <string name="default_assistant_guide_step1_title">Definir como assistente padrão</string>
     <string name="default_assistant_guide_step1_desc">Defina o Operit como o aplicativo de assistente digital padrão do seu sistema</string>
     <string name="default_assistant_guide_step1_detail1">• Abra Configurações do sistema → Aplicativos → Aplicativos padrão → Aplicativo Assistente Digital</string>
-    <string name="default_assistant_guide_step1_detail2">• Encontre e selecione "Operit AI" na lista de aplicativos assistentes</string>
+    <string name="default_assistant_guide_step1_detail2">• Encontre e selecione "RO-Operit" na lista de aplicativos assistentes</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: Configurações → Aplicativos → Aplicativos padrão → Aplicativo Digital Assistant → Aplicativo Digital Assistant padrão</string>
     <string name="default_assistant_guide_open_settings">Abra as configurações do assistente</string>
     <string name="default_assistant_guide_open_gesture_settings">Abrir configurações de gestos</string>
@@ -6026,7 +6026,7 @@ Agora é possível usar o modo AutoGLM na interface de diálogo.</string>
     <string name="html_export_updated">renovar</string>
     <string name="html_export_group">Grupo</string>
     <string name="html_export_message_count">Número de mensagens</string>
-    <string name="html_export_footer">Exportado do Operit AI Assistant</string>
+    <string name="html_export_footer">Exportado do RO-Operit Assistant</string>
     <string name="mnn_no_cache_data">Nenhum dado em cache</string>
     <string name="mnn_response_empty">O corpo da resposta está vazio</string>
     <string name="mnn_fetch_repo_files_failed">Falha ao obter a lista de arquivos do warehouse: %1$s</string>
@@ -6708,7 +6708,7 @@ Agora é possível usar o modo AutoGLM na interface de diálogo.</string>
     <string name="chat_message_timing_stats_compact">tempo: %1$s (primeiro %2$s geração %3$s)</string>
     <string name="software_identity_title">Identidade do software</string>
     <string name="software_identity_description">Altera a identidade do software exibida no topo da barra lateral.</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">Lingshu AI</string>
     <string name="hide_runtime_task_view">Ocultar visualização de tarefa em execução</string>
     <string name="hide_runtime_task_view_description">Quando a IA está processando mensagens ou executando ferramentas, oculta o cartão de tarefa do aplicativo da lista de tarefas recentes do sistema, evitando que seja fechado acidentalmente ao deslizar.</string>

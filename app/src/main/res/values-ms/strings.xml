@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Operit AI</string>
+    <string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">Digunakan untuk mendapatkan hierarki UI, menyediakan keupayaan analisis antara muka yang lebih pantas untuk pembantu AI, tidak akan mengumpul atau menyimpan sebarang maklumat peribadi.</string>
     <string name="model_selector_title">Pilih Konfigurasi Model</string>
     <string name="model_selector_toggle">Tunjukkan Pemilih Model</string>
@@ -539,9 +539,9 @@
     <string name="install_termux_failed">Pemasangan Termux gagal</string>
     <string name="open_termux">Buka Termux</string>
     <string name="termux_setup_guide">Panduan penyediaan Termux</string>
-    <string name="about_title">Perihal Operit AI</string>
+    <string name="about_title">Perihal RO-Operit</string>
     <string name="about_version">Versi: %1$s</string>
-    <string name="about_description">Operit AI ialah aplikasi pembantu pintar yang membantu pengguna menggunakan peranti dengan lebih cekap, menyediakan analisis antara muka, perbualan sembang dan fungsi lain.</string>
+    <string name="about_description">RO-Operit ialah aplikasi pembantu pintar yang membantu pengguna menggunakan peranti dengan lebih cekap, menyediakan analisis antara muka, perbualan sembang dan fungsi lain.</string>
     <string name="about_developer">Pembangun: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">Hubungi kami: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -560,7 +560,7 @@
     <string name="network_unavailable">Sambungan rangkaian tidak tersedia, sila semak tetapan rangkaian anda</string>
     <string name="network_status">Status rangkaian: %1$s</string>
     <string name="network_status_label">Status rangkaian</string>
-    <string name="config_title">Pembantu Operit AI</string>
+    <string name="config_title">Pembantu RO-Operit</string>
     <string name="config_description">Gunakan Kunci API DeepSeek atau konfigurasikan perkhidmatan model lain</string>
     <string name="config_api_key_label">Kunci API</string>
     <string name="config_api_key_placeholder">Kunci API DeepSeek</string>
@@ -4486,7 +4486,7 @@ Kini anda boleh menggunakan mod AutoGLM di antara muka perbualan.</string>
     <string name="default_assistant_guide_step1_title">Tetapkan sebagai Pembantu Lalai</string>
     <string name="default_assistant_guide_step1_desc">Tetapkan Operit sebagai aplikasi pembantu digital lalai sistem</string>
     <string name="default_assistant_guide_step1_detail1">• Buka Tetapan Sistem → Aplikasi → Aplikasi Lalai → Aplikasi Pembantu Digital</string>
-    <string name="default_assistant_guide_step1_detail2">• Cari dan pilih "Operit AI" dalam senarai aplikasi pembantu</string>
+    <string name="default_assistant_guide_step1_detail2">• Cari dan pilih "RO-Operit" dalam senarai aplikasi pembantu</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: Tetapan → Aplikasi → Aplikasi Lalai → Aplikasi Pembantu Digital → Aplikasi Pembantu Digital Lalai</string>
     <string name="default_assistant_guide_open_settings">Buka Tetapan Pembantu</string>
     <string name="default_assistant_guide_open_gesture_settings">Buka Tetapan Isyarat</string>
@@ -6111,7 +6111,7 @@ Kini anda boleh menggunakan mod AutoGLM di antara muka perbualan.</string>
     <string name="html_export_updated">Dikemas kini</string>
     <string name="html_export_group">Kumpulan</string>
     <string name="html_export_message_count">Bilangan Mesej</string>
-    <string name="html_export_footer">Dieksport dari Operit AI Assistant</string>
+    <string name="html_export_footer">Dieksport dari RO-Operit Assistant</string>
     <string name="mnn_no_cache_data">Tiada data cache</string>
     <string name="mnn_response_empty">Badan respons kosong</string>
     <string name="mnn_fetch_repo_files_failed">Gagal mendapatkan senarai fail repositori: %1$s</string>
@@ -6873,7 +6873,7 @@ Kini anda boleh menggunakan mod AutoGLM di antara muka perbualan.</string>
     <string name="chat_message_timing_stats_compact">masa: %1$s (pertama %2$s jana %3$s)</string>
     <string name="software_identity_title">Identiti Perisian</string>
     <string name="software_identity_description">Tukar identiti perisian yang dipaparkan di bahagian atas bar sisi.</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">Lingshu AI</string>
     <string name="chat_auto_update_memory_failed">Gagal mengemas kini memori secara automatik: %1$s</string>
 

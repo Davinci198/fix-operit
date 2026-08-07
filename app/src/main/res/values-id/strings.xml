@@ -205,7 +205,7 @@
     <string name="colorpicker_select_statusbar">Pilih warna bilah status</string>
     <string name="colorpicker_select_navigation_drawer_background">Pilih warna latar menu geser samping</string>
 
-    <string name="app_name">Operit AI</string>
+    <string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">Digunakan untuk mendapatkan hierarki UI, memberikan kemampuan analisis antarmuka yang lebih cepat untuk asisten AI, tidak akan mengumpulkan atau menyimpan informasi pribadi apa pun.</string>
     <string name="model_selector_title">Pilih Konfigurasi Model</string>
     <string name="model_selector_toggle">Tampilkan Pemilih Model</string>
@@ -500,9 +500,9 @@
 
     <string name="open_termux">Buka Termux</string>
     <string name="termux_setup_guide">Panduan Pengaturan Termux</string>
-    <string name="about_title">Tentang Operit AI</string>
+    <string name="about_title">Tentang RO-Operit</string>
     <string name="about_version">Versi: %1$s</string>
-    <string name="about_description">Operit AI adalah aplikasi asisten cerdas yang membantu pengguna menggunakan perangkat dengan lebih efisien, menyediakan analisis antarmuka, percakapan obrolan, dan fungsi lainnya.</string>
+    <string name="about_description">RO-Operit adalah aplikasi asisten cerdas yang membantu pengguna menggunakan perangkat dengan lebih efisien, menyediakan analisis antarmuka, percakapan obrolan, dan fungsi lainnya.</string>
     <string name="about_developer">Pengembang: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">Hubungi kami: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -521,7 +521,7 @@
     <string name="network_unavailable">Koneksi jaringan tidak tersedia, periksa pengaturan jaringan Anda</string>
     <string name="network_status">Status jaringan: %1$s</string>
     <string name="network_status_label">Status Jaringan</string>
-    <string name="config_title">Asisten Operit AI</string>
+    <string name="config_title">Asisten RO-Operit</string>
     <string name="config_description">Gunakan Kunci API DeepSeek atau konfigurasikan layanan model lain</string>
     <string name="config_api_key_label">Kunci API</string>
     <string name="config_api_key_placeholder">Kunci API DeepSeek</string>
@@ -4568,7 +4568,7 @@ Sekarang Anda dapat menggunakan mode AutoGLM di antarmuka percakapan.</string>
     <string name="default_assistant_guide_step1_title">Atur sebagai Asisten Default</string>
     <string name="default_assistant_guide_step1_desc">Atur Operit sebagai aplikasi asisten digital default sistem</string>
     <string name="default_assistant_guide_step1_detail1">• Buka Pengaturan sistem → Aplikasi → Aplikasi default → Aplikasi asisten digital</string>
-    <string name="default_assistant_guide_step1_detail2">• Temukan dan pilih "Operit AI" dalam daftar aplikasi asisten</string>
+    <string name="default_assistant_guide_step1_detail2">• Temukan dan pilih "RO-Operit" dalam daftar aplikasi asisten</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: Pengaturan → Aplikasi → Aplikasi default → Aplikasi asisten digital → Aplikasi asisten digital default</string>
     <string name="default_assistant_guide_open_settings">Buka pengaturan asisten</string>
     <string name="default_assistant_guide_open_gesture_settings">Buka pengaturan gestur</string>
@@ -4590,7 +4590,7 @@ Sekarang Anda dapat menggunakan mode AutoGLM di antarmuka percakapan.</string>
     <string name="default_assistant_guide_step3_detail3">• Anda dapat mencoba berbicara atau mengetik teks untuk berinteraksi dengan asisten</string>
     <string name="default_assistant_guide_troubleshooting_title">Mengalami masalah?</string>
     <string name="default_assistant_guide_troubleshooting_content">Jika tidak dapat menemukan Operit dalam daftar, pastikan:\n\n• Aplikasi telah diinstal dengan benar dan tidak dinonaktifkan\n• Izin yang diperlukan telah diberikan (mikrofon, jendela mengambang, dll.)\n• Coba restart perangkat dan atur ulang\n\nBeberapa sistem kustom mungkin membatasi aplikasi pihak ketiga sebagai asisten default. Jika mengalami hal ini, Anda masih dapat menggunakan Operit melalui fungsi jendela mengambang dalam aplikasi.</string>
-    <string name="voice_interaction_service_name">Asisten Operit AI</string>
+    <string name="voice_interaction_service_name">Asisten RO-Operit</string>
     <string name="voice_interaction_service_summary">Layanan asisten suara pintar</string>
     <string name="tool_permissions_title">Izin Alat</string>
     <string name="tool_permissions_description">Secara default, semua alat memerlukan "permintaan" dari Anda. Anda dapat menambahkan pengecualian di bawah ini.</string>
@@ -6364,7 +6364,7 @@ Sekarang Anda dapat menggunakan mode AutoGLM di antarmuka percakapan.</string>
     <string name="html_export_updated">Diperbarui</string>
     <string name="html_export_group">Grup</string>
     <string name="html_export_message_count">Jumlah Pesan</string>
-    <string name="html_export_footer">Diekspor dari Operit AI Assistant</string>
+    <string name="html_export_footer">Diekspor dari RO-Operit Assistant</string>
     <string name="mnn_no_cache_data">Tidak ada data cache</string>
     <string name="mnn_response_empty">Bodi respons kosong</string>
     <string name="mnn_fetch_repo_files_failed">Gagal mengambil daftar file repositori: %1$s</string>
@@ -6875,7 +6875,7 @@ Sekarang Anda dapat menggunakan mode AutoGLM di antarmuka percakapan.</string>
     <string name="chat_message_timing_stats_compact">waktu: %1$s (pertama %2$s generasi %3$s)</string>
     <string name="software_identity_title">Identitas Perangkat Lunak</string>
     <string name="software_identity_description">Ubah identitas perangkat lunak yang ditampilkan di bagian atas sidebar.</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">Lingshu AI</string>
     <string name="chat_auto_update_memory_failed">Gagal memperbarui memori otomatis: %1$s</string>
 

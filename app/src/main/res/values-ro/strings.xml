@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Operit AI</string>
+    <string name="app_name">RO-Operit</string>
     <string name="accessibility_service_description">Utilizat pentru a obțineUIIerarhie, pentruAIAsistentul oferă capacități mai rapide de analiză a interfeței și nu colectează sau stochează nicio informație personală.</string>
 
     <!-- 模型选择器相关 -->
@@ -584,9 +584,9 @@
     <string name="termux_setup_guide">Termux Ghidul de configurare</string>
 
     <!-- About Screen -->
-    <string name="about_title">Despre Operit AI</string>
+    <string name="about_title">Despre RO-Operit</string>
     <string name="about_version">Versiune: %1$s</string>
-    <string name="about_description">Operit AIEste o aplicație de asistență inteligentă, care ajută utilizatorii să-și folosească dispozitivele mai eficient, oferind funcții precum analiza interfeței și conversații prin chat.</string>
+    <string name="about_description">RO-Operit este o aplicație de asistență inteligentă, care ajută utilizatorii să-și folosească dispozitivele mai eficient, oferind funcții precum analiza interfeței și conversații prin chat.</string>
     <string name="about_developer">Dezvoltator: &lt;a href="https://github.com/AAswordman"&gt;AAswordman&lt;/a&gt;</string>
     <string name="about_contact">Contactați-ne: aaswordsman@foxmail.com</string>
     <string name="about_website">&lt;a href="https://github.com/AAswordman/Operit"&gt;GitHub: https://github.com/AAswordman/Operit&lt;/a&gt;</string>
@@ -609,7 +609,7 @@
     <string name="network_status_label">Starea rețelei</string>
 
     <!-- Configuration Screen -->
-    <string name="config_title">Operit AI asistent</string>
+    <string name="config_title">RO-Operit asistent</string>
     <string name="config_description">Utilizare DeepSeek API Key, sau să configurați alte servicii de modelare</string>
     <string name="config_api_key_label">APICheie</string>
     <string name="config_api_key_placeholder">DeepSeek APICheie</string>
@@ -5142,9 +5142,9 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
 
     <!-- 步骤1: 设置为默认助理 -->
     <string name="default_assistant_guide_step1_title">Setează ca asistent implicit</string>
-    <string name="default_assistant_guide_step1_desc">Va Operit Setați ca aplicație implicită de asistență digitală a sistemului</string>
+    <string name="default_assistant_guide_step1_desc">Vă rog setați RO-Operit ca aplicație implicită de asistență digitală a sistemului</string>
     <string name="default_assistant_guide_step1_detail1">• Deschideți Setări sistem → Aplicații → Aplicații implicite → Aplicația Asistent digital</string>
-    <string name="default_assistant_guide_step1_detail2">• Găsiți și selectați „” din lista de aplicații a asistentuluiOperit AI"</string>
+    <string name="default_assistant_guide_step1_detail2">• Găsiți și selectați „RO-Operit” din lista de aplicații a asistentului</string>
     <string name="default_assistant_guide_step1_detail_android12">Android 12+: Setări → Aplicații → Aplicații implicite → Aplicația Asistent digital → Aplicația implicită pentru Asistentul digital</string>
     <string name="default_assistant_guide_open_settings">Deschideți setările Asistentului</string>
 
@@ -5176,7 +5176,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="default_assistant_guide_troubleshooting_content">Dacă nu îl găsiți în listăOperit, vă rugăm să vă asigurați că:\n\n• Aplicația a fost instalată corect și nu a fost dezactivată\n• Au fost acordate permisiunile necesare (microfon, fereastră flotantă etc.)\n• Încercați să reconfigurați dispozitivul după ce îl reporniți\n\nAnumite sisteme personalizate pot restricționa utilizarea aplicațiilor terțe ca asistenți impliciți; în acest caz, puteți utiliza în continuare aplicația prin intermediul funcției de fereastră plutitoare din cadrul acesteiaOperit.</string>
 
     <!-- Voice Interaction Service -->
-    <string name="voice_interaction_service_name">Operit AI asistent</string>
+    <string name="voice_interaction_service_name">RO-Operit asistent</string>
     <string name="voice_interaction_service_summary">Servicii de asistență vocală inteligentă</string>
 
     <!-- Tool Permission Settings -->
@@ -5464,7 +5464,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="start_with_new_chat_description">După activare, la fiecare pornire a aplicației se va deschide o nouă fereastră de chat goală, iar conversația anterioară nu se va mai deschide automat.</string>
     <string name="software_identity_title">Logo-ul software-ului</string>
     <string name="software_identity_description">Modificați sigla aplicației afișată în partea de sus a barei laterale.</string>
-    <string name="software_identity_option_operit">Operit AI</string>
+    <string name="software_identity_option_operit">RO-Operit</string>
     <string name="software_identity_option_lingshu">Ling Shu AI</string>
     <string name="reset_all_display_settings">Resetează toate setările de afișare</string>
     <string name="ui_accessibility_mode">Modul de adaptare pentru accesibilitate</string>
@@ -7351,7 +7351,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="html_export_updated">Actualizare</string>
     <string name="html_export_group">Grupare</string>
     <string name="html_export_message_count">Numărul de mesaje</string>
-    <string name="html_export_footer">Extras din Operit AI Assistant</string>
+    <string name="html_export_footer">Extras din RO-Operit Assistant</string>
 
     <!-- MnnModelDownloadManager (新增) -->
     <string name="mnn_no_cache_data">Date fără cache</string>
