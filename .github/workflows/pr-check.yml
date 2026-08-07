@@ -347,7 +347,7 @@ jobs:
             --repository "$GITHUB_WORKSPACE"
 
       - name: Setup DragonBones Prebuilt AAR
-        if: steps.plan.outputs.android_full == 'true'
+        if: steps.plan.outputs.android_full == 'true' || steps.plan.outputs.android_jvm == 'true'
         shell: bash
         run: |
           set -euo pipefail
