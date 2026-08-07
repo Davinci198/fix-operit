@@ -344,6 +344,19 @@ jobs:
             --archives "$MANUAL_DEPS_DIR" \
             --repository "$GITHUB_WORKSPACE"
 
+      - name: Setup DragonBones Prebuilt AAR
+        if: steps.plan.outputs.android_full == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p app/libs
+          if [ ! -s app/libs/dragonbones-release.aar ]; then
+            curl --fail --location --retry 3 -o app/libs/dragonbones-release.aar \
+              https://github.com/Davinci198/dragonbones-aar-prebuilt/releases/download/v1.0.0-ndk27-fix/dragonbones-release.aar
+          fi
+          test -s app/libs/dragonbones-release.aar
+          ls -lh app/libs/dragonbones-release.aar
+
       - name: Restore native ripgrep cache
         if: steps.plan.outputs.android_full == 'true' || steps.plan.outputs.android_jvm == 'true'
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
