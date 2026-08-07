@@ -3125,6 +3125,11 @@
     <string name="memory">记忆</string>
     <string name="memory_desc">选择当前对话使用的独立记忆空间</string>
     <string name="memory_space_select">选择记忆空间</string>
+    <string name="memory_space_create">新建记忆空间</string>
+    <string name="memory_space_rename">重命名记忆空间</string>
+    <string name="memory_space_delete">删除记忆空间</string>
+    <string name="memory_space_name">记忆空间名称</string>
+    <string name="memory_space_delete_warning">确定要删除"%1$s"及其中的所有记忆吗？此操作无法撤销。</string>
     <string name="memory_auto_update">自动保存记忆</string>
     <string name="memory_auto_update_desc">开启后，当前轮回复结束时会先把候选内容加入长期记忆队列，并在应用存活期间由后台定时整理写入记忆库。</string>
     <string name="memory_auto_update_runtime_status">待提取记忆的条数%1$d，距离下次保存%2$d分钟</string>
