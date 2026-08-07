@@ -16,7 +16,12 @@ on:
     branches: [main]
     paths-ignore:
       - '*.md'
+      - '*.txt'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/workflows/close-title-only-issues.yml'
+      - 'docs/**'
+      - 'README*'
+      - 'LICENSE*'
 
 concurrency:
   group: android-clone-${{ github.ref }}
