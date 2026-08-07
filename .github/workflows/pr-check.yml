@@ -381,7 +381,7 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x ./gradlew
-          tasks=(":app:testDebugUnitTest")
+          tasks=(":app:testCloneDebugUnitTest")
           if [[ "$INSTRUMENTATION_REQUIRED" == "true" ]]; then
             tasks+=(":app:compileDebugAndroidTestKotlin" ":app:compileDebugAndroidTestJavaWithJavac")
           fi
@@ -395,7 +395,7 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x ./gradlew
-          tasks=("assembleStandardDebug" ":app:testDebugUnitTest")
+          tasks=("assembleStandardDebug" ":app:testCloneDebugUnitTest")
           if [[ "$INSTRUMENTATION_REQUIRED" == "true" ]]; then
             tasks+=(":app:compileDebugAndroidTestKotlin" ":app:compileDebugAndroidTestJavaWithJavac")
           fi

@@ -286,15 +286,19 @@ jobs:
           esac
           echo "Building $gradle_task - for parallel install com.ai.assistance.operit.clone"
           chmod +x ./gradlew
-          ./gradlew "$gradle_task" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -Xms2g -XX:+UseG1GC" 2>&1 | tee gradle.log
-          grep -i "BUILD SUCCESSFUL" gradle.log
+          ./gradlew "$gradle_task" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -Xms2g -XX:+UseG1GC" 2>&1 | tee gradle.log || true
+          if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
+            echo "::error::GRADLE BUILD FAILED - last 120 lines of gradle.log:"
+            tail -120 gradle.log | sed 's/^/::error::/' || true
+            exit 1
+          fi
 
       - name: Run JVM unit tests
         if: >-
           !cancelled() &&
           steps.gradle-build.outcome == 'success' &&
           (github.event_name == 'push' || inputs.run_unit_tests)
-        run: ./gradlew :app:testDebugUnitTest --stacktrace --no-build-cache --no-daemon
+        run: ./gradlew :app:testCloneDebugUnitTest --stacktrace --no-build-cache --no-daemon
 
       - name: Upload Android reports
         if: always()
