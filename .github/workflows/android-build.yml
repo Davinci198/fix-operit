@@ -265,11 +265,26 @@ jobs:
           git diff --exit-code -- examples/github.js || true
           python3 tools/example_packages/sync_example_packages.py --no-hot-reload || true
 
-      - name: Configure Android SDK
+      - name: Configure Android SDK + Signing
         shell: bash
         run: |
           set -euo pipefail
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+          # Set up release signing when secrets are present
+          if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
+            echo "$RO_OPERIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ro-operit-release.jks"
+            echo "RELEASE_STORE_FILE=$RUNNER_TEMP/ro-operit-release.jks" >> local.properties
+            echo "RELEASE_STORE_PASSWORD=$RO_OPERIT_KEYSTORE_PASSWORD" >> local.properties
+            echo "RELEASE_KEY_ALIAS=ro-operit" >> local.properties
+            echo "RELEASE_KEY_PASSWORD=$RO_OPERIT_KEY_PASSWORD" >> local.properties
+            echo "Release signing configured with RO-Operit keystore"
+          else
+            echo "Signing secrets not present; building unsigned/debug-signed"
+          fi
+        env:
+          RO_OPERIT_KEYSTORE_B64: ${{ secrets.RO_OPERIT_KEYSTORE_B64 }}
+          RO_OPERIT_KEYSTORE_PASSWORD: ${{ secrets.RO_OPERIT_KEYSTORE_PASSWORD }}
+          RO_OPERIT_KEY_PASSWORD: ${{ secrets.RO_OPERIT_KEY_PASSWORD }}
 
       - name: Clean corrupted CXX cache
         run: |
