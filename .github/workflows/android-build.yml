@@ -75,7 +75,6 @@ jobs:
 
       - name: Fix Gradle mirror (aliyun -> official)
         run: |
-          # shellcheck disable=SC2129
           echo "Before:"
           cat gradle/wrapper/gradle-wrapper.properties
           # 1) Remove any backslash before ':' (broken URL like https\://...)
@@ -84,12 +83,14 @@ jobs:
           sed -i 's|https://[^/]*/.*gradle-[0-9.]*-bin.zip|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
           # 3) Last-resort fallback: rewrite the file completely if it still has a mirror or broken URL
           if grep -qE "aliyun|macports|https\://" gradle/wrapper/gradle-wrapper.properties; then
-            echo "distributionUrl=https://services.gradle.org/distributions/gradle-8.13-bin.zip" > gradle/wrapper/gradle-wrapper.properties
-            echo "distributionBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
-            echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-            echo "distributionSha256Sum=20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78" >> gradle/wrapper/gradle-wrapper.properties
-            echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
-            echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+            cat > gradle/wrapper/gradle-wrapper.properties <<'EOF'
+          distributionUrl=https://services.gradle.org/distributions/gradle-8.13-bin.zip
+          distributionBase=GRADLE_USER_HOME
+          distributionPath=wrapper/dists
+          distributionSha256Sum=20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78
+          zipStoreBase=GRADLE_USER_HOME
+          zipStorePath=wrapper/dists
+          EOF
           fi
           echo "After:"
           cat gradle/wrapper/gradle-wrapper.properties
@@ -238,15 +239,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # shellcheck disable=SC2129
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           # Set up release signing when secrets are present
           if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
             echo "$RO_OPERIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ro-operit-release.jks"
-            echo "RELEASE_STORE_FILE=$RUNNER_TEMP/ro-operit-release.jks" >> local.properties
-            echo "RELEASE_STORE_PASSWORD=$RO_OPERIT_KEYSTORE_PASSWORD" >> local.properties
-            echo "RELEASE_KEY_ALIAS=ro-operit" >> local.properties
-            echo "RELEASE_KEY_PASSWORD=$RO_OPERIT_KEY_PASSWORD" >> local.properties
+            {
+              echo "RELEASE_STORE_FILE=$RUNNER_TEMP/ro-operit-release.jks"
+              echo "RELEASE_STORE_PASSWORD=$RO_OPERIT_KEYSTORE_PASSWORD"
+              echo "RELEASE_KEY_ALIAS=ro-operit"
+              echo "RELEASE_KEY_PASSWORD=$RO_OPERIT_KEY_PASSWORD"
+            } >> local.properties
             echo "Release signing configured with RO-Operit keystore"
           else
             echo "Signing secrets not present; building unsigned/debug-signed"
