@@ -24,9 +24,10 @@ class UpdateViewModel(private val context: Context) : ViewModel() {
     
     private val apiService = GitHubApiService(context)
     
+    private val repoOwner: String by lazy { resolveRepoFromWebsite(context) }
+    private val repoName: String by lazy { resolveRepoFromWebsite(context, isName = true) }
+    
     companion object {
-        private val repoOwner by lazy { resolveRepoFromWebsite(context) }
-        private val repoName by lazy { resolveRepoFromWebsite(context, isName = true) }
         private fun resolveRepoFromWebsite(context: Context, isName: Boolean = false): String {
             return try {
                 val aboutWebsite = context.getString(com.ai.assistance.operit.R.string.about_website)
