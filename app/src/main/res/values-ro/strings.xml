@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">RO-Operit</string>
-    <string name="accessibility_service_description">Utilizat pentru a obțineUIIerarhie, pentruAIAsistentul oferă capacități mai rapide de analiză a interfeței și nu colectează sau stochează nicio informație personală.</string>
+    <string name="accessibility_service_description">Utilizat pentru a obține ierarhia UI, oferind asistentului AI capacități mai rapide de analiză a interfeței; nu colectează și nu stochează nicio informație personală.</string>
 
     <!-- 模型选择器相关 -->
     <string name="model_selector_title">Selectarea configurației modelului</string>
@@ -36,7 +36,7 @@
     <string name="chat_fullscreen_input">Introducere pe ecran complet</string>
     <string name="chat_history_settings">Setări pentru istoricul conversațiilor</string>
     <string name="chat_display_mode">Modul de afișare</string>
-    <string name="chat_autoglm_warning">Utilizarea este interzisăautoglmCa model principal de dialog. Modelul de dialog șiuiModelele de control sunt separate; vă rugăm să alegeți orice alt model inteligent. Dacă aveți întrebări, vă rugăm să citiți cu atenție documentația pentru a înțelege mecanismul de configurare a modelelor din cadrul software-ului.</string>
+    <string name="chat_autoglm_warning">Este interzisă utilizarea autoglm ca model principal de dialog. Modelul de dialog și modelele de control UI sunt separate; vă rugăm să alegeți orice alt model inteligent. Dacă aveți întrebări, citiți cu atenție documentația pentru a înțelege mecanismul de configurare a modelelor din aplicație.</string>
     <string name="chat_model_count">%dun model</string>
     <string name="chat_starting_export">Începe exportul...</string>
     <string name="chat_reply_instruction">Utilizatorul îți răspunde la mesajul tău anterior:</string>
@@ -97,9 +97,9 @@
     <string name="colorpicker_select_pip_icon">Alegeți culoarea pictogramei ferestrei plutitoare</string>
     <string name="colorpicker_select_cursor_user_bubble">Selectarea culorii ferestrei de mesaje pentru utilizator în modul de comandă</string>
     <string name="colorpicker_select_bubble_user_bubble">Selectarea culorii balonului de dialog al utilizatorului</string>
-    <string name="colorpicker_select_bubble_ai_bubble">Alege modul dialogicAICuloarea bulelor</string>
+    <string name="colorpicker_select_bubble_ai_bubble">Alege culoarea bulelor AI în modul dialog</string>
     <string name="colorpicker_select_bubble_user_text">Selectarea culorii textului utilizatorului în modul dialog</string>
-    <string name="colorpicker_select_bubble_ai_text">Alege modul dialogicAICuloarea textului</string>
+    <string name="colorpicker_select_bubble_ai_text">Alege culoarea textului AI în modul dialog</string>
     <string name="colorpicker_select_color">Alegeți culoarea</string>
     <string name="colorpicker_sample_text">Text de exemplu</string>
     <string name="colorpicker_high_contrast">Contrast ridicat</string>
@@ -823,14 +823,14 @@
     <string name="microphone_permission_floating_required">Funcția „Fereastră flotantă” necesită permisiunea de acces la microfon pentru a permite interacțiunea vocală</string>
 
     <!-- AI Tools -->
-    <string name="ai_tools_enabled">Este activatAIFuncțiile instrumentului</string>
+    <string name="ai_tools_enabled">Funcțiile instrumentelor AI sunt activate</string>
     <string name="tools_extracting">Se verifică apelurile către instrumente...</string>
     <string name="tools_executing">Instrumentul este în curs de execuție: %1$s</string>
     <string name="tools_completed">Executarea instrumentului s-a încheiat</string>
     <string name="tools_failed">Executarea instrumentului a eșuat: %1$s</string>
     <string name="tool_result">Rezultatele executării instrumentului</string>
     <string name="disable_tools">Instrumente dezactivate</string>
-    <string name="disable_tools_desc">După dezactivare,AINu se vor putea accesa instrumentele încorporate, inclusiv interogările de memorie, cum ar fi sistemul de fișiere,HTTPși instrumente de memorare.</string>
+    <string name="disable_tools_desc">După dezactivare, AI nu va mai putea accesa instrumentele încorporate, inclusiv interogările de memorie, sistemul de fișiere, HTTP și instrumentele de memorare.</string>
     <string name="tools_disabled">Instrumentul a fost dezactivat</string>
     <string name="max_mode_title">MaxModul</string>
     <string name="max_mode_info">Max Mode(Modul de context extins) După activare, se va utiliza %2$sk Fereastra de context; dacă o închideți, reveniți la %1$sk. Puteți personaliza aceste valori din setări.</string>
@@ -840,7 +840,7 @@
     <string name="tool_calculator">Calculator</string>
     <string name="tool_web_search">Căutare pe internet</string>
     <string name="ai_planning_desc">Se va efectua defalcarea sarcinilor și se vor declanșa mai multe sub-agentSă culeg informații și să le sintetizez la final. Sub-agentcapacitatea de a apela instrumente și de a folosi chat-ulagentLa fel. Acest lucru poate deveni foarte consumator de timp, așa că se recomandă activarea lui doar atunci când se colectează informații.</string>
-    <string name="enhanced_service_not_initialized">ÎmbunătățireAIServiciul nu a fost inițializat; vă rugăm să verificați setările</string>
+    <string name="enhanced_service_not_initialized">Serviciul AI îmbunătățit nu a fost inițializat; vă rugăm să verificați setările</string>
     <string name="ui_automation_in_progress">Se execută o sarcină din interfață...</string>
 
     <!-- Settings Screen -->
@@ -856,7 +856,7 @@
     <!-- Settings Screen Sections -->
     <string name="settings_section_personalization">Personalizare</string>
     <string name="settings_user_preferences">Setări de preferințe ale utilizatorului</string>
-    <string name="settings_user_preferences_desc">Editorul va fi trimis ca context al utilizatorului către AI al user.md</string>
+    <string name="settings_user_preferences_desc">Conținutul user.md va fi trimis ca și context al utilizatorului către AI</string>
     <string name="settings_configure_preferences">Configurarea preferințelor utilizatorului</string>
     <string name="settings_model_prompts">Setarea cuvintelor-cheie pentru model</string>
     <string name="settings_model_prompts_desc">PersonalizareAICuvintele de introducere ale sistemului pentru asistent, inclusiv prezentarea personală și stilul de exprimare, fac caAIcare corespunde mai bine așteptărilor dumneavoastră</string>
@@ -876,7 +876,7 @@
     <string name="reset_default_character">Resetarea cărților de personaj la valorile implicite</string>
     <string name="reset_default_character_confirm">Ești sigur că vrei să resetezi cartea de personaj la setările implicite? Această acțiune va restabili numele, setările și textele de prompt implicite și va reseta avatarul și tema.</string>
 
-    <string name="settings_section_ai_model">AIConfigurarea modelului</string>
+    <string name="settings_section_ai_model">Configurarea modelului AI</string>
     <string name="settings_model_parameters">Configurarea modelului și a parametrilor</string>
     <string name="settings_model_parameters_desc">ConfigurațieAPISetări, denumiri de modele și parametri; suportă gestionarea mai multor configurații</string>
     <string name="settings_configure_model">Model de configurare</string>
@@ -971,14 +971,14 @@
     <string name="user_preferences_guide">Setări personalizate</string>
     <string name="user_preferences">Setări de preferințe ale utilizatorului</string>
     <string name="user_preferences_settings">Date de utilizator (user.md)</string>
-    <string name="user_md_description">Singurul fișier cu datele utilizatorului. Aici, Markdown Va fi trimis ca context al utilizatorului atunci când este activat către AI.</string>
+    <string name="user_md_description">Singurul fișier cu datele utilizatorului. Conținutul Markdown va fi trimis către AI ca și context al utilizatorului atunci când este activat.</string>
     <string name="user_md_edit_tab">Editare</string>
     <string name="user_md_preview_tab">Previzualizare</string>
     <string name="user_md_legacy_archive">Arhive vechi</string>
     <string name="user_md_unsaved_title">Doriți să renunțați la modificările nesalvate?</string>
     <string name="user_md_unsaved_message">La întoarcere, de data aceasta față de user.md Modificările vor fi pierdute.</string>
     <string name="user_md_discard">Renunțare la modificare</string>
-    <string name="user_md_editor_placeholder">Prezintă-ți trecutul, obiceiurile și aspirațiile AI Cum să comunic cu tine…</string>
+    <string name="user_md_editor_placeholder">Prezintă-ți trecutul, obiceiurile și aspirațiile, precum și cum să comunice AI cu tine…</string>
     <string name="user_md_preview_empty">user.md În prezent este gol; după ce introduceți conținutul, îl puteți previzualiza aici.</string>
     <string name="custom_description">Prezentare personalizată</string>
     <string name="preferences_hint">Vă rugăm să introduceți o scurtă prezentare personală (maxim100(caractere)</string>
@@ -1452,10 +1452,10 @@
     <string name="select_prompt_config">Vă rugăm să selectați configurația mesajelor de sistem</string>
     <string name="manage_all_prompts">Gestionarea tuturor configurațiilor cuvintelor-cheie</string>
     <string name="custom_system_prompts">Mesaje de sistem personalizate</string>
-    <string name="customize_ai_behavior">PersonalizareAIStilul comportamental și de exprimare</string>
-    <string name="ai_self_introduction">AIPrezentare personală</string>
+    <string name="customize_ai_behavior">Personalizează stilul comportamental și de exprimare AI</string>
+    <string name="ai_self_introduction">Prezentare personală AI</string>
     <string name="intro_prompt">Indicații pentru prezentarea de sine</string>
-    <string name="ai_tone_style">AIStilul de exprimare</string>
+    <string name="ai_tone_style">Stilul de exprimare AI</string>
     <string name="tone_prompt">Cuvinte-cheie pentru stilul și tonul textului</string>
     <string name="restore_default_prompts">Restaurarea cuvântului-cheie implicit</string>
     <string name="save_prompts">Salvare cuvânt-cheie</string>
@@ -1463,7 +1463,7 @@
     <string name="system_prompts_desc">Cuvintele-cheie ale sistemului sunt utilizate pentru a definiAIComportamentul și stilul asistentului:</string>
     <string name="intro_prompt_desc">DefinițieAIIdentitatea și sfera de competențe</string>
     <string name="tone_prompt_desc">SetăriAITonul și modul de exprimare al răspunsului</string>
-    <string name="prompt_tip">Sfat: Un cuvânt-cheie eficient poate face caAIAsistentul se va adapta mai bine la așteptările dumneavoastră, dar cuvintele-cheie prea lungi ar putea consuma mai multToken.</string>
+    <string name="prompt_tip">Sfat: Un prompt eficient poate face ca asistentul AI să se adapteze mai bine la așteptările dumneavoastră, dar prompturile prea lungi pot consuma mai multe tokenuri.</string>
     <string name="prompts_saved">Cuvântul-cheie a fost salvat</string>
     <string name="new_prompt_config_title">Configurare cuvânt-cheie nouă</string>
     <string name="new_prompt_config_desc">Creați o nouă configurație a cuvintelor-cheie, personalizați-oAIComportamentul asistentului</string>
@@ -1828,7 +1828,7 @@
     <string name="avatar_mode">Modelul personajului virtual</string>
     <string name="loading_failed">Încărcarea a eșuat: %1$s</string>
     <string name="loading">Se încarcă...</string>
-    <string name="floating_service_description">AfișareAIServiciul de ferestre plutitoare al asistentului</string>
+    <string name="floating_service_description">Afișează serviciul de fereastră plutitoare al asistentului AI</string>
     <string name="undo">Anulare</string>
     <string name="redo">Refacere</string>
     <string name="files">Document</string>
@@ -3124,7 +3124,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="chat_no_active_conversation">În prezent nu există nicio conversație activă</string>
     <string name="chat_summarizing_generating">Se generează rezumatul...</string>
     <string name="chat_no_messages_to_summarize">Nu există știri care să poată fi rezumate</string>
-    <string name="chat_ai_service_not_initialized">AIServiciul nu a fost inițializat</string>
+    <string name="chat_ai_service_not_initialized">Serviciul AI nu a fost inițializat</string>
     <string name="chat_summary_inserted">Rezumatul a fost inserat</string>
     <string name="chat_summary_generation_failed">Eșec la generarea rezumatului</string>
     <string name="chat_insert_summary_failed">Eșec la inserarea rezumatului: %1$s</string>
@@ -3391,7 +3391,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="settings_model_params_subtitle">Parametrii modelului șiAPIConfigurație</string>
     <string name="settings_functional_model_subtitle">Configurare specifică pentru modelul funcțional</string>
     <string name="settings_speech_services">Configurarea serviciilor vocale</string>
-    <string name="settings_speech_services_subtitle">TTS/STTSetări servicii</string>
+    <string name="settings_speech_services_subtitle">Setări servicii TTS/STT</string>
     <string name="settings_custom_headers">Antete de cerere personalizate</string>
     <string name="settings_custom_headers_subtitle">APIConfigurarea câmpurilor antetului cererii</string>
     <string name="headers_configured_count">Configurat %1$d articol</string>
@@ -3606,7 +3606,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="not_set">Nu este configurat</string>
     <string name="personality_traits">Trăsături de caracter</string>
     <string name="identity">Identitate</string>
-    <string name="ai_style">AIStil</string>
+    <string name="ai_style">Stil AI</string>
     <string name="currently_active">Activare curentă</string>
     <string name="activate_action">Activare</string>
     <string name="locked">Blocat</string>
@@ -3645,7 +3645,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <!-- User Preferences Guide Screen Dialog -->
     <string name="add_custom_personality">Adăugarea unor trăsături de personalitate personalizate</string>
     <string name="add_custom_identity">Adăugarea unei identități personalizate</string>
-    <string name="add_custom_ai_style">Adăugare personalizatăAIStil</string>
+    <string name="add_custom_ai_style">Adaugă un stil AI personalizat</string>
     <string name="add_custom_tag">Adăugare etichete personalizate</string>
     <string name="enter_tag_name">Introduceți numele etichetei (maxim10(caractere)</string>
     <string name="add_action">Adăugare</string>
@@ -3659,7 +3659,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="personality_optional">Trăsături de caracter (Opțional, se pot selecta mai multe opțiuni)</string>
     <string name="add_custom">Adăugare personalizată</string>
     <string name="identity_optional">Identitate (Opțional, se pot selecta mai multe opțiuni)</string>
-    <string name="ai_style_optional">AșteptatAIStil (Opțional, se pot selecta mai multe opțiuni)</string>
+    <string name="ai_style_optional">Stil AI dorit (Opțional, se pot selecta mai multe opțiuni)</string>
     <string name="select_birth_date_title">Alegeți data nașterii</string>
     <string name="info_icon">Informații</string>
     <string name="add_icon">Adăugare</string>
@@ -3711,17 +3711,17 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="chat_style_cursor_user_bubble_color">Fereastră de mesaj pentru utilizator în stil imperativ</string>
     <string name="chat_style_bubble_color_title">Culoarea baloanelor de dialog</string>
     <string name="chat_style_bubble_user_color">Balonul utilizatorului</string>
-    <string name="chat_style_bubble_ai_color">AIBule</string>
+    <string name="chat_style_bubble_ai_color">Bule AI</string>
     <string name="chat_style_bubble_text_style_title">Stil de text dialogic</string>
     <string name="chat_style_bubble_user_text_color">Textul utilizatorului</string>
-    <string name="chat_style_bubble_ai_text_color">AIText</string>
+    <string name="chat_style_bubble_ai_text_color">Text AI</string>
     <string name="chat_style_bubble_user_font_title">Fonturi personalizate</string>
     <string name="chat_style_bubble_ai_font_title">AIFont</string>
     <string name="chat_style_bubble_user_image_title">Imagine cu balonul utilizatorului</string>
-    <string name="chat_style_bubble_ai_image_title">AIImagini cu bule de săpun</string>
+    <string name="chat_style_bubble_ai_image_title">Imagini cu bule AI</string>
     <string name="chat_style_bubble_image_desc">După activare, se utilizează baloane de text cu imagini, fiind acceptate funcțiile de decupare și întindere repetată în partea centrală</string>
     <string name="chat_style_bubble_user_image_disabled_by_glass">În prezent, este activat fundalul cu sticlă mată sau sticlă transparentă cu bule de aer; imaginea cu bule de aer a utilizatorului nu va fi afișată</string>
-    <string name="chat_style_bubble_ai_image_disabled_by_glass">Este activat în prezentAIFundal din sticlă mată cu bule sau sticlă transparentă,AIImaginile cu bule nu se afișează</string>
+    <string name="chat_style_bubble_ai_image_disabled_by_glass">În prezent este activat fundalul din sticlă mată sau sticla transparentă pentru bule; imaginile cu bule AI nu se afișează</string>
     <string name="chat_style_bubble_pick_image">Alege o imagine</string>
     <string name="chat_style_bubble_clear_image">Șterge imaginile</string>
     <string name="chat_style_bubble_no_image_selected">Nu s-a selectat nicio imagine</string>
@@ -3820,9 +3820,9 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="enable_direct_image_processing">Modelul acceptă recunoașterea imaginilor</string>
     <string name="enable_direct_image_processing_desc">După activare, imaginile vor fi trimise direct cătreAIsă se ocupe de asta, în loc să laseAIPrinOCRCitirea instrumentelor</string>
     <string name="enable_direct_audio_processing">Modelul acceptă analiza audio</string>
-    <string name="enable_direct_audio_processing_desc">După activare, semnalul audio va fi transmis direct cătreAIPrelucrare, nu transcrierea textului prin intermediul unui instrument/Descriere</string>
+    <string name="enable_direct_audio_processing_desc">După activare, audio-ul va fi trimis direct către AI pentru procesare, nu transcris în text prin instrumente</string>
     <string name="enable_direct_video_processing">Modelul acceptă analiza videoclipurilor</string>
-    <string name="enable_direct_video_processing_desc">După activare, videoclipul va fi trimis direct cătreAIPrelucrare, nu extragerea cadrelor cu ajutorul unor instrumente/Analiză</string>
+    <string name="enable_direct_video_processing_desc">După activare, videoclipul va fi trimis direct către AI pentru procesare, nu analizat prin extragerea de cadre cu instrumente</string>
     <string name="enable_google_search">Activare Google Search</string>
     <string name="enable_google_search_desc">După activare,Gemini Se va utiliza Google Căutare pentru a îmbunătăți răspunsul (pot apărea costuri suplimentare)</string>
     <string name="enable_claude_1h_prompt_cache">Activare Claude 1 Cache pentru alerte orare</string>
@@ -3965,9 +3965,9 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
 
     <!-- 人设卡生成和Waifu模式设置 -->
     <string name="persona_card_generation">Generarea fișei personajului</string>
-    <string name="persona_card_generation_desc">Accesați șiAIGenerarea prin dialog a unei fișe de personaj personalizate</string>
-    <string name="waifu_mode_settings">WaifuSetări mod</string>
-    <string name="waifu_mode_settings_desc">ConfigurațieAIModul de trimitere a propozițiilor de răspuns</string>
+    <string name="persona_card_generation_desc">Accesați și generați prin dialog o fișă de personaj personalizată cu AI</string>
+    <string name="waifu_mode_settings">Setări mod Waifu</string>
+    <string name="waifu_mode_settings_desc">Configurează modul AI de trimitere a propozițiilor de răspuns</string>
 
     <!-- 酒馆角色卡导入 -->
     <string name="import_tavern_card">Importarea cărților de personaj din tavernă</string>
@@ -3986,7 +3986,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="screen_title_model_config">Configurarea modelului și a parametrilor</string>
     <string name="screen_title_speech_services_settings">Setări servicii vocale</string>
     <string name="screen_title_persona_card_generation">Generarea fișei personajului</string>
-    <string name="screen_title_waifu_mode_settings">WaifuSetări mod</string>
+    <string name="screen_title_waifu_mode_settings">Setări mod Waifu</string>
     <string name="screen_title_tag_market">Piața etichetelor</string>
     <string name="screen_title_model_prompts_settings">Editarea cărților de personaj</string>
     <string name="screen_title_functional_config">Configurarea modelului funcțional</string>
@@ -4082,12 +4082,12 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="close">Închide</string>
 
     <!-- Waifu Mode Settings Screen -->
-    <string name="waifu_mode">WaifuModul</string>
+    <string name="waifu_mode">Modul Waifu</string>
     <string name="waifu_mode_description">După activare,AIRăspunsurile vor fi trimise frază cu frază, separate prin semne de punctuație, pentru a crea o experiență de conversație mai naturală.</string>
-    <string name="enable_waifu_mode">ActivareWaifuModul</string>
+    <string name="enable_waifu_mode">Activează modul Waifu</string>
     <string name="waifu_mode_toggle_desc">AIRăspunsul va fi trimis separat, pe baza semnelor de punctuație</string>
     <string name="waifu_merge_send">Trimitere în bloc</string>
-    <string name="waifu_merge_send_desc">Atunci când se trimit mai multe mesaje scurte consecutive, după o pauză, acestea sunt combinate într-un singur mesaj care este transmis cătreAIPrelucrare</string>
+    <string name="waifu_merge_send_desc">Când sunt trimise mai multe mesaje scurte consecutive, după o pauză acestea sunt combinate într-un singur mesaj care este transmis către AI pentru procesare</string>
     <string name="waifu_merge_send_delay">Intervalul de trimitere combinat</string>
     <string name="waifu_merge_send_delay_desc">Cât timp așteaptă utilizatorul după ultima sa trimitere înainte de a trimite cătreAI</string>
     <string name="waifu_merge_send_delay_format">În prezent:%dms</string>
@@ -4099,10 +4099,10 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="current_delay_format">În prezent:%dms/Caracter</string>
     <string name="remove_punctuation">Eliminarea semnelor de punctuație de la sfârșitul propoziției</string>
     <string name="remove_punctuation_desc">Eliminați punctul, semnul de întrebare și semnul de exclamare de la sfârșitul propoziției</string>
-    <string name="waifu_custom_prompt">WaifuCuvinte-cheie pentru modele</string>
+    <string name="waifu_custom_prompt">Prompturi pentru model Waifu</string>
     <string name="waifu_custom_prompt_desc">Personalizare Waifu Cuvinte cheie suplimentare pentru model.</string>
     <string name="waifu_custom_prompt_placeholder">De exemplu: răspundeți concis și natural, fără a încerca să fiți drăgălași, fără a folosi interjecții și fără a descrie acțiuni.</string>
-    <string name="waifu_custom_prompt_tip">Acest text va fi utilizat ca Waifu Regulile suplimentare ale modelului sunt inserate în promptul sistemului.</string>
+    <string name="waifu_custom_prompt_tip">Acest text va fi folosit ca reguli suplimentare pentru modelul Waifu, fiind inserat în promptul de sistem.</string>
     <string name="enable_emoticons">Activează emojile</string>
     <string name="emoticons_desc">Includeți etichete care indică starea emoțională în dialog pentru a spori eficacitatea exprimării</string>
     <string name="available_emoticons">Emoticoane disponibile:crying, like_you, happy, surprised, miss_you, speechless, angry, confused, sad</string>
@@ -4119,7 +4119,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
 
     <string name="settings_section_account">Cont</string>
     <string name="github_account_not_logged_in">Nu sunteți autentificat</string>
-    <string name="github_account_login_desc">Utilizare GitHub Autentificați-vă pentru a utiliza MCP Comunicat de presă/Funcții de administrare etc.</string>
+    <string name="github_account_login_desc">Autentificați-vă cu GitHub pentru a utiliza funcțiile MCP, publicare și administrare.</string>
     <string name="github_account_logout_desc">Ieșire din pagina curentă GitHub Starea de conectare</string>
 
     <string name="github_account_info_title">Informații despre cont</string>
@@ -5272,7 +5272,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="export_failed">Eșec la exportare</string>
     <string name="file_saved_to">Fișierul a fost salvat în:</string>
     <string name="token_limit_warning">Token Avertisment privind depășirea limitelor</string>
-    <string name="token_limit_warning_message">Știrea a depășitTokenLimita maximă; continuarea trimiterii ar putea duce la pierderea contextului sauAINu înțeleg. Să continuăm?</string>
+    <string name="token_limit_warning_message">Mesajul a depășit limita maximă de tokenuri; continuarea trimiterii ar putea duce la pierderea contextului sau la neînțelegerea de către AI. Continuăm?</string>
     <string name="continue_send">Continuă trimiterea</string>
     <string name="camera_permission_denied_toast">Accesul la cameră a fost refuzat</string>
     <string name="microphone_permission_denied_toast">Accesul la microfon a fost refuzat</string>
@@ -5431,7 +5431,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="show_model_provider">Afișează furnizorii de modele</string>
     <string name="show_model_provider_description">înAIÎn mesaj se afișează numele furnizorului modelului</string>
     <string name="show_model_name">Afișează numele modelului</string>
-    <string name="show_model_name_description">înAINumele modelului utilizat, așa cum apare în mesaj</string>
+    <string name="show_model_name_description">Afișează în mesaj numele modelului utilizat</string>
     <string name="show_role_name">Afișează numele cărții personajului</string>
     <string name="show_role_name_description">înAIMesajul afișează numele cărții personajului curent</string>
     <string name="show_user_name">Afișează numele utilizatorului</string>
@@ -5871,7 +5871,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="toolreg_user_pref_personality">Caracterul</string>
     <string name="toolreg_user_pref_identity">Identitate</string>
     <string name="toolreg_user_pref_occupation">Profesie</string>
-    <string name="toolreg_user_pref_ai_style">AIStil</string>
+    <string name="toolreg_user_pref_ai_style">Stil AI</string>
     <string name="toolreg_list_separator">,</string>
     <string name="toolreg_update_user_profile_desc">Actualizarea fișierului cu datele de identificare ale utilizatorilor:%1$s</string>
     <string name="toolreg_create_memory_desc">Crearea amintirilor: %1$s</string>
@@ -6550,7 +6550,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="character">colț</string>
     <string name="config_bound_to_character_card">Configurația a fost asociată cu cardul de rol</string>
     <string name="character_card_model_switch_confirm_title">Modificarea modelului asociat cărții personajului</string>
-    <string name="character_card_model_switch_confirm_message">Fişa personajului curent este deja asociată unui model de dialog. Dacă continuați, asocierea modelului pentru această fişă de personaj va fi modificată, fără a afecta configurația globală a modelelor de dialog.</string>
+    <string name="character_card_model_switch_confirm_message">Fișa personajului curent este deja asociată unui model de dialog. Dacă continuați, asocierea modelului pentru această fișă de personaj va fi modificată, fără a afecta configurația globală a modelelor de dialog.</string>
     <string name="character_card_model_switch_confirm_action">Confirmă modificarea</string>
     <string name="character_card_memory_switch_confirm_title">Modificarea configurației memoriei asociate cărții personajului</string>
     <string name="character_card_memory_switch_confirm_message">Cartea de personaj curentă are deja o configurație de memorie asociată. Dacă continui, vei modifica configurația de memorie asociată acestei cărți de personaj, fără a modifica configurația globală de memorie.</string>
@@ -7134,14 +7134,14 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="profile_personality">Trăsături de caracter</string>
     <string name="profile_identity">Identitate</string>
     <string name="profile_occupation">Profesie</string>
-    <string name="profile_ai_style">AșteptatAIStil</string>
+    <string name="profile_ai_style">Stil AI dorit</string>
     <string name="profile_gender_value">Sexul: %1$s</string>
     <string name="profile_birth_date">Data nașterii: %1$s</string>
     <string name="profile_age">Vârsta: %1$dan</string>
     <string name="profile_personality_value">Trăsături de caracter: %1$s</string>
     <string name="profile_identity_value">Identitate: %1$s</string>
     <string name="profile_occupation_value">Profesie: %1$s</string>
-    <string name="profile_ai_style_value">AșteptatAIStil: %1$s</string>
+    <string name="profile_ai_style_value">Stil AI dorit: %1$s</string>
     <string name="profile_regex_birth_date">(Data nașterii|Anul, luna și ziua nașterii)[:：\s]+([\d-]+)</string>
     <string name="profile_regex_birth_year">(Anul nașterii|Vârsta)[:：\s]+(\d+)</string>
     <string name="profile_regex_gender">Gen [:：\s]+([\u4e00-\u9fa5]+)</string>
@@ -7280,7 +7280,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
 
     <!-- MessageCoordinationDelegate (新增) -->
     <string name="chat_cannot_create_new">Nu se poate crea o conversație nouă. Vă rugăm să încercați din nou.</string>
-    <string name="chat_ai_service_unavailable_memory">AIServiciul nu este disponibil, nu se poate actualiza memoria</string>
+    <string name="chat_ai_service_unavailable_memory">Serviciul AI nu este disponibil, memoria nu poate fi actualizată</string>
     <string name="chat_history_empty_no_update">Istoricul conversațiilor este gol, nu este necesară actualizarea memoriei</string>
     <string name="chat_selected_messages_no_user_for_memory">Mesajul selectat nu conține mesaje ale utilizatorilor care pot fi salvate în memorie</string>
     <string name="chat_selected_messages_added_to_memory_queue">A fost %1$d Adăugarea mesajului utilizatorului în coada de memorare a rezumatelor automate</string>
@@ -7291,7 +7291,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="chat_summarizing_please_wait">Se realizează rezumatul, vă rugăm să așteptați puțin</string>
     <string name="chat_conversation_summary_generated">S-a generat rezumatul conversației</string>
     <string name="chat_compressing_history">Se comprimă istoricul...</string>
-    <string name="chat_ai_service_unavailable_summarize">AIServiciul nu este disponibil, nu se poate realiza un rezumat</string>
+    <string name="chat_ai_service_unavailable_summarize">Serviciul AI nu este disponibil, rezumatul nu poate fi generat</string>
     <string name="chat_summarize_failed_no_valid_summary">Analiza eșecurilor: Nu s-a putut genera un rezumat valabil</string>
     <string name="chat_summarize_generation_failed">Eșecul generării rezumatului: %1$s</string>
 
@@ -7720,7 +7720,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
 
     <!-- FloatingChatService -->
     <string name="floating_chat_window_title">AIFereastra flotantă a asistentului</string>
-    <string name="floating_chat_running_in_background">AIAsistentul rulează în fundal</string>
+    <string name="floating_chat_running_in_background">Asistentul AI rulează în fundal</string>
 
     <!-- OCRUtils -->
     <string name="ocr_cannot_read_image">Nu se poate citi fișierul imagine: %1$s</string>
@@ -7745,7 +7745,7 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="message_role_user">Utilizator</string>
     <string name="role_card_chat_model_binding_parse_failed">Eșec la analizarea legării modelului de dialog al cărții de personaj</string>
     <string name="message_workspace_sync_failed">Eșecul sincronizării stării zonei de lucru: %1$s</string>
-    <string name="message_ai_service_not_initialized">AIServiciul nu a fost inițializat</string>
+    <string name="message_ai_service_not_initialized">Serviciul AI nu a fost inițializat</string>
     <string name="message_summarizing">Se face un rezumat al amintirilor...</string>
     <string name="message_send_failed">Eșec la trimiterea mesajului: %1$s</string>
 
@@ -7978,4 +7978,47 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="notification_kind_review_changes">Trebuie modificat</string>
     <string name="notification_kind_entry_curated">Selectat în selecția de top</string>
 
+    <!-- Chei lipsă traduse în română (corectare_ro) -->
+    <string name="chat_pasted_text_attached">Textul lipit a fost adăugat ca atașament: %1$s</string>
+    <string name="github_login_method_description">Alegeți metoda de autentificare GitHub. Pagina încorporată finalizează autorizarea în aplicație; browserul extern deschide browserul de sistem și revine la aplicație după autorizare.</string>
+    <string name="github_login_method_embedded">Autentificare cu pagină încorporată</string>
+    <string name="github_login_method_external">Autentificare cu browser extern</string>
+    <string name="github_login_starting">Se pregătește autorizarea GitHub…</string>
+    <string name="long_pasted_text_threshold">Prag de conversie</string>
+    <string name="long_pasted_text_threshold_desc">Când textul lipit depășește acest număr de caractere, este convertit în fișier</string>
+    <string name="long_pasted_text_threshold_unit">caractere</string>
+    <string name="long_pasted_text_to_file">Conversia textului lipit foarte lung în fișier</string>
+    <string name="long_pasted_text_to_file_desc">Când lipiți text care depășește numărul de caractere setat, acesta este adăugat automat ca atașament text</string>
+    <string name="market_version_incompatible_title">Descărcare imposibilă: versiunea clientului nu este acceptată</string>
+    <string name="market_version_too_low_message">Versiunea curentă a clientului %1$s este mai mică decât versiunea minimă %2$s cerută de această resursă. Vă rugăm să actualizați clientul înainte de descărcare.</string>
+    <string name="market_version_too_high_message">Versiunea curentă a clientului %1$s este mai mare decât versiunea maximă acceptată %2$s a acestei resurse. Vă rugăm să utilizați o versiune de client acceptată.</string>
+    <string name="package_market_origin_message">Acest pachet provine din piața Operit.
+Nume pachet: %1$s
+Versiune: %2$s
+Autor: %3$s
+Vă rugăm să sprijiniți autorul original și să fiți atenți la revânzare.</string>
+    <string name="package_market_origin_title">Avertisment privind originea pachetelor externe</string>
+    <string name="settings_section_chat_input">Introducere chat</string>
+    <string name="theme_discard_and_continue">Nu salva</string>
+    <string name="theme_edit_target_character">Tema personajului curent</string>
+    <string name="theme_edit_target_group">Tema grupului de chat curent al personajului</string>
+    <string name="theme_save_and_continue">Salvează și continuă</string>
+    <string name="theme_save_failed">Salvarea temei a eșuat</string>
+    <string name="theme_select_target">Selectați obiectul temei</string>
+    <string name="theme_target_switch_failed">Comutarea obiectului temei a eșuat</string>
+    <string name="theme_unsaved_message">Modificările obiectului de temă curent nu au fost salvate.</string>
+    <string name="theme_unsaved_title">Salvați modificările temei?</string>
+    <string name="user_configuration_active">Configurația activă curentă</string>
+    <string name="user_configuration_auto_update">Actualizare automată a datelor</string>
+    <string name="user_configuration_auto_update_desc">După activare, analiza memoriei pe termen lung va actualiza user.md pe baza conversațiilor din spațiul asociat configurației. Blocarea împiedică doar actualizarea automată; editarea manuală rămâne disponibilă.</string>
+    <string name="user_configuration_create">Configurare utilizator nouă</string>
+    <string name="user_configuration_delete">Ștergerea configurației utilizatorului</string>
+    <string name="user_configuration_delete_warning">Sigur doriți să ștergeți configurația utilizatorului „%1$s” și toate amintirile asociate? Această operațiune nu poate fi anulată.</string>
+    <string name="user_configuration_lock">Blochează actualizarea automată a datelor</string>
+    <string name="user_configuration_name">Numele configurației utilizatorului</string>
+    <string name="user_configuration_open_memory">Deschide memoria asociată</string>
+    <string name="user_configuration_policy">Actualizare automată și blocare</string>
+    <string name="user_configuration_rename">Redenumirea configurației utilizatorului</string>
+    <string name="user_configuration_select">Selectați configurația utilizatorului</string>
+    <string name="user_configuration_unlock_notice">Această configurație a fost migrată din setările de blocare ale versiunii vechi; după salvare, blocarea întregii fișe de date va fi eliminată.</string>
 </resources>
