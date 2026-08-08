@@ -8,9 +8,13 @@ on:
         required: true
         default: 'v1.13.1'
       version_name:
-        description: 'Version name shown in APK (ex: 1.13.1+8-clone)'
+        description: 'Version name shown in APK (ex: 1.13.2+1-clone)'
         required: true
-        default: '1.13.1+8-clone'
+        default: '1.13.2+1-clone'
+      version_code:
+        description: 'Numeric versionCode (MUST be higher than current installed, ex: 48)'
+        required: true
+        default: '48'
       gradle_task:
         description: 'Gradle task'
         type: choice
@@ -175,6 +179,17 @@ jobs:
         run: |
           set -euo pipefail
           echo "sdk.dir=$ANDROID_HOME" > local.properties
+          # Patch versionCode/versionName from workflow inputs so the APK is
+          # actually newer than what users have installed (fixes: same version
+          # APK cannot be installed, update check loops forever)
+          VERSION_CODE="${version_code}"
+          VERSION_NAME_BASE="${version_name%-clone}"
+          VERSION_NAME_BASE="${VERSION_NAME_BASE%%+*}"
+          PATCH_INDEX="${version_name#*+}"; PATCH_INDEX="${PATCH_INDEX%-clone}"
+          echo "Patching versionCode -> $VERSION_CODE, versionName -> ${VERSION_NAME_BASE}+${PATCH_INDEX}"
+          sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" app/build.gradle.kts
+          sed -i "s/versionName = \"[^\"]*\"/versionName = \"${VERSION_NAME_BASE}+${PATCH_INDEX}\"/" app/build.gradle.kts
+          grep -n "versionCode\|versionName" app/build.gradle.kts | head -4
           # Set up release signing when secrets are present
           if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
             echo "$RO_OPERIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ro-operit-release.jks"
