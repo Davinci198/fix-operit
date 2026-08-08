@@ -1,6 +1,7 @@
 package com.ai.assistance.operit.data.updates
 
 import android.content.Context
+import com.ai.assistance.operit.BuildConfig
 import com.ai.assistance.operit.util.AppLogger
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -142,7 +143,10 @@ class UpdateManager private constructor(private val context: Context) {
                 AppLogger.d(TAG, "checkForUpdatesInternal(): currentVersion=$currentVersion betaEnabled=$betaEnabled")
 
                 val patchUpdate: UpdateStatus? =
-                    if (betaEnabled) {
+                    if (betaEnabled && BuildConfig.FLAVOR != "clone") {
+                        // Patch-urile din OperitNightlyRelease sunt generate pentru APK-ul
+                        // original AAswordman; varianta clone are un APK diferit (re-semnat,
+                        // cu modificări), deci patch-urile upstream NU se aplică.
                         AppLogger.d(TAG, "beta enabled, trying patch update releases...")
                         val patch = tryFetchLatestPatchUpdate(currentVersion)
                         if (patch != null) {
@@ -156,6 +160,9 @@ class UpdateManager private constructor(private val context: Context) {
                         }
                         patch
                     } else {
+                        if (betaEnabled && BuildConfig.FLAVOR == "clone") {
+                            AppLogger.d(TAG, "clone variant: skipping upstream patch updates (incompatible APK)")
+                        }
                         null
                     }
 
