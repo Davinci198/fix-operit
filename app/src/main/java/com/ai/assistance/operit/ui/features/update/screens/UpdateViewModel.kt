@@ -25,8 +25,22 @@ class UpdateViewModel(private val context: Context) : ViewModel() {
     private val apiService = GitHubApiService(context)
     
     companion object {
-        private const val REPO_OWNER = "AAswordman"
-        private const val REPO_NAME = "Operit"
+        private val repoOwner by lazy { resolveRepoFromWebsite(context) }
+        private val repoName by lazy { resolveRepoFromWebsite(context, isName = true) }
+        private fun resolveRepoFromWebsite(context: Context, isName: Boolean = false): String {
+            return try {
+                val aboutWebsite = context.getString(com.ai.assistance.operit.R.string.about_website)
+                val html = aboutWebsite.replace("&lt;", "<").replace("&gt;", ">")
+                val m = Regex("https://github.com/([^/"<>]+)/([^/"<>]+)").find(html)
+                if (m != null) {
+                    if (isName) m.groupValues[2] else m.groupValues[1]
+                } else {
+                    if (isName) "Operit" else "AAswordman"
+                }
+            } catch (_: Exception) {
+                if (isName) "Operit" else "AAswordman"
+            }
+        }
     }
     
     init {
@@ -40,7 +54,7 @@ class UpdateViewModel(private val context: Context) : ViewModel() {
         viewModelScope.launch {
             _uiState.value = UpdateUiState.Loading
             
-            apiService.getRepositoryReleases(REPO_OWNER, REPO_NAME, page = 1, perPage = 20)
+            apiService.getRepositoryReleases(repoOwner, repoName, page = 1, perPage = 20)
                 .onSuccess { releases ->
                     val updates = releases
                         .filter { !it.draft && !it.prerelease } // 过滤掉草稿和预发布
