@@ -143,10 +143,11 @@ class UpdateManager private constructor(private val context: Context) {
                 AppLogger.d(TAG, "checkForUpdatesInternal(): currentVersion=$currentVersion betaEnabled=$betaEnabled")
 
                 val patchUpdate: UpdateStatus? =
-                    if (betaEnabled && BuildConfig.FLAVOR != "clone") {
-                        // Patch-urile din OperitNightlyRelease sunt generate pentru APK-ul
-                        // original AAswordman; varianta clone are un APK diferit (re-semnat,
-                        // cu modificări), deci patch-urile upstream NU se aplică.
+                    if (betaEnabled) {
+                        // Pentru flavor-ul standard folosim patch-urile upstream din
+                        // AAswordman/OperitNightlyRelease. Pentru flavor-ul clone (APK
+                        // re-semnat, cu modificări proprii), patch-urile upstream NU se
+                        // aplică, deci căutăm patch-uri proprii în Davinci198/fix-operit.
                         AppLogger.d(TAG, "beta enabled, trying patch update releases...")
                         val patch = tryFetchLatestPatchUpdate(currentVersion)
                         if (patch != null) {
@@ -229,11 +230,10 @@ class UpdateManager private constructor(private val context: Context) {
 
     private suspend fun tryFetchLatestPatchUpdate(currentVersion: String): UpdateStatus? {
         val api = GitHubApiService(context)
-
-        val owner = "AAswordman"
-        val repo = "OperitNightlyRelease"
-
-        AppLogger.d(TAG, "tryFetchLatestPatchUpdate(): currentVersion=$currentVersion repo=$owner/$repo")
+        val isClone = BuildConfig.FLAVOR == "clone"
+        val owner = if (isClone) "Davinci198" else "AAswordman"
+        val repo = if (isClone) "fix-operit" else "OperitNightlyRelease"
+        AppLogger.d(TAG, "tryFetchLatestPatchUpdate(): currentVersion=$currentVersion repo=$owner/$repo isClone=$isClone")
         val result = api.getRepositoryReleases(owner = owner, repo = repo, page = 1, perPage = 20)
 
         result.exceptionOrNull()?.let { e ->
