@@ -31,7 +31,8 @@ class UpdateViewModel(private val context: Context) : ViewModel() {
             return try {
                 val aboutWebsite = context.getString(com.ai.assistance.operit.R.string.about_website)
                 val html = aboutWebsite.replace("&lt;", "<").replace("&gt;", ">")
-                val m = Regex("https://github.com/([^/"<>]+)/([^/"<>]+)").find(html)
+                // Regex pentru extragerea owner/repo din link-ul GitHub
+                val m = Regex("""https://github\.com/([^/<>"]+)/([^/<>"]+)""").find(html)
                 if (m != null) {
                     if (isName) m.groupValues[2] else m.groupValues[1]
                 } else {
