@@ -33,7 +33,7 @@ object FFmpegUtil {
             } else {
                 AppLogger.e(
                     TAG,
-                    "FFmpeg failed with return code: ${returnCode.value}, output: ${session.output}"
+                    "FFmpeg failed with return code: ${if (ReturnCode.isSuccess(returnCode)) 0 else 1}, output: ${session.output}"
                 )
                 return false
             }

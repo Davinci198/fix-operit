@@ -383,6 +383,8 @@ android {
             // libsudo.so (2-byte placeholder from terminal jniLibs) is not a
             // valid ELF; llvm-strip fails on it during release packaging.
             keepDebugSymbols += setOf("**/libsudo.so")
+            // Fix duplicate libc++_shared.so from dragonbones + ffmpeg-kit-local
+            pickFirsts += "**/libc++_shared.so"
         }
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
