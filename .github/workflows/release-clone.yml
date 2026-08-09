@@ -151,7 +151,7 @@ jobs:
           rm -rf app/src/main/cpp/.cxx
           rm -rf app/build/intermediates/cxx
           rm -rf app/build/.cxx
-          ls -la app/src/main/cpp/ | head -20
+          find app/src/main/cpp -maxdepth 1 -ls | head -20
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -218,7 +218,7 @@ jobs:
           TASK="${TASK:-:app:assembleCloneRelease}"
           echo "Building $TASK as com.ai.assistance.operit.clone"
           chmod +x ./gradlew
-          ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
+          ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
             echo "::error::GRADLE BUILD FAILED - last 120 lines:"
             tail -120 gradle.log | sed 's/^/::error::/' || true
@@ -229,8 +229,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
-          APK=$(ls app/build/outputs/apk/clone/release/*.apk 2>/dev/null | head -1)
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          APK=$(find app/build/outputs/apk/clone/release -name '*.apk' -type f 2>/dev/null | head -1)
           if [ -z "$APK" ]; then
             APK=$(find app/build/outputs/apk -name '*.apk' | head -1)
           fi
