@@ -40,6 +40,10 @@ val requiredExternallyBuiltNativeLibraries =
     )
 
 val ffmpegKitLocalAar = file("libs/ffmpeg-kit-local.aar")
+// FFmpegKit este OPTIONAL: pe CI (GitHub Actions) lipseste AAR-ul local,
+// iar build-ul trebuie sa reuseasca fara el. Pe dispozitivul de build local
+// (ARM64) AAR-ul poate fi plasat in app/libs/ pentru suport FFmpeg complet.
+val hasFfmpegKit = ffmpegKitLocalAar.isFile && ffmpegKitLocalAar.length() > 0L
 val requiredFfmpegKitArm64Libraries =
     setOf(
         "jni/arm64-v8a/libavcodec.so",
@@ -76,22 +80,20 @@ val verifyExternallyBuiltNativeLibraries by tasks.registering {
                 ". Run tools/native_ripgrep/build_native_ripgrep.ps1 before packaging."
         }
 
-        require(ffmpegKitLocalAar.isFile && ffmpegKitLocalAar.length() > 0L) {
-            "Missing or empty FFmpegKit AAR: ${ffmpegKitLocalAar.path}. " +
-                "Build it with tools/ffmpeg/build_ffmpeg_kit_wsl.sh and import it with " +
-                "tools/ffmpeg/import_local_ffmpeg_kit.ps1 before packaging."
-        }
-
-        ZipFile(ffmpegKitLocalAar).use { archive ->
-            val invalidEntries =
-                requiredFfmpegKitArm64Libraries.filter { entryName ->
-                    val entry = archive.getEntry(entryName)
-                    entry == null || entry.size <= 0L
+        if (hasFfmpegKit) {
+            ZipFile(ffmpegKitLocalAar).use { archive ->
+                val invalidEntries =
+                    requiredFfmpegKitArm64Libraries.filter { entryName ->
+                        val entry = archive.getEntry(entryName)
+                        entry == null || entry.size <= 0L
+                    }
+                require(invalidEntries.isEmpty()) {
+                    "FFmpegKit AAR is missing or contains empty arm64 native libraries: " +
+                        invalidEntries.joinToString()
                 }
-            require(invalidEntries.isEmpty()) {
-                "FFmpegKit AAR is missing or contains empty arm64 native libraries: " +
-                    invalidEntries.joinToString()
             }
+        } else {
+            println("WARN: ffmpeg-kit-local.aar lipseste - se construieste FARA suport FFmpeg (CI build).")
         }
     }
 }
@@ -452,8 +454,10 @@ dependencies {
     implementation("com.google.android.filament:gltfio-android:1.69.2")
     implementation("com.google.android.filament:filament-utils-android:1.69.2")
     implementation(libs.androidx.ui.graphics.android)
-    // The only vendored artifact is the custom FFmpegKit AAR.
-    implementation(files("libs/ffmpeg-kit-local.aar"))
+    // FFmpegKit AAR este optional: exista doar local pe dispozitivul de build.
+    if (hasFfmpegKit) {
+        implementation(files("libs/ffmpeg-kit-local.aar"))
+    }
     implementation("com.arthenica:smart-exception-common:0.2.1")
     implementation("com.arthenica:smart-exception-java:0.2.1")
     implementation(libs.androidx.runtime.android)
