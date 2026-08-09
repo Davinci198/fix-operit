@@ -47,7 +47,7 @@ class StandardFFmpegToolExecutor(private val context: Context) : ToolExecutor {
                         result =
                                 FFmpegResultData(
                                         command = command,
-                                        returnCode = if (ReturnCode.isSuccess(returnCode)) 0 else 1,
+                                        returnCode = returnCode.value,
                                         output = output,
                                         duration = duration
                                 )
@@ -64,7 +64,7 @@ class StandardFFmpegToolExecutor(private val context: Context) : ToolExecutor {
                         toolName = tool.name,
                         success = false,
                         result = StringResultData(""),
-                        error = "FFmpeg execution failed, return code: ${if (ReturnCode.isSuccess(returnCode)) 0 else 1}\nOutput:\n$output"
+                        error = "FFmpeg execution failed, return code: ${returnCode.value}\nOutput:\n$output"
                 )
             }
         } catch (e: Exception) {
@@ -117,7 +117,7 @@ class StandardFFmpegInfoToolExecutor : ToolExecutor {
                     result =
                             FFmpegResultData(
                                     command = "-codecs",
-                                    returnCode = if (ReturnCode.isSuccess(codecsSession.returnCode)) 0 else 1,
+                                    returnCode = codecsSession.returnCode.value,
                                     output = info.toString(),
                                     duration = duration
                             )
@@ -221,8 +221,9 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
                                                 FFmpegResultData.StreamInfo(
                                                         index = stream.index?.toInt() ?: 0,
                                                         codecType = stream.type ?: "unknown",
-                                                        codecName = "unknown",
-                                                        resolution = null,
+                                                        codecName = stream.codec ?: "unknown",
+                                                        resolution =
+                                                                "${stream.width}x${stream.height}",
                                                         frameRate =
                                                                 null // We'll get this from FFprobe
                                                         // if needed
@@ -238,7 +239,7 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
                                                 FFmpegResultData.StreamInfo(
                                                         index = stream.index?.toInt() ?: 0,
                                                         codecType = stream.type ?: "unknown",
-                                                        codecName = "unknown",
+                                                        codecName = stream.codec ?: "unknown",
                                                         sampleRate =
                                                                 null, // We'll get this from FFprobe
                                                         // if needed
@@ -267,7 +268,12 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
                                                 videoStreams[index] =
                                                         stream.copy(
                                                                 frameRate =
-                                                                        null
+                                                                        probeStream
+                                                                                .allProperties
+                                                                                ?.get(
+                                                                                        "r_frame_rate"
+                                                                                )
+                                                                                ?.toString()
                                                         )
                                             }
                                         }
@@ -281,9 +287,16 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
                                                 audioStreams[index] =
                                                         stream.copy(
                                                                 sampleRate =
-                                                                        null,
+                                                                        probeStream
+                                                                                .allProperties
+                                                                                ?.get("sample_rate")
+                                                                                ?.toString(),
                                                                 channels =
-                                                                        null
+                                                                        probeStream
+                                                                                .allProperties
+                                                                                ?.get("channels")
+                                                                                ?.toString()
+                                                                                ?.toIntOrNull()
                                                         )
                                             }
                                         }
@@ -293,7 +306,7 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
 
                             FFmpegResultData(
                                     command = command,
-                                    returnCode = if (ReturnCode.isSuccess(returnCode)) 0 else 1,
+                                    returnCode = returnCode.value,
                                     output = output,
                                     duration = duration,
                                     outputFile = outputPath,
@@ -309,7 +322,7 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
                         } else {
                             FFmpegResultData(
                                     command = command,
-                                    returnCode = if (ReturnCode.isSuccess(returnCode)) 0 else 1,
+                                    returnCode = returnCode.value,
                                     output = output,
                                     duration = duration,
                                     outputFile = outputPath
@@ -322,7 +335,7 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
                         toolName = tool.name,
                         success = false,
                         result = StringResultData(""),
-                        error = "Video conversion failed, return code: ${if (ReturnCode.isSuccess(returnCode)) 0 else 1}\nCommand: $command\nOutput:\n$output"
+                        error = "Video conversion failed, return code: ${returnCode.value}\nCommand: $command\nOutput:\n$output"
                 )
             }
         } catch (e: Exception) {
