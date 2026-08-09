@@ -13,50 +13,42 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingDotsIndicator(textColor: Color) {
-        val infiniteTransition = rememberInfiniteTransition(label = "dots")
-
-        Row(
-                modifier = Modifier.padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
-        ) {
-                val jumpHeight = -5f
-                val animationDelay = 160
-
-                (0..2).forEach { index ->
-                        val offsetY by
-                                infiniteTransition.animateFloat(
-                                        initialValue = 0f,
-                                        targetValue = jumpHeight,
-                                        animationSpec =
-                                                infiniteRepeatable(
-                                                        animation =
-                                                                keyframes {
-                                                                        durationMillis = 600
-                                                                        0f at 0
-                                                                        jumpHeight * 0.4f at 100
-                                                                        jumpHeight * 0.8f at 200
-                                                                        jumpHeight at 300
-                                                                        jumpHeight * 0.8f at 400
-                                                                        jumpHeight * 0.4f at 500
-                                                                        0f at 600
-                                                                },
-                                                        repeatMode = RepeatMode.Restart,
-                                                        initialStartOffset =
-                                                                StartOffset(index * animationDelay)
-                                                ),
-                                        label = "offsetY_$index"
-                                )
-
-                        Box(
-                                modifier =
-                                        Modifier.size(6.dp)
-                                                .offset(y = offsetY.dp)
-                                                .background(
-                                                        color = textColor.copy(alpha = 0.6f),
-                                                        shape = CircleShape
-                                                )
-                        )
+    // Performanță: o singură animație infinită cu fază derivată, în loc de 3 animații separate.
+    val infiniteTransition = rememberInfiniteTransition(label = "dots")
+    val phase by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 600f,
+        animationSpec =
+        infiniteRepeatable(
+            animation = tween(durationMillis = 600, easing = LinearEasing),
+        ),
+        label = "dots_phase",
+    )
+    Row(
+        modifier = Modifier.padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val jumpHeight = -5f
+        val animationDelay = 160
+        (0..2).forEach { index ->
+            val localPhase = (phase + index * animationDelay) % 600f
+            val offsetY =
+                when {
+                    localPhase < 100f -> jumpHeight * (localPhase / 100f)
+                    localPhase < 300f -> jumpHeight
+                    localPhase < 500f -> jumpHeight * ((500f - localPhase) / 200f)
+                    else -> 0f
                 }
+            Box(
+                modifier =
+                Modifier.size(6.dp)
+                    .offset(y = offsetY.dp)
+                    .background(
+                        color = textColor.copy(alpha = 0.6f),
+                        shape = CircleShape
+                    )
+            )
         }
+    }
 }

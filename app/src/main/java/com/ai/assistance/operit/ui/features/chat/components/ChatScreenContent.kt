@@ -180,17 +180,7 @@ fun ChatScreenContent(
     val hasOlderDisplayHistory by actualViewModel.hasOlderDisplayHistory.collectAsState()
     val hasNewerDisplayHistory by actualViewModel.hasNewerDisplayHistory.collectAsState()
     val isLoadingDisplayWindow by actualViewModel.isLoadingDisplayWindow.collectAsState()
-    
-    // 监听朗读状态
-    val isSpeechSessionActive by actualViewModel.isSpeechSessionActive.collectAsState()
-    val isSpeechPaused by actualViewModel.isSpeechPaused.collectAsState()
-    val isAutoReadEnabled by actualViewModel.isAutoReadEnabled.collectAsState()
-    LaunchedEffect(isSpeechSessionActive, isSpeechPaused, isAutoReadEnabled) {
-        AppLogger.d(
-            "ChatScreenContent",
-            "speechControls session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled visible=${isSpeechSessionActive || isSpeechPaused || isAutoReadEnabled}"
-        )
-    }
+
     LaunchedEffect(pendingRollbackIndex) {
         val index = pendingRollbackIndex
         if (index != null) {
@@ -605,123 +595,10 @@ fun ChatScreenContent(
         }
 
         // Stop reading button
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val density = LocalDensity.current
-            val endPadding = 16.dp
-            val bottomPadding = 80.dp
-            val fabSize = 40.dp
-
-            val containerWidthPx = with(density) { maxWidth.toPx() }
-            val containerHeightPx = with(density) { maxHeight.toPx() }
-            val fabSizePx = with(density) { fabSize.toPx() }
-            val bottomInsetPx = with(density) { bottomInset.toPx() }
-
-            val initialOffsetXPx =
-                (containerWidthPx - with(density) { (endPadding + fabSize).toPx() }).coerceAtLeast(0f)
-            val initialOffsetYPx =
-                (containerHeightPx - with(density) { (bottomPadding + bottomInset + fabSize).toPx() }).coerceAtLeast(0f)
-
-            var stopButtonOffsetXPx by rememberSaveable { mutableFloatStateOf(initialOffsetXPx) }
-            var stopButtonOffsetYPx by rememberSaveable { mutableFloatStateOf(initialOffsetYPx) }
-
-            val maxX = (containerWidthPx - fabSizePx).coerceAtLeast(0f)
-            val maxY = (containerHeightPx - fabSizePx - bottomInsetPx).coerceAtLeast(0f)
-
-            // 屏幕尺寸变化（旋转/分屏）时，确保按钮仍然在可见区域内
-            LaunchedEffect(maxX, maxY) {
-                stopButtonOffsetXPx = stopButtonOffsetXPx.coerceIn(0f, maxX)
-                stopButtonOffsetYPx = stopButtonOffsetYPx.coerceIn(0f, maxY)
-            }
-
-            AnimatedVisibility(
-                visible = isSpeechSessionActive || isSpeechPaused || isAutoReadEnabled,
-                enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
-                exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it }),
-                modifier = Modifier
-                    .offset {
-                        IntOffset(
-                            stopButtonOffsetXPx.roundToInt(),
-                            stopButtonOffsetYPx.roundToInt()
-                        )
-                    }
-                    .pointerInput(maxX, maxY) {
-                        detectDragGestures { change, dragAmount ->
-                            change.consume()
-                            stopButtonOffsetXPx = (stopButtonOffsetXPx + dragAmount.x).coerceIn(0f, maxX)
-                            stopButtonOffsetYPx = (stopButtonOffsetYPx + dragAmount.y).coerceIn(0f, maxY)
-                        }
-                    }
-            ) {
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    SmallFloatingActionButton(
-                        modifier = Modifier.align(Alignment.Top),
-                        onClick = {
-                            AppLogger.d(
-                                "ChatScreenContent",
-                                "speechControls pauseClick session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled"
-                            )
-                            actualViewModel.pauseSpeaking()
-                        },
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Pause,
-                            contentDescription = stringResource(R.string.pause_reading),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    AnimatedVisibility(
-                        visible = isSpeechPaused,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                        modifier = Modifier.align(Alignment.Top)
-                    ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            SmallFloatingActionButton(
-                                onClick = {
-                                    AppLogger.d(
-                                        "ChatScreenContent",
-                                        "speechControls resumeClick session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled"
-                                    )
-                                    actualViewModel.resumeSpeaking()
-                                },
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.PlayArrow,
-                                    contentDescription = stringResource(R.string.resume_reading),
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
-                            SmallFloatingActionButton(
-                                onClick = {
-                                    AppLogger.d(
-                                        "ChatScreenContent",
-                                        "speechControls stopClick session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled"
-                                    )
-                                    actualViewModel.stopSpeaking()
-                                },
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Stop,
-                                    contentDescription = stringResource(R.string.stop_reading),
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        SpeechControlsOverlay(
+            actualViewModel = actualViewModel,
+            bottomInset = bottomInset,
+        )
 
         if (showDeleteSelectedConfirmDialog) {
             AlertDialog(
@@ -1134,5 +1011,140 @@ fun ChatHistorySelectorPanel(
                 },
                 activePrompt = activePrompt
         )
+    }
+}
+
+/**
+ * Overlay flotant pentru controlul citirii cu voce.
+ *
+ * Performanță: state-urile de speech sunt colectate AICI (sub-composable izolat), nu în
+ * ChatScreenContent. Astfel, orice schimbare a stării de citire (pause/resume/stop) recompune
+ * doar aceste butoane, nu întregul ecran de chat.
+ */
+@Composable
+private fun SpeechControlsOverlay(
+    actualViewModel: ChatViewModel,
+    bottomInset: Dp,
+) {
+    val isSpeechSessionActive by actualViewModel.isSpeechSessionActive.collectAsState()
+    val isSpeechPaused by actualViewModel.isSpeechPaused.collectAsState()
+    val isAutoReadEnabled by actualViewModel.isAutoReadEnabled.collectAsState()
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val density = LocalDensity.current
+        val endPadding = 16.dp
+        val bottomPadding = 80.dp
+        val fabSize = 40.dp
+
+        val containerWidthPx = with(density) { maxWidth.toPx() }
+        val containerHeightPx = with(density) { maxHeight.toPx() }
+        val fabSizePx = with(density) { fabSize.toPx() }
+        val bottomInsetPx = with(density) { bottomInset.toPx() }
+
+        val initialOffsetXPx =
+            (containerWidthPx - with(density) { (endPadding + fabSize).toPx() }).coerceAtLeast(0f)
+        val initialOffsetYPx =
+            (containerHeightPx - with(density) { (bottomPadding + bottomInset + fabSize).toPx() }).coerceAtLeast(0f)
+
+        var stopButtonOffsetXPx by rememberSaveable { mutableFloatStateOf(initialOffsetXPx) }
+        var stopButtonOffsetYPx by rememberSaveable { mutableFloatStateOf(initialOffsetYPx) }
+
+        val maxX = (containerWidthPx - fabSizePx).coerceAtLeast(0f)
+        val maxY = (containerHeightPx - fabSizePx - bottomInsetPx).coerceAtLeast(0f)
+
+        // 屏幕尺寸变化（旋转/分屏）时，确保按钮仍然在可见区域内
+        LaunchedEffect(maxX, maxY) {
+            stopButtonOffsetXPx = stopButtonOffsetXPx.coerceIn(0f, maxX)
+            stopButtonOffsetYPx = stopButtonOffsetYPx.coerceIn(0f, maxY)
+        }
+
+        AnimatedVisibility(
+            visible = isSpeechSessionActive || isSpeechPaused || isAutoReadEnabled,
+            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
+            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it }),
+            modifier = Modifier
+                .offset {
+                    IntOffset(
+                        stopButtonOffsetXPx.roundToInt(),
+                        stopButtonOffsetYPx.roundToInt()
+                    )
+                }
+                .pointerInput(maxX, maxY) {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        stopButtonOffsetXPx = (stopButtonOffsetXPx + dragAmount.x).coerceIn(0f, maxX)
+                        stopButtonOffsetYPx = (stopButtonOffsetYPx + dragAmount.y).coerceIn(0f, maxY)
+                    }
+                }
+        ) {
+            Row(
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SmallFloatingActionButton(
+                    modifier = Modifier.align(Alignment.Top),
+                    onClick = {
+                        AppLogger.d(
+                            "ChatScreenContent",
+                            "speechControls pauseClick session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled"
+                        )
+                        actualViewModel.pauseSpeaking()
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Pause,
+                        contentDescription = stringResource(R.string.pause_reading),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = isSpeechPaused,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier.align(Alignment.Top)
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SmallFloatingActionButton(
+                            onClick = {
+                                AppLogger.d(
+                                    "ChatScreenContent",
+                                    "speechControls resumeClick session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled"
+                                )
+                                actualViewModel.resumeSpeaking()
+                            },
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = stringResource(R.string.resume_reading),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+
+                        SmallFloatingActionButton(
+                            onClick = {
+                                AppLogger.d(
+                                    "ChatScreenContent",
+                                    "speechControls stopClick session=$isSpeechSessionActive paused=$isSpeechPaused autoRead=$isAutoReadEnabled"
+                                )
+                                actualViewModel.stopSpeaking()
+                            },
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Stop,
+                                contentDescription = stringResource(R.string.stop_reading),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }

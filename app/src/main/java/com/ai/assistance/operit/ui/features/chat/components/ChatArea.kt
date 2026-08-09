@@ -1,12 +1,11 @@
 package com.ai.assistance.operit.ui.features.chat.components
 
 import android.widget.Toast
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.StartOffset
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -60,6 +59,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.firstOrNull
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -230,8 +231,6 @@ fun ChatArea(
     val messageAnchors = remember(currentChatId) { mutableStateMapOf<Long, ChatScrollMessageAnchor>() }
     var pendingJumpToMessageTimestamp by remember(currentChatId) { mutableStateOf<Long?>(null) }
     val lastMessage = chatHistory.lastOrNull()
-    val pendingTargetAnchor =
-        pendingJumpToMessageTimestamp?.let { targetTimestamp -> messageAnchors[targetTimestamp] }
     var hasLastAiMessageStartedStreaming by remember(lastMessage?.timestamp) {
         mutableStateOf(lastMessage?.run { sender == "ai" && content.isNotBlank() } == true)
     }
@@ -268,7 +267,6 @@ fun ChatArea(
         messagesCount,
         chatHistory.firstOrNull()?.timestamp,
         chatHistory.lastOrNull()?.timestamp,
-        pendingTargetAnchor,
         scrollState.maxValue,
     ) {
         val targetTimestamp = pendingJumpToMessageTimestamp ?: return@LaunchedEffect
@@ -276,14 +274,18 @@ fun ChatArea(
         if (targetIndex < 0) {
             return@LaunchedEffect
         }
-
-        val targetAnchor = pendingTargetAnchor ?: return@LaunchedEffect
         val isActualLatestMessage = targetIndex == messagesCount - 1 && !hasNewerDisplayHistory
         onAutoScrollToBottomChange?.invoke(isActualLatestMessage)
-
         if (targetIndex == messagesCount - 1) {
             scrollState.animateScrollTo(scrollState.maxValue)
         } else {
+            // Citește anchor-ul în interiorul coroutinei: nu înregistrăm observație de stare,
+            // deci actualizările de poziție la scroll NU mai recompun ChatArea.
+            val targetAnchor = snapshotFlow { messageAnchors[targetTimestamp] }.firstOrNull()
+            if (targetAnchor == null) {
+                pendingJumpToMessageTimestamp = null
+                return@LaunchedEffect
+            }
             val targetOffset =
                 targetAnchor.absoluteTopPx.roundToInt().coerceIn(0, scrollState.maxValue)
             scrollState.animateScrollTo(targetOffset)
@@ -1387,7 +1389,18 @@ private fun MessageFooterBar(
 
 @Composable
 private fun LoadingDotsIndicator(textColor: Color) {
+    // Performanță: folosim o singură animație infinită cu fază derivată, în loc de 3 animații
+    // separate (rememberInfiniteTransition per dot). Astfel recompoziția e limitată la un singur
+    // snapshot state și costul pe frame e minim, chiar și când indicatorul e vizibil mult timp.
     val infiniteTransition = rememberInfiniteTransition()
+    val phase by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 600f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 600, easing = LinearEasing),
+        ),
+        label = "dots_phase",
+    )
 
     Row(
         modifier = Modifier.padding(vertical = 4.dp),
@@ -1398,28 +1411,15 @@ private fun LoadingDotsIndicator(textColor: Color) {
         val animationDelay = 160
 
         (0..2).forEach { index ->
-            val offsetY by
-            infiniteTransition.animateFloat(
-                initialValue = 0f,
-                targetValue = jumpHeight,
-                animationSpec =
-                infiniteRepeatable(
-                    animation =
-                    keyframes {
-                        durationMillis = 600
-                        0f at 0
-                        jumpHeight * 0.4f at 100
-                        jumpHeight * 0.8f at 200
-                        jumpHeight at 300
-                        jumpHeight * 0.8f at 400
-                        jumpHeight * 0.4f at 500
-                        0f at 600
-                    },
-                    repeatMode = RepeatMode.Restart,
-                    initialStartOffset = StartOffset(index * animationDelay),
-                ),
-                label = "",
-            )
+            // Faza decalată pentru fiecare punct, calculată pur din valorile unui singur state.
+            val localPhase = (phase + index * animationDelay) % 600f
+            val offsetY =
+                when {
+                    localPhase < 100f -> jumpHeight * (localPhase / 100f)
+                    localPhase < 300f -> jumpHeight
+                    localPhase < 500f -> jumpHeight * ((500f - localPhase) / 200f)
+                    else -> 0f
+                }
 
             Box(
                 modifier =
