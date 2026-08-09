@@ -59,6 +59,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.firstOrNull
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -229,8 +231,6 @@ fun ChatArea(
     val messageAnchors = remember(currentChatId) { mutableStateMapOf<Long, ChatScrollMessageAnchor>() }
     var pendingJumpToMessageTimestamp by remember(currentChatId) { mutableStateOf<Long?>(null) }
     val lastMessage = chatHistory.lastOrNull()
-    val pendingTargetAnchor =
-        pendingJumpToMessageTimestamp?.let { targetTimestamp -> messageAnchors[targetTimestamp] }
     var hasLastAiMessageStartedStreaming by remember(lastMessage?.timestamp) {
         mutableStateOf(lastMessage?.run { sender == "ai" && content.isNotBlank() } == true)
     }
@@ -267,7 +267,6 @@ fun ChatArea(
         messagesCount,
         chatHistory.firstOrNull()?.timestamp,
         chatHistory.lastOrNull()?.timestamp,
-        pendingTargetAnchor,
         scrollState.maxValue,
     ) {
         val targetTimestamp = pendingJumpToMessageTimestamp ?: return@LaunchedEffect
@@ -275,14 +274,18 @@ fun ChatArea(
         if (targetIndex < 0) {
             return@LaunchedEffect
         }
-
-        val targetAnchor = pendingTargetAnchor ?: return@LaunchedEffect
         val isActualLatestMessage = targetIndex == messagesCount - 1 && !hasNewerDisplayHistory
         onAutoScrollToBottomChange?.invoke(isActualLatestMessage)
-
         if (targetIndex == messagesCount - 1) {
             scrollState.animateScrollTo(scrollState.maxValue)
         } else {
+            // Citește anchor-ul în interiorul coroutinei: nu înregistrăm observație de stare,
+            // deci actualizările de poziție la scroll NU mai recompun ChatArea.
+            val targetAnchor = snapshotFlow { messageAnchors[targetTimestamp] }.firstOrNull()
+            if (targetAnchor == null) {
+                pendingJumpToMessageTimestamp = null
+                return@LaunchedEffect
+            }
             val targetOffset =
                 targetAnchor.absoluteTopPx.roundToInt().coerceIn(0, scrollState.maxValue)
             scrollState.animateScrollTo(targetOffset)
