@@ -1758,13 +1758,18 @@ class MessageCoordinationDelegate(
                 val isGroupChat = currentChat?.characterGroupId != null
 
                 val summaryCustomRules = readSummaryCustomRules()
-                val summaryMessage = AIMessageManager.summarizeMemory(
-                    enhancedAiService = service,
-                    messages = snapshotMessages,
-                    autoContinue = false,
-                    isGroupChat = isGroupChat,
-                    summaryCustomRules = summaryCustomRules
-                ) ?: return@launch
+                // ANR fix: summarizeMemory face procesare regex grea pe istoricul conversației.
+                // Trebuie rulată pe un dispatcher de background (Default), NU pe main thread,
+                // altfel blochează UI-ul > 5s -> ANR "RO-Operit nu răspunde".
+                val summaryMessage = withContext(Dispatchers.Default) {
+                    AIMessageManager.summarizeMemory(
+                        enhancedAiService = service,
+                        messages = snapshotMessages,
+                        autoContinue = false,
+                        isGroupChat = isGroupChat,
+                        summaryCustomRules = summaryCustomRules
+                    )
+                } ?: return@launch
 
                 val currentChatId = chatHistoryDelegate.currentChatId.value
                 if (currentChatId != originalChatId) {
