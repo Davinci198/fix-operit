@@ -173,7 +173,7 @@ jobs:
           echo "Building $TASK as com.ai.assistance.operit.clone"
           chmod +x ./gradlew
           # shellcheck disable=SC2086
-          ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -Xms2g" | tee gradle.log
+          ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" | tee gradle.log
 
       - name: Upload APK Clone
         if: success()

@@ -400,7 +400,9 @@ jobs:
           if [[ "$INSTRUMENTATION_REQUIRED" == "true" ]]; then
             tasks+=(":app:compileDebugAndroidTestKotlin" ":app:compileDebugAndroidTestJavaWithJavac")
           fi
-          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon
+          # Explicit heap override: gradle.properties is tuned for ARM64 phone (4g);
+          # CI runners need more heap for the full Kotlin compile (OOM fix, PR #9).
+          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC"
 
       - name: Run full Android checks
         if: steps.plan.outputs.android_full == 'true'

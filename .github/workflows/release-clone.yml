@@ -218,7 +218,7 @@ jobs:
           TASK="${TASK:-:app:assembleCloneRelease}"
           echo "Building $TASK as com.ai.assistance.operit.clone"
           chmod +x ./gradlew
-          ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx4g -Xms2g" 2>&1 | tee gradle.log
+          ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
             echo "::error::GRADLE BUILD FAILED - last 120 lines:"
             tail -120 gradle.log | sed 's/^/::error::/' || true
