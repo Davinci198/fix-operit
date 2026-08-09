@@ -14,6 +14,28 @@ import com.arthenica.ffmpegkit.ReturnCode
 import java.io.File
 
 /** FFmpeg工具执行器 提供媒体文件处理能力，包括转换、裁剪、合并等功能 */
+object FFmpegAvailability {
+    /** Returneaza true daca FFmpegKit este disponibil la runtime (AAR prezent in APK). */
+    fun isAvailable(): Boolean =
+        try {
+            Class.forName("com.arthenica.ffmpegkit.FFmpegKit")
+            true
+        } catch (e: ClassNotFoundException) {
+            false
+        } catch (e: Throwable) {
+            false
+        }
+
+    fun unavailableResult(toolName: String): ToolResult =
+        ToolResult(
+            toolName = toolName,
+            success = false,
+            result = StringResultData(""),
+            error = "FFmpeg nu este inclus in aceasta versiune (ffmpeg-kit-local.aar lipseste). " +
+                "Instaleaza o versiune cu suport FFmpeg pentru conversii media."
+        )
+}
+
 class StandardFFmpegToolExecutor(private val context: Context) : ToolExecutor {
     companion object {
         private const val TAG = "FFmpegToolExecutor"
@@ -21,6 +43,10 @@ class StandardFFmpegToolExecutor(private val context: Context) : ToolExecutor {
 
     override fun invoke(tool: AITool): ToolResult {
         val command = tool.parameters.find { it.name == "command" }?.value ?: ""
+
+        if (!FFmpegAvailability.isAvailable()) {
+            return FFmpegAvailability.unavailableResult(tool.name)
+        }
 
         if (command.isEmpty()) {
             return ToolResult(
@@ -95,6 +121,9 @@ class StandardFFmpegInfoToolExecutor : ToolExecutor {
     }
 
     override fun invoke(tool: AITool): ToolResult {
+        if (!FFmpegAvailability.isAvailable()) {
+            return FFmpegAvailability.unavailableResult(tool.name)
+        }
         return try {
             val info = StringBuilder()
             val startTime = System.currentTimeMillis()
@@ -145,6 +174,9 @@ class StandardFFmpegConvertToolExecutor(private val context: Context) : ToolExec
     }
 
     override fun invoke(tool: AITool): ToolResult {
+        if (!FFmpegAvailability.isAvailable()) {
+            return FFmpegAvailability.unavailableResult(tool.name)
+        }
         val inputPath = tool.parameters.find { it.name == "input_path" }?.value ?: ""
         val outputPath = tool.parameters.find { it.name == "output_path" }?.value ?: ""
         val format = tool.parameters.find { it.name == "format" }?.value

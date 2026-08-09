@@ -22,6 +22,21 @@ object FFmpegUtil {
      * Execute an FFmpeg command and return if it was successful
      */
     fun executeCommand(command: String): Boolean {
+        // Daca FFmpegKit nu este inclus in APK (ffmpeg-kit-local.aar optional),
+        // nu incerca executia si returneaza fals.
+        val ffmpegAvailable =
+            try {
+                Class.forName("com.arthenica.ffmpegkit.FFmpegKit")
+                true
+            } catch (e: ClassNotFoundException) {
+                false
+            } catch (e: Throwable) {
+                false
+            }
+        if (!ffmpegAvailable) {
+            AppLogger.e(TAG, "FFmpegKit nu este inclus in APK; comanda nu a fost executata.")
+            return false
+        }
         try {
             AppLogger.d(TAG, "Executing FFmpeg command: $command")
             val session = FFmpegKit.execute(command)
