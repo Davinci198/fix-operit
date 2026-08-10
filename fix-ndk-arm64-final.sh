@@ -134,8 +134,8 @@ fi
 # ------------------------------------------------------------
 echo "[7/9] Fix AIDL: wrapper C + qemu-x86_64 + IAccessibilityProvider..."
 AIDL_X86=$BT_DIR/aidl
-if [ -f "$AIDL_X86" ]; then
-  echo "  AIDL gasit: $AIDL_X86 (backup la .orig)"
+if [ -f "$AIDL_X86" ] && file "$AIDL_X86" | grep -q "x86-64"; then
+  echo "  AIDL x86-64 gasit: $AIDL_X86 (backup la .orig)"
   sudo mv "$AIDL_X86" "$AIDL_X86.orig" || true
   cat > /tmp/aidl_wrap.c << 'EOF'
 #include <stdio.h>
@@ -161,12 +161,40 @@ EOF
   echo "  Wrapper creat: $AIDL_X86 (ARM64)"
 fi
 
-# Genereaza IAccessibilityProvider (AGP nu il genereaza din .aidl)
-if [ -f /opt/android-sdk/build-tools/34.0.0/aidl ] && [ -f "app/src/main/aidl/android/accessibilityservice/IAccessibilityProvider.aidl" ]; then
-  echo "  Generare IAccessibilityProvider.java (aidl 34.0.0 ARM64 nativ)..."
-  /opt/android-sdk/build-tools/34.0.0/aidl --lang=java \
-    -o app/src/main/java \
-    app/src/main/aidl/android/accessibilityservice/IAccessibilityProvider.aidl || true
+# Genereaza IAccessibilityProvider + IAccessibilityEventCallback (AGP nu le
+# genereaza din .aidl - atat pentru cloneRelease cat si pentru variantele
+# standard/release). Fisierele sunt surse persistente in app/src/main/java si
+# nu dispar la clean. Folosim aidl ARM64 nativ (36.0.0) cu -I import path.
+AIDL_NATIVE=""
+for ver in 36.0.0 35.0.0 34.0.0; do
+  CAND=/opt/android-sdk/build-tools/$ver/aidl
+  if [ -f "$CAND" ] && file "$CAND" | grep -qE "ARM aarch64|ARM64"; then
+    AIDL_NATIVE=$CAND
+    echo "  aidl ARM64 nativ gasit: $CAND"
+    break
+  fi
+done
+if [ -z "$AIDL_NATIVE" ] && [ -f /opt/android-sdk/build-tools/36.0.0/aidl ]; then
+  AIDL_NATIVE=/opt/android-sdk/build-tools/36.0.0/aidl
+  echo "  Folosesc aidl 36.0.0 (poate fi wrapper)" 
+fi
+
+AIDL_SRC_DIR=app/src/main/aidl
+AIDL_DST_DIR=app/src/main/java
+if [ -n "$AIDL_NATIVE" ] && [ -d "$AIDL_SRC_DIR" ]; then
+  echo "  Generare IAccessibilityProvider + IAccessibilityEventCallback ..."
+  "$AIDL_NATIVE" --lang=java -I "$AIDL_SRC_DIR" -o "$AIDL_DST_DIR" \
+    "$AIDL_SRC_DIR/com/ai/assistance/operit/provider/IAccessibilityProvider.aidl" || true
+  "$AIDL_NATIVE" --lang=java -I "$AIDL_SRC_DIR" -o "$AIDL_DST_DIR" \
+    "$AIDL_SRC_DIR/com/ai/assistance/operit/provider/IAccessibilityEventCallback.aidl" || true
+  if [ -f "$AIDL_DST_DIR/com/ai/assistance/operit/provider/IAccessibilityProvider.java" ]; then
+    echo "  OK: IAccessibilityProvider.java generat ($(stat -c%s "$AIDL_DST_DIR/com/ai/assistance/operit/provider/IAccessibilityProvider.java") bytes)"
+  fi
+  if [ -f "$AIDL_DST_DIR/com/ai/assistance/operit/provider/IAccessibilityEventCallback.java" ]; then
+    echo "  OK: IAccessibilityEventCallback.java generat ($(stat -c%s "$AIDL_DST_DIR/com/ai/assistance/operit/provider/IAccessibilityEventCallback.java") bytes)"
+  fi
+else
+  echo "  !! Nu am gasit aidl ARM64 - generare manuala SKIP (build-ul va pica daca lipsesc .java-urile)"
 fi
 
 # ------------------------------------------------------------
