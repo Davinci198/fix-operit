@@ -817,6 +817,57 @@ ensure_native_libs() {
   fi
 }
 
+# ------------------------------------------------------------
+# Pachete UI (assets/packages/*.toolpkg) - CRITICE pentru butoane.
+#   - gen: python3 tools/example_packages/sync_example_packages.py
+#         (copiaza .js + pacheaza .toolpkg din examples/ in assets/packages/)
+#   - daca lipsesc, build-ul iese FARA butoanele dependente de pachete
+#     (bug observat pe build local: 17 fisiere lipsa in APK, UI fara butoane)
+#   - aici: ruleaza sync-ul (daca e posibil) + valideaza ca toate cele 11
+#     pachete .toolpkg exista; daca nu, FAIL cu mesaj clar.
+# ------------------------------------------------------------
+ensure_ui_packages() {
+  local sync_script="tools/example_packages/sync_example_packages.py"
+  local packages_dir="app/src/main/assets/packages"
+  # Cele 11 pachete toolpkg care trebuie sa existe mereu in assets
+  local required=(
+    apktool context_limiter_c deepsearching linux_ssh message_insert
+    plan_mode qqbot remote_operit thinking_guidance windows_control worldbook
+  )
+  local missing=0
+
+  log "ensure_ui_packages: verific pachetele UI (toolpkg)..."
+
+  # Pas 1: ruleaza sync-ul oficial ca sa (re)genereze .toolpkg din examples/
+  if [[ -f "$sync_script" ]]; then
+    if command -v python3 >/dev/null 2>&1; then
+      log "ensure_ui_packages: rulez sync_example_packages.py (genereaza .toolpkg din examples/)..."
+      if python3 "$sync_script" --no-hot-reload >/tmp/sync_ui_packages.log 2>&1; then
+        log "ensure_ui_packages: sync OK - $(grep -o 'packed=[0-9]*' /tmp/sync_ui_packages.log | head -1), $(grep -o 'copied=[0-9]*' /tmp/sync_ui_packages.log | head -1)"
+      else
+        log "WARN: sync_example_packages.py a esuat (vezi /tmp/sync_ui_packages.log) - continui cu validare"
+      fi
+    else
+      log "WARN: python3 lipseste - nu pot rula sync; validez doar pachetele existente"
+    fi
+  else
+    log "WARN: $sync_script lipseste - nu pot rula sync; validez doar pachetele existente"
+  fi
+
+  # Pas 2: validare - fiecare pachet .toolpkg trebuie sa existe si sa aiba dimensiune > 0
+  for pkg in "${required[@]}"; do
+    if [[ ! -f "$packages_dir/$pkg.toolpkg" || ! -s "$packages_dir/$pkg.toolpkg" ]]; then
+      log "MISSING UI PACKAGE: $packages_dir/$pkg.toolpkg"
+      missing=1
+    fi
+  done
+
+  if [[ $missing -ne 0 ]]; then
+    fail "Pachete UI lipsa (toolpkg) - butoanele NU vor aparea in APK! Ruleaza: python3 tools/example_packages/sync_example_packages.py --no-hot-reload"
+  fi
+  log "ensure_ui_packages: OK - toate cele 11 pachete toolpkg sunt prezente"
+}
+
 main() {
   SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   cd "$SCRIPT_DIR"
@@ -839,6 +890,7 @@ main() {
   restore_gradlew_bat
   update_local_properties
   ensure_native_libs
+  ensure_ui_packages
   ensure_ndk_arm64_toolchain
   patch_ndk_sysroot_libs
   fix_aidl_arm64
