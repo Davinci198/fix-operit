@@ -352,7 +352,7 @@ const SystemTools = (function () {
         return { success: true, message: '成功获取应用使用时长', data: result };
     }
     async function get_device_location(params) {
-        const result = await Tools.System.getLocation(params.high_accuracy || false, params.timeout || 10, params.include_address);
+        const result = await Tools.System.getLocation(params.high_accuracy || false, params.timeout || 10);
         return { success: true, message: '成功获取位置信息', data: result };
     }
     async function request_bluetooth_permission(params) {
