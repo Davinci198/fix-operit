@@ -748,15 +748,31 @@ EOF
 
 # ------------------------------------------------------------
 # Librarii native locale: dragonbones AAR prebuilt v1.1.0
+#   - offline: copia din tools/dragonbones/ (inclus in repo)
+#   - fallback: download din release-ul oficial GitHub
 #   + ffmpeg-kit-local.aar (optional, dar verificat)
 # ------------------------------------------------------------
 ensure_native_libs() {
   mkdir -p app/libs
-  local dragonbones_url="https://github.com/Davinci198/dragonbones-aar-prebuilt/releases/download/v1.1.0/dragonbones-release.aar"
+  local bundled_dragonbones="$SCRIPT_DIR/tools/dragonbones/dragonbones-release.aar"
+  local expected_sha256="639238ed2d6d2c68fb7f4954c809475aaee25e4c5eeaebfcc690f53d7f775807"
   if [[ ! -f "app/libs/dragonbones-release.aar" ]]; then
+    if [[ -f "$bundled_dragonbones" ]]; then
+      local actual_sha256
+      actual_sha256=$(sha256sum "$bundled_dragonbones" | awk '{print $1}')
+      if [[ "$actual_sha256" == "$expected_sha256" ]]; then
+        cp "$bundled_dragonbones" "app/libs/dragonbones-release.aar"
+        log "dragonbones-release.aar copiat din tools/dragonbones (offline, SHA256 OK)"
+      else
+        log "dragonbones bundled checksum mismatch: $actual_sha256 != $expected_sha256"
+      fi
+    fi
+  fi
+  if [[ ! -f "app/libs/dragonbones-release.aar" ]]; then
+    local dragonbones_url="https://github.com/Davinci198/dragonbones-aar-prebuilt/releases/download/v1.1.0/dragonbones-release.aar"
     log "Downloading dragonbones-release.aar v1.1.0 (2.49MB)"
     if download_file "$dragonbones_url" "app/libs/dragonbones-release.aar"; then
-      log "dragonbones-release.aar downloaded"
+      log "dragonbones-release.aar downloaded from GitHub release"
     else
       log "dragonbones download failed; foloseste AAR-ul din repo-ul dragonbones-aar-prebuilt"
     fi
