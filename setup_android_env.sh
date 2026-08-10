@@ -736,13 +736,43 @@ EOF
     log "AIDL already ARM64 native: $aidl_bin"
   fi
 
-  # IAccessibilityProvider: AGP nu il genereaza din .aidl
-  if [[ -f "$ANDROID_HOME/build-tools/34.0.0/aidl" && -f "app/src/main/aidl/android/accessibilityservice/IAccessibilityProvider.aidl" ]]; then
-    log "Generating IAccessibilityProvider.java (aidl 34.0.0 native)..."
-    "$ANDROID_HOME/build-tools/34.0.0/aidl" --lang=java \
-      -o app/src/main/java \
-      app/src/main/aidl/android/accessibilityservice/IAccessibilityProvider.aidl || \
+  # Genereaza IAccessibilityProvider + IAccessibilityEventCallback (AGP nu le
+  # genereaza din .aidl - atat pentru cloneRelease cat si pentru variantele
+  # standard/release). Fisierele sunt surse persistente in app/src/main/java si
+  # nu dispar la clean. Folosim aidl ARM64 nativ cu -I import path.
+  local aidl_native=""
+  local ver
+  for ver in 36.0.0 35.0.0 34.0.0; do
+    local cand="$ANDROID_HOME/build-tools/$ver/aidl"
+    if [[ -f "$cand" ]] && file "$cand" | grep -qE "ARM aarch64|ARM64"; then
+      aidl_native="$cand"
+      log "aidl ARM64 nativ gasit: $cand"
+      break
+    fi
+  done
+  if [[ -z "$aidl_native" ]] && [[ -f "$ANDROID_HOME/build-tools/36.0.0/aidl" ]]; then
+    aidl_native="$ANDROID_HOME/build-tools/36.0.0/aidl"
+    log "Folosesc aidl 36.0.0 (poate fi wrapper)"
+  fi
+
+  local aidl_src_dir="app/src/main/aidl"
+  local aidl_dst_dir="app/src/main/java"
+  if [[ -n "$aidl_native" ]] && [[ -d "$aidl_src_dir" ]]; then
+    log "Generare IAccessibilityProvider + IAccessibilityEventCallback ..."
+    "$aidl_native" --lang=java -I "$aidl_src_dir" -o "$aidl_dst_dir" \
+      "$aidl_src_dir/com/ai/assistance/operit/provider/IAccessibilityProvider.aidl" || \
       log "IAccessibilityProvider generation failed (non-fatal)"
+    "$aidl_native" --lang=java -I "$aidl_src_dir" -o "$aidl_dst_dir" \
+      "$aidl_src_dir/com/ai/assistance/operit/provider/IAccessibilityEventCallback.aidl" || \
+      log "IAccessibilityEventCallback generation failed (non-fatal)"
+    if [[ -f "$aidl_dst_dir/com/ai/assistance/operit/provider/IAccessibilityProvider.java" ]]; then
+      log "OK: IAccessibilityProvider.java generat ($(stat -c%s "$aidl_dst_dir/com/ai/assistance/operit/provider/IAccessibilityProvider.java") bytes)"
+    fi
+    if [[ -f "$aidl_dst_dir/com/ai/assistance/operit/provider/IAccessibilityEventCallback.java" ]]; then
+      log "OK: IAccessibilityEventCallback.java generat ($(stat -c%s "$aidl_dst_dir/com/ai/assistance/operit/provider/IAccessibilityEventCallback.java") bytes)"
+    fi
+  else
+    log "!! Nu am gasit aidl ARM64 - generare manuala SKIP (build-ul va pica daca lipsesc .java-urile)"
   fi
 }
 
