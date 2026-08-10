@@ -26,6 +26,10 @@ jobs:
     name: Candidate checks
     runs-on: ubuntu-24.04
     timeout-minutes: 240
+    env:
+      GRADLE_OPTS: "-Xmx4g -Dorg.gradle.jvmargs=-Xmx4g"
+      JAVA_OPTS: "-Xmx4g"
+      _JAVA_OPTIONS: "-Xmx4g"
 
     steps:
       - name: Checkout merge candidate
@@ -35,6 +39,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: false
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
@@ -400,7 +409,9 @@ jobs:
           if [[ "$INSTRUMENTATION_REQUIRED" == "true" ]]; then
             tasks+=(":app:compileDebugAndroidTestKotlin" ":app:compileDebugAndroidTestJavaWithJavac")
           fi
-          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon
+          # Explicit heap override: gradle.properties is tuned for ARM64 phone (4g);
+          # CI runners need more heap for the full Kotlin compile (OOM fix, PR #9).
+          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC"
 
       - name: Run full Android checks
         if: steps.plan.outputs.android_full == 'true'
@@ -410,8 +421,13 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x ./gradlew
-          tasks=("assembleStandardDebug" ":app:testCloneDebugUnitTest")
+          # Single build only; do NOT run Standard and Clone flavors together.
+          # Explicit heap override: gradle.properties is tuned for ARM64 phone (4g);
+          # CI runners need more heap for the full Kotlin compile (OOM fix, PR #9).
+          ./gradlew :app:compileStandardDebugKotlin --no-daemon --max-workers=2 \
+            -Dkotlin.daemon.jvmargs="-Xmx3g" \
+            --stacktrace
           if [[ "$INSTRUMENTATION_REQUIRED" == "true" ]]; then
-            tasks+=(":app:compileDebugAndroidTestKotlin" ":app:compileDebugAndroidTestJavaWithJavac")
+            ./gradlew :app:compileDebugAndroidTestKotlin :app:compileDebugAndroidTestJavaWithJavac \
+              --no-daemon --max-workers=2 -Dkotlin.daemon.jvmargs="-Xmx3g" --stacktrace
           fi
-          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon
