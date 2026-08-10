@@ -158,7 +158,7 @@ download_file() {
   local dest="$2"
   local max_retries=3
   local retry_count=0
-  
+
   while [[ $retry_count -lt $max_retries ]]; do
     if command_exists curl; then
       if curl -L --connect-timeout 30 --max-time 120 --retry 2 --retry-delay 3 "$url" -o "$dest"; then
@@ -172,12 +172,12 @@ download_file() {
       log "curl or wget is required to download files."
       exit 1
     fi
-    
+
     retry_count=$((retry_count + 1))
     log "Download failed, retrying ($retry_count/$max_retries)..."
     sleep 2
   done
-  
+
   log "Failed to download file after $max_retries attempts: $url"
   return 1
 }
