@@ -1220,67 +1220,46 @@ Java_com_ai_assistance_llama_LlamaNative_nativeGenerateStream(JNIEnv * env, jcla
 
     int32_t n_past = 0;
 
-    // Evaluate prompt.
-    // IMPORTANT: the prompt MUST be decoded in chunks of at most n_batch tokens,
-    // otherwise llama_decode() aborts (GGML_ASSERT n_tokens_all <= n_batch -> ggml_abort).
-    // This was the root cause of native crashes (SIGABRT in llama_context::decode)
-    // when the prompt (chat history + tools + system) exceeded the batch size.
+    // Evaluate prompt
+    llama_batch batch = llama_batch_get_one(promptTokens.data(), static_cast<int32_t>(promptTokens.size()));
+    // llama_batch_get_one() may leave batch.logits == nullptr (default behavior is: only last token outputs logits)
+    // so never write to it unless it's allocated.
+    if (batch.logits != nullptr && batch.n_tokens > 0) {
+        batch.logits[batch.n_tokens - 1] = 1;
+    }
+
     if (llama_model_has_encoder(session->model)) {
-        // Encoder model: encode in batches, then decode the single decoder-start token.
-        const int32_t nBatch = static_cast<int32_t>(llama_n_batch(session->ctx));
-        const int32_t nTokens = static_cast<int32_t>(promptTokens.size());
-        for (int32_t off = 0; off < nTokens; off += nBatch) {
-            const int32_t chunk = std::min<int32_t>(nBatch, nTokens - off);
-            llama_batch batch = llama_batch_get_one(promptTokens.data() + off, chunk);
-            if (batch.logits != nullptr && chunk > 0) {
-                batch.logits[chunk - 1] = 1;
-            }
-            if (llama_encode(session->ctx, batch) != 0) {
-                LOGE("llama_encode failed at offset %d", off);
-                return JNI_FALSE;
-            }
+        if (llama_encode(session->ctx, batch) != 0) {
+            LOGE("llama_encode failed");
+            return JNI_FALSE;
         }
+
         llama_token decoder_start_token_id = llama_model_decoder_start_token(session->model);
         if (decoder_start_token_id == -1) {
             decoder_start_token_id = llama_vocab_bos(vocab);
         }
-        llama_batch batch = llama_batch_get_one(&decoder_start_token_id, 1);
+
+        batch = llama_batch_get_one(&decoder_start_token_id, 1);
         if (batch.logits != nullptr) {
             batch.logits[0] = 1;
         }
-        int32_t ret = llama_decode(session->ctx, batch);
-        if (ret != 0 && ret != 1) {
-            if (ret == 2) {
-                LOGI("decode aborted (decoder start)");
-            } else {
-                LOGE("llama_decode failed for decoder start ret=%d", ret);
-            }
-            return JNI_FALSE;
-        }
-        n_past = 1;
-    } else {
-        // Decoder-only model: chunked prefill, logits only on the last chunk's last token.
-        const int32_t nBatch = static_cast<int32_t>(llama_n_batch(session->ctx));
-        const int32_t nTokens = static_cast<int32_t>(promptTokens.size());
-        for (int32_t off = 0; off < nTokens; off += nBatch) {
-            const int32_t chunk = std::min<int32_t>(nBatch, nTokens - off);
-            llama_batch batch = llama_batch_get_one(promptTokens.data() + off, chunk);
-            if (batch.logits != nullptr && chunk > 0) {
-                batch.logits[chunk - 1] = 1;
-            }
-            int32_t ret = llama_decode(session->ctx, batch);
-            if (ret != 0 && ret != 1) {
-                // 1 is a warning; 2 is aborted
-                if (ret == 2) {
-                    LOGI("decode aborted (prompt chunk at %d)", off);
-                } else {
-                    LOGE("llama_decode failed for prompt chunk at %d ret=%d", off, ret);
-                }
-                return JNI_FALSE;
-            }
-        }
-        n_past = nTokens;
     }
+
+    int32_t ret = llama_decode(session->ctx, batch);
+    if (ret != 0 && ret != 1) {
+        // 1 is a warning; 2 is aborted
+        if (ret == 2) {
+            LOGI("decode aborted (prompt)");
+        } else {
+            LOGE("llama_decode failed for prompt ret=%d", ret);
+        }
+        return JNI_FALSE;
+    }
+
+    // n_past for subsequent single-token decoding
+    n_past = llama_model_has_encoder(session->model)
+        ? 1
+        : static_cast<int32_t>(promptTokens.size());
 
     prefillToolCallGenerationPrompt(session);
 
