@@ -87,3 +87,11 @@ tmp
 temp
 .tmp
 .temp
+
+# Backup-uri locale / artefacte build (NU se comite pe GitHub)
+apk-backup/
+logs-backup/
+
+# Fisiere AIDL generate automat (build intermediate)
+app/src/main/java/com/ai/assistance/operit/provider/IAccessibilityProvider.java
+app/src/main/java/com/ai/assistance/operit/provider/IAccessibilityEventCallback.java
