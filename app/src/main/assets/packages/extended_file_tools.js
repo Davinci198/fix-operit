@@ -3,8 +3,6 @@
     "name": "extended_file_tools",
 
     "display_name": {
-        "ro": "Instrumente extinse de fișiere",
-        "ro": "Operare fișiere: verificare existență, mutare, copiere, dezarhivare/arhivare, deschidere și partajare.",
         "zh": "增强文件工具",
         "en": "Extended File Tools"
     },

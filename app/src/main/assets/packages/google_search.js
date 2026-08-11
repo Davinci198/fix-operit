@@ -3,8 +3,6 @@
     "name": "google_search",
 
     "display_name": {
-        "ro": "Căutare Google",
-        "ro": "Căutare Google Web și Google Scholar pentru articole academice.",
         "zh": "Google 搜索",
         "en": "Google Search"
     },

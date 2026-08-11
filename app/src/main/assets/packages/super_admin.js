@@ -4,8 +4,6 @@ METADATA
     "name": "super_admin",
 
     "display_name": {
-        "ro": "Super Administrator",
-        "ro": "Set de instrumente avansat pentru terminal și operare Shell în mediu Ubuntu sau sistem Android.",
         "zh": "超级管理员",
         "en": "Super Admin"
     },

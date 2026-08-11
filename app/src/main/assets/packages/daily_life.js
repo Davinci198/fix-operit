@@ -4,8 +4,6 @@ METADATA
     "name": "daily_life",
 
     "display_name": {
-        "ro": "Instrumente pentru viața de zi cu zi",
-        "ro": "Data/ora, stare baterie, vreme, mementouri, alarme, SMS, apeluri și comutatoare Wi-Fi/Lanternă.",
         "zh": "日常生活工具包",
         "en": "Daily Life Toolkit"
     },

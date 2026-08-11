@@ -3,8 +3,6 @@
     "name": "system_tools",
 
     "display_name": {
-        "ro": "Instrumente de sistem",
-        "ro": "Gestionare setări, instalare/dezinstalare aplicații, notificări, servicii de localizare și informații dispozitiv.",
         "zh": "系统工具",
         "en": "System Tools"
     },

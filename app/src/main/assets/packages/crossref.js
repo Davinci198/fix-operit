@@ -2,8 +2,6 @@
 {
     "name": "crossref",
     "display_name": {
-        "ro": "Interogare literatură Crossref",
-        "ro": "Căutare articole academice și metadate prin DOI, cuvinte cheie sau autori.",
         "zh": "Crossref 学术文献查询",
         "en": "Crossref Academic Literature Search"
     },

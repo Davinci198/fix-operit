@@ -2,8 +2,6 @@
 {
   name: code_runner
   display_name: {
-    ro: "Executant de cod",
-    ro: "Execuție de cod în mai multe limbaje (JavaScript, Python, Ruby, Go, Rust, C/C++).",
     zh: "代码运行器"
     en: "Code Runner"
   }
