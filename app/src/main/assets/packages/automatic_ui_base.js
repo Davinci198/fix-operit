@@ -3,6 +3,8 @@
     "name": "Automatic_ui_base",
 
     "display_name": {
+        "ro": "Automatizare UI de bază",
+        "ro": "Instrumente fundamentale de automatizare a ecranului.",
         "zh": "自动化基础工具",
         "en": "Automation Base Tools"
     },

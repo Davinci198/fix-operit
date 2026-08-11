@@ -3,6 +3,8 @@
     "name": "ffmpeg",
 
     "display_name": {
+        "ro": "FFmpeg Multimedia",
+        "ro": "Instrumente multimedia FFmpeg pentru procesare audio și video (conversie, extragere, tăiere).",
         "zh": "FFmpeg 工具集",
         "en": "FFmpeg Toolkit"
     },

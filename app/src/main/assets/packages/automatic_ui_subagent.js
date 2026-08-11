@@ -3,7 +3,9 @@
     name: "Automatic_ui_subagent"
 
     display_name: {
-      zh: "自动化AutoGLM子代理"
+      ro: "Sub-agent automatizare UI",
+    ro: "Planificare și executare automată a operațiilor de pe ecran (clic, glisare, introducere text).",
+    zh: "自动化AutoGLM子代理"
       en: "Automated AutoGLM Sub-agent"
     }description: {
         zh: '''
