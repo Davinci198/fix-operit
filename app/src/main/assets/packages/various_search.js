@@ -3,6 +3,8 @@
   name: various_search
 
   display_name: {
+    ro: "Căutare multi-platformă",
+    ro: "Căutare pe mai multe platforme (inclusiv imagini) de pe Bing, Baidu, Sogou, Quark etc.",
     zh: "多平台搜索"
     en: "Multi-Platform Search"
   }

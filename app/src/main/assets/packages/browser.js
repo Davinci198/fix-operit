@@ -2,6 +2,8 @@
 {
     "name": "browser",
     "display_name": {
+        "ro": "Automatizare browser",
+        "ro": "Automatizare browser web compatibilă Playwright pentru navigare și extragere date.",
         "zh": "Browser 自动化操作",
         "en": "Browser Automation"
     },

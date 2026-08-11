@@ -3,6 +3,8 @@
     "name": "extended_http_tools",
 
     "display_name": {
+        "ro": "Instrumente HTTP extinse",
+        "ro": "Încărcare de fișiere și cereri directe de rețea HTTP GET/POST.",
         "zh": "增强 HTTP 工具",
         "en": "Extended HTTP Tools"
     },

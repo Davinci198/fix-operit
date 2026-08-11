@@ -3,6 +3,8 @@
   name: "workflow"
 
   display_name: {
+    ro: "Manager de fluxuri de lucru",
+    ro: "Gestionare fluxuri de lucru: creare, interogare, actualizare, activare, dezactivare și declanșare.",
     zh: "工作流管理"
     en: "Workflow Management"
   }

@@ -4,6 +4,8 @@ METADATA
     "name": "duckduckgo",
 
     "display_name": {
+        "ro": "Căutare DuckDuckGo",
+        "ro": "Căutare web și extragere de conținut folosind DuckDuckGo.",
         "zh": "DuckDuckGo 搜索",
         "en": "DuckDuckGo Search"
     },
