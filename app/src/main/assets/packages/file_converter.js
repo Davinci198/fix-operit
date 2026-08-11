@@ -3,6 +3,8 @@
     "name": "file_converter",
 
     "display_name": {
+        "ro": "Convertor de fișiere",
+        "ro": "Conversie completă a formatelor de fișiere (audio/video, imagini și documente PDF/Markdown/DOCX).",
         "zh": "文件转换器",
         "en": "File Converter"
     },

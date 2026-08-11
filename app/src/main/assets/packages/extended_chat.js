@@ -3,6 +3,8 @@
     "name": "extended_chat",
 
     "display_name": {
+        "ro": "Instrumente de chat extinse",
+        "ro": "Căutare, redenumire și gestionare conversații, citire mesaje și legare carduri de personaj.",
         "zh": "增强对话",
         "en": "Extended Chat"
     },

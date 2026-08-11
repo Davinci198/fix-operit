@@ -3,6 +3,8 @@
   name: time
 
   display_name: {
+    ro: "Instrumente de timp",
+    ro: "Furnizează funcționalități legate de oră și fus orar.",
     zh: "时间"
     en: "Time"
   }

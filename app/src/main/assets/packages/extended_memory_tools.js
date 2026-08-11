@@ -3,6 +3,8 @@
     "name": "extended_memory_tools",
 
     "display_name": {
+        "ro": "Extensie memorie",
+        "ro": "Creare, actualizare, ștergere și interogare a amintirilor și preferințelor utilizatorului.",
         "zh": "增强记忆工具",
         "en": "Extended Memory Tools"
     },
