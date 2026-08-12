@@ -272,7 +272,7 @@ ensure_android_tools() {
   export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
   log "Installing Android SDK packages"
   yes | sdkmanager --licenses >/dev/null || true
-  sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+  sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" "ndk;27.0.12077973"
 }
 
 ensure_gradle() {
@@ -361,25 +361,52 @@ restore_gradle_properties() {
 # any settings specified in this file.
 # For more details on how to configure your build environment visit
 # http://www.gradle.org/docs/current/userguide/build_environment.html
-# Specifies the JVM arguments used for the daemon process.
-# The setting is particularly useful for tweaking memory settings.
-org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-# When configured, Gradle will run in incubating parallel mode.
-# This option should only be used with decoupled projects. For more details, visit
-# https://developer.android.com/r/tools/gradle-multi-project-decoupled-projects
-# org.gradle.parallel=true
-# AndroidX package structure to make it clearer which packages are bundled with the
-# Android operating system, and which are packaged with your app's APK
-# https://developer.android.com/topic/libraries/support-library/androidx-rn
+
+# ============================================================================
+# JVM & Daemon Configuration - Critical for native module builds (MNN monolith)
+# ============================================================================
+# Main Gradle daemon JVM arguments (6GB heap + 1.5GB metaspace for heavy CMake)
+org.gradle.jvmargs=-Xmx6144m -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=1536m
+
+# Kotlin daemon for faster compilation (3GB heap)
+kotlin.daemon.jvmargs=-Xmx3072m -Dfile.encoding=UTF-8
+
+# ============================================================================
+# Parallel & Build Cache Configuration
+# ============================================================================
+# Enable parallel builds for faster compilation (with decoupled projects)
+org.gradle.parallel=true
+
+# Max workers for CMake/NDK parallel compilation (balance: CPU cores / memory)
+org.gradle.workers.max=4
+
+# Build cache for incremental builds (avoid recompiling unchanged code)
+org.gradle.caching=true
+
+# Configure on demand: only build requested projects (faster for multi-module)
+org.gradle.configureondemand=true
+
+# ============================================================================
+# Android Build Tools Configuration
+# ============================================================================
+# AndroidX support (required for modern Android libraries)
 android.useAndroidX=true
-# Kotlin code style for this project: "official" or "obsolete":
+
+# Kotlin code style
 kotlin.code.style=official
-# Enables namespacing of each library's R class so that its R class includes only the
-# resources declared in the library itself and none from the library's dependencies,
-# thereby reducing the size of the R class for that library
+
+# Namespacing R classes per library (reduces APK size)
 android.nonTransitiveRClass=true
 
+# ============================================================================
+# NDK & CMake Configuration
+# ============================================================================
+# Optimize CMake cache directory (avoid proot issues)
+android.builder.cmake.inCMakeCacheDir=false
+
+# ============================================================================
 # Proot/Termux Compatibility Settings
+# ============================================================================
 # Disable AAPT2 daemon mode to prevent "Daemon startup failed" errors in proot environment
 android.aapt2.process.daemon=false
 EOF
