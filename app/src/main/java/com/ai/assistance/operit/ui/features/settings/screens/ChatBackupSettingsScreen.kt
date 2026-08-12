@@ -96,8 +96,6 @@ import com.ai.assistance.operit.ui.features.settings.components.MemoryOperation
 import com.ai.assistance.operit.ui.features.settings.components.ModelConfigExportWarningDialog
 import com.ai.assistance.operit.ui.features.settings.components.ModelConfigManagementCard
 import com.ai.assistance.operit.ui.features.settings.components.ModelConfigOperation
-import com.ai.assistance.operit.ui.features.settings.components.ProotManagementCard
-import com.ai.assistance.operit.ui.features.settings.components.ProotOperation
 import com.ai.assistance.operit.ui.features.settings.components.ManagementButton
 import com.ai.assistance.operit.ui.features.settings.components.OperationProgressView
 import com.ai.assistance.operit.ui.features.settings.components.OperationResultCard
@@ -165,10 +163,6 @@ fun ChatBackupSettingsScreen() {
     var memoryOperationMessage by remember { mutableStateOf("") }
     var modelConfigOperationState by remember { mutableStateOf(ModelConfigOperation.IDLE) }
     var modelConfigOperationMessage by remember { mutableStateOf("") }
-    var prootOperationState by remember { mutableStateOf(ProotOperation.IDLE) }
-    var prootOperationMessage by remember { mutableStateOf("") }
-    var pendingProotRestoreUri by remember { mutableStateOf<Uri?>(null) }
-    var showProotRestoreConfirmDialog by remember { mutableStateOf(false) }
     var roomDbBackupOperationState by remember { mutableStateOf(RoomDatabaseBackupOperation.IDLE) }
     var roomDbBackupOperationMessage by remember { mutableStateOf("") }
     var roomDbRestoreOperationState by remember { mutableStateOf(RoomDatabaseRestoreOperation.IDLE) }
@@ -466,18 +460,6 @@ fun ChatBackupSettingsScreen() {
             }
         }
 
-    val prootFilePickerLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    pendingProotRestoreUri = uri
-                    showProotRestoreConfirmDialog = true
-                }
-            }
-        }
-
     val activeProfileName =
         allProfiles.find { it.id == activeProfileId }?.name
             ?: stringResource(R.string.default_profile_name)
@@ -675,78 +657,6 @@ fun ChatBackupSettingsScreen() {
                         type = "application/json"
                     }
                     modelConfigFilePickerLauncher.launch(intent)
-                }
-            )
-        }
-        item {
-            ProotManagementCard(
-                operationState = prootOperationState,
-                operationMessage = prootOperationMessage,
-                onExport = {
-                    scope.launch {
-                        prootOperationState = ProotOperation.EXPORTING
-                        prootOperationMessage = ""
-                        try {
-                            val prootRoot = File(
-                                context.filesDir,
-                                "usr/var/lib/proot-distro/installed-rootfs/ubuntu"
-                            )
-                            if (!prootRoot.exists() || !File(prootRoot, ".operit_installed_ok").exists()) {
-                                prootOperationState = ProotOperation.FAILED
-                                prootOperationMessage = context.getString(R.string.backup_proot_not_installed)
-                            } else {
-                                val exportDir = OperitBackupDirs.backupRootDir()
-                                val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault())
-                                val timestamp = dateFormat.format(Date())
-                                val exportFile = File(exportDir, "proot_rootfs_$timestamp.tar.zst")
-                                prootOperationMessage = context.getString(
-                                    R.string.backup_proot_export_target,
-                                    exportFile.absolutePath
-                                )
-                                val result = withContext(Dispatchers.IO) {
-                                    val cmd = arrayOf(
-                                        "tar", "--zstd", "-cf", exportFile.absolutePath,
-                                        "--exclude=proc", "--exclude=sys", "--exclude=dev",
-                                        "--exclude=tmp", "--exclude=sdcard", "--exclude=storage",
-                                        "--exclude=mnt", "--exclude=data/data/com.ai.assistance.operit/cache",
-                                        "-C", prootRoot.parentFile.absolutePath, prootRoot.name
-                                    )
-                                    try {
-                                        val process = ProcessBuilder(*cmd)
-                                            .redirectErrorStream(true)
-                                            .start()
-                                        val exitCode = process.waitFor()
-                                        if (exitCode == 0 && exportFile.exists() && exportFile.length() > 0) {
-                                            ProotOperation.EXPORTED
-                                        } else {
-                                            ProotOperation.FAILED
-                                        }
-                                    } catch (e: Exception) {
-                                        ProotOperation.FAILED
-                                    }
-                                }
-                                prootOperationState = result
-                                if (result == ProotOperation.FAILED && prootOperationMessage.isBlank()) {
-                                    prootOperationMessage = context.getString(R.string.backup_proot_export_failed)
-                                }
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            prootOperationState = ProotOperation.FAILED
-                            prootOperationMessage = context.getString(
-                                R.string.backup_export_failed_with_reason,
-                                e.localizedMessage ?: e.toString()
-                            )
-                        }
-                    }
-                },
-                onImport = {
-                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "*/*"
-                        putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/x-tar", "application/gzip", "application/zip"))
-                    }
-                    prootFilePickerLauncher.launch(intent)
                 }
             )
         }
@@ -1425,132 +1335,6 @@ fun ChatBackupSettingsScreen() {
                     R.string.backup_export_result_success,
                     exportedModelConfigPath
                 )
-            }
-        )
-    }
-
-    if (showProotRestoreConfirmDialog) {
-        val targetName = pendingProotRestoreUri?.lastPathSegment ?: "-"
-
-        AlertDialog(
-            onDismissRequest = {
-                showProotRestoreConfirmDialog = false
-                pendingProotRestoreUri = null
-            },
-            title = { Text(stringResource(R.string.backup_proot_restore_confirm_title)) },
-            text = { Text(stringResource(R.string.backup_proot_restore_confirm_message, targetName)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showProotRestoreConfirmDialog = false
-                        val uri = pendingProotRestoreUri
-                        pendingProotRestoreUri = null
-                        if (uri != null) {
-                            scope.launch {
-                                prootOperationState = ProotOperation.IMPORTING
-                                prootOperationMessage = ""
-                                try {
-                                    val result = withContext(Dispatchers.IO) {
-                                        try {
-                                            val prootRoot = File(
-                                                context.filesDir,
-                                                "usr/var/lib/proot-distro/installed-rootfs/ubuntu"
-                                            )
-                                            val tmpDir = File(prootRoot.parentFile, "ubuntu.import.tmp")
-                                            if (tmpDir.exists()) {
-                                                tmpDir.deleteRecursively()
-                                            }
-                                            tmpDir.mkdirs()
-                                            val input = context.contentResolver.openInputStream(uri)
-                                                ?: return@withContext ProotOperation.FAILED
-                                            input.use { ins ->
-                                                val cmd = arrayOf(
-                                                    "tar", "--zstd", "-xf", "-",
-                                                    "-C", tmpDir.absolutePath
-                                                )
-                                                val process = ProcessBuilder(*cmd)
-                                                    .redirectErrorStream(true)
-                                                    .start()
-                                                val buffered = ins.buffered()
-                                                buffered.use { it.copyTo(process.outputStream) }
-                                                process.outputStream.close()
-                                                val exitCode = process.waitFor()
-                                                if (exitCode != 0) {
-                                                    return@withContext ProotOperation.FAILED
-                                                }
-                                            }
-                                            // Dacă arhiva conține folder "ubuntu", mutăm conținutul la rădăcină
-                                            val nested = File(tmpDir, "ubuntu")
-                                            if (nested.exists() && nested.isDirectory) {
-                                                nested.listFiles()?.forEach { f ->
-                                                    val dest = File(tmpDir, f.name)
-                                                    if (dest.exists()) {
-                                                        dest.deleteRecursively()
-                                                    }
-                                                    if (!f.renameTo(dest)) {
-                                                        return@withContext ProotOperation.FAILED
-                                                    }
-                                                }
-                                            }
-                                            val okFile = File(tmpDir, ".operit_installed_ok")
-                                            if (!okFile.exists()) {
-                                                okFile.writeText("ok")
-                                            }
-                                            // Înlocuim rootfs-ul vechi cu cel nou
-                                            val backupOld = File(prootRoot.parentFile, "ubuntu.old")
-                                            if (backupOld.exists()) {
-                                                backupOld.deleteRecursively()
-                                            }
-                                            if (prootRoot.exists()) {
-                                                if (!prootRoot.renameTo(backupOld)) {
-                                                    return@withContext ProotOperation.FAILED
-                                                }
-                                            }
-                                            if (!tmpDir.renameTo(prootRoot)) {
-                                                // rollback
-                                                if (backupOld.exists()) {
-                                                    backupOld.renameTo(prootRoot)
-                                                }
-                                                return@withContext ProotOperation.FAILED
-                                            }
-                                            if (backupOld.exists()) {
-                                                backupOld.deleteRecursively()
-                                            }
-                                            ProotOperation.IMPORTED
-                                        } catch (e: Exception) {
-                                            e.printStackTrace()
-                                            ProotOperation.FAILED
-                                        }
-                                    }
-                                    prootOperationState = result
-                                    prootOperationMessage = if (result == ProotOperation.IMPORTED) {
-                                        context.getString(R.string.backup_proot_restart_required, targetName)
-                                    } else {
-                                        context.getString(
-                                            R.string.backup_import_failed_with_reason,
-                                            targetName
-                                        )
-                                    }
-                                } catch (e: Exception) {
-                                    prootOperationState = ProotOperation.FAILED
-                                    prootOperationMessage = e.localizedMessage ?: e.toString()
-                                }
-                            }
-                        }
-                    }
-                ) {
-                    Text(stringResource(R.string.backup_room_db_restore_confirm_action))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showProotRestoreConfirmDialog = false
-                        pendingProotRestoreUri = null
-                    }
-                ) {
-                    Text(stringResource(R.string.backup_room_db_restore_cancel_action))
-                }
             }
         )
     }

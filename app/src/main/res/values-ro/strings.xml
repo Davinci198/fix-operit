@@ -5640,17 +5640,6 @@ Acum poate fi utilizat în interfața de dialog AutoGLM A devenit un model.</str
     <string name="backup_delete_success">Ștergerea s-a efectuat cu succes</string>
     <string name="backup_operation_failed">Operațiunea a eșuat</string>
 
-    <string name="backup_proot_title">Mediu Proot (Ubuntu)</string>
-    <string name="backup_proot_subtitle">Export/Import complet al mediului Linux Proot</string>
-    <string name="backup_proot_desc">Include întregul sistem de fișiere Ubuntu (toate pachetele instalate, SDK-uri, proiecte din /root). Exportul poate ocupa zeci de GB. Importul înlocuiește mediul curent și necesită repornirea aplicației.</string>
-    <string name="backup_proot_exporting">Se exportă mediul Proot...</string>
-    <string name="backup_proot_importing">Se importă mediul Proot...</string>
-    <string name="backup_proot_not_installed">Mediul Proot nu este instalat.</string>
-    <string name="backup_proot_export_failed">Exportul mediului Proot a eșuat.</string>
-    <string name="backup_proot_export_target">Se exportă în: %1$s</string>
-    <string name="backup_proot_restore_confirm_title">Import mediu Proot</string>
-    <string name="backup_proot_restore_confirm_message">Sigur doriți să importați mediul Proot din „%1$s”? Mediul actual va fi înlocuit complet. Această operațiune poate dura mult timp.</string>
-    <string name="backup_proot_restart_required">Import reușit: %1$s. Reporniți aplicația pentru ca noul mediu să devină activ.</string>
     <string name="backup_faq_title">Întrebări frecvente</string>
     <string name="backup_faq_subtitle">Aflați ce trebuie să aveți în vedere atunci când efectuați copii de siguranță și importuri, pentru a evita greșelile frecvente.</string>
     <string name="backup_faq_why">De ce este necesar să se facă o copie de rezervă a datelor?</string>

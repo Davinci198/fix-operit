@@ -37,11 +37,3 @@ enum class ModelConfigOperation {
     IMPORTED,
     FAILED
 }
-enum class ProotOperation {
-    IDLE,
-    EXPORTING,
-    EXPORTED,
-    IMPORTING,
-    IMPORTED,
-    FAILED
-}
