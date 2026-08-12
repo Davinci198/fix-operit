@@ -5233,6 +5233,17 @@
     <string name="backup_delete_success">Delete Successful</string>
     <string name="backup_operation_failed">Operation Failed</string>
     
+    <string name="backup_proot_title">Proot Environment (Ubuntu)</string>
+    <string name="backup_proot_subtitle">Full export/import of the Linux Proot environment</string>
+    <string name="backup_proot_desc">Includes the entire Ubuntu filesystem (all installed packages, SDKs, projects in /root). Export can take tens of GB. Import replaces the current environment and requires app restart.</string>
+    <string name="backup_proot_exporting">Exporting Proot environment...</string>
+    <string name="backup_proot_importing">Importing Proot environment...</string>
+    <string name="backup_proot_not_installed">Proot environment is not installed.</string>
+    <string name="backup_proot_export_failed">Failed to export Proot environment.</string>
+    <string name="backup_proot_export_target">Exporting to: %1$s</string>
+    <string name="backup_proot_restore_confirm_title">Import Proot environment</string>
+    <string name="backup_proot_restore_confirm_message">Are you sure you want to import the Proot environment from "%1$s"? The current environment will be completely replaced. This operation may take a long time.</string>
+    <string name="backup_proot_restart_required">Import successful: %1$s. Restart the app for the new environment to take effect.</string>
     <string name="backup_faq_title">FAQ</string>
     <string name="backup_faq_subtitle">Learn about backup and import precautions to avoid common issues.</string>
     <string name="backup_faq_why">Why backup data?</string>

@@ -494,6 +494,79 @@ fun OperationProgressView(message: String) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ProotManagementCard(
+    operationState: ProotOperation,
+    operationMessage: String,
+    onExport: () -> Unit,
+    onImport: () -> Unit
+) {
+    val prootTitle = stringResource(R.string.backup_proot_title)
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            SectionHeader(
+                title = prootTitle,
+                subtitle = stringResource(R.string.backup_proot_subtitle),
+                icon = Icons.Default.Storage
+            )
+            Text(
+                text = stringResource(R.string.backup_proot_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ManagementButton(
+                    text = stringResource(R.string.backup_export),
+                    icon = Icons.Default.CloudDownload,
+                    onClick = onExport,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+                ManagementButton(
+                    text = stringResource(R.string.backup_import),
+                    icon = Icons.Default.CloudUpload,
+                    onClick = onImport,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+            }
+            AnimatedVisibility(visible = operationState != ProotOperation.IDLE) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    when (operationState) {
+                        ProotOperation.EXPORTING ->
+                            OperationProgressView(message = stringResource(R.string.backup_proot_exporting))
+                        ProotOperation.IMPORTING ->
+                            OperationProgressView(message = stringResource(R.string.backup_proot_importing))
+                        ProotOperation.EXPORTED -> OperationResultCard(
+                            title = stringResource(R.string.backup_export_success),
+                            message = operationMessage,
+                            icon = Icons.Default.CloudDownload
+                        )
+                        ProotOperation.IMPORTED -> OperationResultCard(
+                            title = stringResource(R.string.backup_import_success),
+                            message = operationMessage,
+                            icon = Icons.Default.CloudUpload
+                        )
+                        ProotOperation.FAILED -> OperationResultCard(
+                            title = stringResource(R.string.backup_operation_failed),
+                            message = operationMessage,
+                            icon = Icons.Default.Info,
+                            isError = true
+                        )
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun FaqCard() {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
