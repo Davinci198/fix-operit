@@ -43,7 +43,7 @@ jobs:
   build:
     name: Build Clone APK (Fixed)
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 240
 
     steps:
       - uses: actions/checkout@v5
