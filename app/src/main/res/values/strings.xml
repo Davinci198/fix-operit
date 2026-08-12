@@ -5677,6 +5677,17 @@
     <string name="backup_delete_success">清除成功</string>
     <string name="backup_operation_failed">操作失败</string>
     
+    <string name="backup_proot_title">Proot 环境 (Ubuntu)</string>
+    <string name="backup_proot_subtitle">Linux Proot 环境完整导出/导入</string>
+    <string name="backup_proot_desc">包含整个 Ubuntu 文件系统（所有已安装的软件包、SDK、/root 下的项目）。导出可能占用数十 GB。导入将完全替换当前环境，需要重启应用。</string>
+    <string name="backup_proot_exporting">正在导出 Proot 环境...</string>
+    <string name="backup_proot_importing">正在导入 Proot 环境...</string>
+    <string name="backup_proot_not_installed">Proot 环境尚未安装。</string>
+    <string name="backup_proot_export_failed">Proot 环境导出失败。</string>
+    <string name="backup_proot_export_target">正在导出到: %1$s</string>
+    <string name="backup_proot_restore_confirm_title">导入 Proot 环境</string>
+    <string name="backup_proot_restore_confirm_message">确定要从 "%1$s" 导入 Proot 环境吗？当前环境将被完全替换。此操作可能需要很长时间。</string>
+    <string name="backup_proot_restart_required">导入成功: %1$s。请重启应用以启用新环境。</string>
     <string name="backup_faq_title">常见问题</string>
     <string name="backup_faq_subtitle">了解备份与导入时的注意事项，避免常见误区。</string>
     <string name="backup_faq_why">为什么要备份数据？</string>
