@@ -1,6 +1,18 @@
 name: Android Build - Fixed Clone
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - 'build.gradle*'
+      - 'settings.gradle*'
+      - 'gradle.properties'
+      - 'web-chat/**'
+      - 'tools/**'
+      - '.github/workflows/android-build-clone.yml'
   workflow_dispatch:
     inputs:
       gradle_task:
@@ -169,7 +181,7 @@ jobs:
           TASK: ${{ inputs.gradle_task }}
         run: |
           set -euo pipefail
-          if [ -z "${TASK:-}" ]; then TASK=":app:assembleCloneRelease"; fi
+          if [ -z "${TASK:-}" ]; then TASK=":app:assembleCloneDebug"; fi
           echo "Building $TASK as com.ai.assistance.operit.clone"
           chmod +x ./gradlew
           # shellcheck disable=SC2086
