@@ -142,24 +142,22 @@ jobs:
           rustup target add --toolchain 1.88.0 aarch64-linux-android
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
-      - name: FIX CRITICAL - Remove qwen3_tts_demo
+            - name: FIX CRITICAL - Remove qwen3_tts_demo
         run: |
-          echo "Patching MNN to remove broken qwen3_tts_demo..."
-          # Sterge din toate CMakeLists.txt
-          grep -r "qwen3_tts_demo" llm --include="*.txt" --include="*.cmake" || true
-          find llm -name "CMakeLists.txt" -exec sed -i '/qwen3_tts_demo/d' {} \;
-          find llm -name "*.cmake" -exec sed -i '/qwen3_tts_demo/d' {} \;
-          
-          # Creeaza header fake ca backup
-          mkdir -p llm/mnn/transformers/llm/engine/include/audio
-          echo "#pragma once
-          namespace MNN{namespace Transformer{struct AudioInfo{};}}" > llm/mnn/transformers/llm/engine/include/audio/audio.hpp
-          
-          # Curata tot cache-ul MNN
+          echo "Patching MNN broken demo..."
+          TARGET="llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp"
+          # 1. Goleste fisierul - asa compileaza indiferent de header
+          if [ -f "$TARGET" ]; then
+            echo "int main(){return 0;}" > "$TARGET"
+            echo "Patched $TARGET to dummy"
+          fi
+          # 2. Backup - sterge orice referinta din CMakeLists
+          find llm/mnn -name "CMakeLists.txt" -exec sed -i '/qwen3_tts_demo/d' {} \;
+          # 3. Curata cache-urile corupte
           rm -rf llm/mnn/.cxx
           rm -rf app/.cxx
           rm -rf app/build
-          echo "Fixed!"
+          echo "Fixed! qwen3_tts_demo is now dummy"
       # FIX: Clean corrupted CXX cache
       - name: Clean corrupted CXX cache (fix sherpa_ncnn / wamr)
         run: |
