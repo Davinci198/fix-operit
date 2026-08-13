@@ -72,7 +72,6 @@ jobs:
       - name: Fix Gradle mirror + wrapper
         run: |
           cat gradle/wrapper/gradle-wrapper.properties
-          # Force official URL
           sed -i 's|https://mirrors.aliyun.com.*|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
           if grep -q "aliyun" gradle/wrapper/gradle-wrapper.properties; then
             printf "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n" > gradle/wrapper/gradle-wrapper.properties
@@ -94,7 +93,6 @@ jobs:
 
       - uses: android-actions/setup-android@v4
 
-      # IMPORTANT: Do NOT cache app/.cxx - it corrupts sherpa_ncnn/wamr
       - name: Cache Gradle
         uses: actions/cache@v5
         with:
@@ -142,23 +140,21 @@ jobs:
           rustup target add --toolchain 1.88.0 aarch64-linux-android
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
-            - name: FIX CRITICAL - Remove qwen3_tts_demo
+
+      - name: FIX CRITICAL - Remove qwen3_tts_demo
         run: |
           echo "Patching MNN broken demo..."
           TARGET="llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp"
-          # 1. Goleste fisierul - asa compileaza indiferent de header
           if [ -f "$TARGET" ]; then
             echo "int main(){return 0;}" > "$TARGET"
             echo "Patched $TARGET to dummy"
           fi
-          # 2. Backup - sterge orice referinta din CMakeLists
           find llm/mnn -name "CMakeLists.txt" -exec sed -i '/qwen3_tts_demo/d' {} \;
-          # 3. Curata cache-urile corupte
           rm -rf llm/mnn/.cxx
           rm -rf app/.cxx
           rm -rf app/build
           echo "Fixed! qwen3_tts_demo is now dummy"
-      # FIX: Clean corrupted CXX cache
+
       - name: Clean corrupted CXX cache (fix sherpa_ncnn / wamr)
         run: |
           echo "Cleaning CXX caches that cause 'does not contain CMakeLists.txt'"
@@ -194,9 +190,6 @@ jobs:
         run: |
           set -euo pipefail
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          # Patch versionCode/versionName from workflow inputs so the APK is
-          # actually newer than what users have installed (fixes: same version
-          # APK cannot be installed, update check loops forever)
           VERSION_CODE="${{ inputs.version_code }}"
           VERSION_NAME="${{ inputs.version_name }}"
           VERSION_NAME_BASE="${VERSION_NAME%-clone}"
@@ -206,7 +199,6 @@ jobs:
           sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" app/build.gradle.kts
           sed -i "s/versionName = \"[^\"]*\"/versionName = \"${VERSION_NAME_BASE}+${PATCH_INDEX}\"/" app/build.gradle.kts
           grep -n "versionCode\|versionName" app/build.gradle.kts | head -4
-          # Set up release signing when secrets are present
           if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
             echo "$RO_OPERIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ro-operit-release.jks"
             {
