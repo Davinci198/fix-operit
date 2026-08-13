@@ -70,7 +70,6 @@ jobs:
       - name: Fix Gradle mirror + wrapper
         run: |
           cat gradle/wrapper/gradle-wrapper.properties
-          # Force official URL
           sed -i 's|https://mirrors.aliyun.com.*|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
           if grep -q "aliyun" gradle/wrapper/gradle-wrapper.properties; then
             printf "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n" > gradle/wrapper/gradle-wrapper.properties
@@ -92,7 +91,6 @@ jobs:
 
       - uses: android-actions/setup-android@v4
 
-      # IMPORTANT: Do NOT cache app/.cxx - it corrupts sherpa_ncnn/wamr
       - name: Cache Gradle
         uses: actions/cache@v5
         with:
@@ -141,7 +139,6 @@ jobs:
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
 
-      # FIX FOR YOUR ERROR: Clean corrupted CXX cache
       - name: Clean corrupted CXX cache (fix sherpa_ncnn / wamr)
         run: |
           echo "Cleaning CXX caches that cause 'does not contain CMakeLists.txt'"
@@ -149,8 +146,41 @@ jobs:
           rm -rf app/src/main/cpp/.cxx
           rm -rf app/build/intermediates/cxx
           rm -rf app/build/.cxx
-          # shellcheck disable=SC2012
+          rm -rf llm/mnn/.cxx
+          rm -rf mnn/.cxx
           ls -la app/src/main/cpp/ | head -20
+
+      # >>> FIX PENTRU EROAREA TA <<<
+      - name: Fix MNN - disable DEMO that needs audio/audio.hpp
+        run: |
+          echo "=== Fixing MNN CMake ==="
+          # 1. Fix in llm/mnn submodule if exists
+          if [ -f "llm/mnn/CMakeLists.txt" ]; then
+            echo "Patching llm/mnn/CMakeLists.txt"
+            # Forteaza OFF pentru demo/test/tools
+            grep -q "MNN_BUILD_DEMO" llm/mnn/CMakeLists.txt && sed -i 's/.*MNN_BUILD_DEMO.*/set(MNN_BUILD_DEMO OFF CACHE BOOL "" FORCE)/g' llm/mnn/CMakeLists.txt || echo 'set(MNN_BUILD_DEMO OFF CACHE BOOL "" FORCE)' >> llm/mnn/CMakeLists.txt
+            echo 'set(MNN_BUILD_TEST OFF CACHE BOOL "" FORCE)' >> llm/mnn/CMakeLists.txt
+            echo 'set(MNN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)' >> llm/mnn/CMakeLists.txt
+            echo 'set(MNN_BUILD_BENCHMARK OFF CACHE BOOL "" FORCE)' >> llm/mnn/CMakeLists.txt
+          fi
+          
+          # 2. Fix in modulul mnn (wrapper-ul vostru)
+          MNN_BUILD_FILE=$(find . -maxdepth 4 -type f -name "build.gradle*" | xargs grep -l "MNN\|mnn" | grep mnn | head -1)
+          if [ -z "$MNN_BUILD_FILE" ]; then
+            MNN_BUILD_FILE="mnn/build.gradle"
+          fi
+          if [ -f "$MNN_BUILD_FILE" ]; then
+            echo "Found mnn build file: $MNN_BUILD_FILE"
+            cat "$MNN_BUILD_FILE"
+            # Adauga argumentele necesare daca nu exista
+            if ! grep -q "MNN_BUILD_DEMO" "$MNN_BUILD_FILE"; then
+              sed -i 's/arguments {/arguments {\n            "-DMNN_BUILD_DEMO=OFF",\n            "-DMNN_BUILD_TEST=OFF",\n            "-DMNN_BUILD_TOOLS=OFF",\n            "-DMNN_BUILD_BENCHMARK=OFF",\n            "-DMNN_SEP_BUILD=OFF",/g' "$MNN_BUILD_FILE" || true
+            fi
+          fi
+
+          # 3. Fallback: sterge direct fisierul demo care pica
+          rm -f llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
+          echo "Fix done"
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -184,7 +214,6 @@ jobs:
           if [ -z "${TASK:-}" ]; then TASK=":app:assembleCloneDebug"; fi
           echo "Building $TASK as com.ai.assistance.operit.clone"
           chmod +x ./gradlew
-          # shellcheck disable=SC2086
           ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" | tee gradle.log
 
       - name: Upload APK Clone
