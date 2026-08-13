@@ -43,7 +43,7 @@ set(MNN_SUPPORT_RENDER ON CACHE BOOL "Enable render backend" FORCE)
 # 禁用分离编译 - 将所有后端编入 libMNN.so (解决 "Can't Find type=3 backend" 问题)
 set(MNN_SEP_BUILD OFF CACHE BOOL "Build backends separately" FORCE)
 
-# 禁用不需要的功能以加快编译 - 禁用 DEMO/TEST/TOOLS 以避免缺失依赖
+# 禁用不需要的功能以加快编译
 set(MNN_BUILD_BENCHMARK OFF CACHE BOOL "Build benchmark" FORCE)
 set(MNN_BUILD_TEST OFF CACHE BOOL "Build test" FORCE)
 set(MNN_BUILD_TOOLS OFF CACHE BOOL "Build tools" FORCE)
@@ -51,7 +51,6 @@ set(MNN_BUILD_QUANTOOLS OFF CACHE BOOL "Build quantools" FORCE)
 set(MNN_EVALUATION OFF CACHE BOOL "Build evaluation" FORCE)
 set(MNN_BUILD_CONVERTER OFF CACHE BOOL "Build converter" FORCE)
 set(MNN_BUILD_TRAIN OFF CACHE BOOL "Build train" FORCE)
-set(MNN_BUILD_DEMO OFF CACHE BOOL "Build demo" FORCE)
 
 # 添加 MNN 主项目
 add_subdirectory(${MNN_SOURCE_DIR} ${OPERIT_MNN_BINARY_DIR})
@@ -110,3 +109,4 @@ target_link_options(MNN PRIVATE "-Wl,-z,max-page-size=16384")
 if(TARGET llm)
     target_link_options(llm PRIVATE "-Wl,-z,max-page-size=16384")
 endif()
+
