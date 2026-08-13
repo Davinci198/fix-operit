@@ -109,4 +109,3 @@ target_link_options(MNN PRIVATE "-Wl,-z,max-page-size=16384")
 if(TARGET llm)
     target_link_options(llm PRIVATE "-Wl,-z,max-page-size=16384")
 endif()
-
