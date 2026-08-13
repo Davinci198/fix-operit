@@ -46,7 +46,6 @@ jobs:
     name: Build + Sign + Release Clone APK
     runs-on: ubuntu-24.04
     timeout-minutes: 120
-
     steps:
       - uses: actions/checkout@v5
         with:
@@ -141,24 +140,23 @@ jobs:
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
 
-      -       - name: FIX CRITICAL - Remove qwen3_tts_demo
+      - name: FIX CRITICAL - Remove qwen3_tts_demo everywhere
         run: |
           echo "Patching ALL qwen3_tts_demo.cpp files..."
-          find . -type f -name "qwen3_tts_demo.cpp" -exec sh -c 'echo "int main(){return 0;}" > "$1" && echo "Patched $1"' _ {} \;
+          find . -type f -name "qwen3_tts_demo.cpp" -print
+          find . -type f -name "qwen3_tts_demo.cpp" -exec sh -c 'echo "int main(){return 0;}" > "$1"' _ {} \;
           find . -type f -name "CMakeLists.txt" -exec sed -i '/qwen3_tts_demo/d' {} \;
           rm -rf llm/mnn/.cxx
           rm -rf app/.cxx
           rm -rf app/build
           echo "Fixed everywhere!"
 
-      - name: Clean corrupted CXX cache (fix sherpa_ncnn / wamr)
+      - name: Clean corrupted CXX cache
         run: |
-          echo "Cleaning CXX caches that cause 'does not contain CMakeLists.txt'"
           rm -rf app/.cxx
           rm -rf app/src/main/cpp/.cxx
           rm -rf app/build/intermediates/cxx
           rm -rf app/build/.cxx
-          find app/src/main/cpp -maxdepth 1 -ls | head -20
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -248,20 +246,16 @@ jobs:
           name: RO-Operit ${{ inputs.version_name }} (clone, signed)
           body: |
             ## RO-Operit ${{ inputs.version_name }} (clone)
-
             - **Flavor:** clone (com.ai.assistance.operit.clone) — instalabil în paralel cu versiunea standard
-            - **Semnat:** ✅ RO-Operit release keystore (verificat cu apksigner)
+            - **Semnat:** RO-Operit release keystore (verificat cu apksigner)
             - Build: GitHub Actions run #${{ github.run_number }}
-
-            ### Instalare
-            Descarcă `app-clone-release.apk` și instalează-l (permit instalarea din surse necunoscute dacă e nevoie).
           draft: false
           prerelease: ${{ inputs.prerelease }}
           files: |
             ${{ env.APK_PATH }}
           fail_on_unmatched_files: true
 
-      - name: Upload APK Clone (artifact backup)
+      - name: Upload APK Clone
         if: success()
         uses: actions/upload-artifact@v6
         with:
@@ -279,7 +273,5 @@ jobs:
           name: gradle-log-${{ github.run_number }}
           path: |
             gradle.log
-            app/.cxx/**/CMakeOutput.log
-            app/.cxx/**/CMakeError.log
           if-no-files-found: warn
           retention-days: 7
