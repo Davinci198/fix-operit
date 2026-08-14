@@ -168,15 +168,28 @@ jobs:
         run: |
           echo "=== BEFORE ==="
           grep -n "qwen3\|targets" llm/mnn/build.gradle.kts | head -20 || true
+          
+          # 1. Scoate qwen3 și multi_lora_demo din targets
           sed -i 's/qwen3_tts_demo//g' llm/mnn/build.gradle.kts
           sed -i 's/multi_lora_demo//g' llm/mnn/build.gradle.kts
           sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts
           sed -i 's/"", "/"/g; s/"",/"/g; s/, ,/,/g; s/  ,/,/g' llm/mnn/build.gradle.kts
-          rm -f llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp
-          rm -f llm/mnn/transformers/llm/engine/demo/multi_lora_demo.cpp
-          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx
+          
+          # 2. Șterge COMPLET fișierele sursă qwen3 și multi_lora (din toate locațiile)
+          find . -type f -name "*qwen3*tts*demo*.cpp" -delete 2>/dev/null || true
+          find . -type f -name "*multi_lora_demo*.cpp" -delete 2>/dev/null || true
+          
+          # 3. Creează audio.hpp în locul corect (în directorul audio)
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
-          echo '#pragma once' > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
+          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
+#pragma once
+#include <string>
+namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
+EOF
+          
+          # 4. Curăță cache-urile CMake
+          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx
+          
           echo "=== AFTER ==="
           grep -n "qwen3\|targets" llm/mnn/build.gradle.kts | head -20 || true
           ! grep -q "qwen3" llm/mnn/build.gradle.kts && echo "OK CLEAN" || (echo "FAIL"; exit 1)
