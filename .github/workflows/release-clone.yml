@@ -105,7 +105,6 @@ jobs:
           rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
           rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
           
-          echo "=== Patching llm/mnn/build.gradle.kts - removing from targets ==="
           if [ -f llm/mnn/build.gradle.kts ]; then
             sed -i 's/"qwen3_tts_demo",*//g' llm/mnn/build.gradle.kts || true
             sed -i "s/'qwen3_tts_demo',*//g" llm/mnn/build.gradle.kts || true
@@ -120,23 +119,17 @@ jobs:
           namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
           EOF
           
-          echo "=== Clean all CXX caches ==="
           rm -rf app/.cxx || true
           rm -rf llm/mnn/.cxx || true
           rm -rf ~/.cxx || true
-          
-          echo "FIX DONE"
-          grep -R "qwen3_tts_demo" llm/mnn/build.gradle.kts && echo "WARN: inca in gradle" || echo "CLEAN"
 
       - name: FIX DEFINITIV - Scoate qwen3 din targets NINJA
         run: |
-          echo "=== Dezactivez BUILD_DEMO complet pentru MNN ==="
           if [ -f llm/mnn/build.gradle.kts ]; then
             sed -i 's/-DMNN_SEP_BUILD=false/-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF/g' llm/mnn/build.gradle.kts || true
             sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts || true
             sed -i 's/MNN_BUILD_DEMO", "ON/MNN_BUILD_DEMO", "OFF/g' llm/mnn/build.gradle.kts || true
           fi
-          echo "=== Fix gata ==="
 
       - name: Clean CXX cache
         run: |
@@ -168,6 +161,9 @@ jobs:
             echo "storePassword=$KEYSTORE_PASSWORD" >> app/keystore.properties
             echo "keyAlias=$KEY_ALIAS" >> app/keystore.properties
             echo "keyPassword=$KEY_PASSWORD" >> app/keystore.properties
+            ls -lh app/release.keystore
+          else
+            echo "No keystore secrets - build will be unsigned"
           fi
 
       - name: Run Gradle build - CLONE RELEASE
@@ -178,8 +174,17 @@ jobs:
       - name: Verify APK signature
         if: success()
         run: |
-          ls -lh app/build/outputs/apk/cloneRelease/*.apk
-          apksigner verify --print-certs app/build/outputs/apk/cloneRelease/*.apk || true
+          echo "=== Caut APK oriunde ==="
+          find app/build/outputs -name "*.apk" -type f | head -20
+          APK=$(find app/build/outputs -name "*.apk" -type f | head -1)
+          if [ -z "$APK" ]; then
+            echo "Nu am gasit APK!"
+            find app -name "*.apk" | head -20
+            exit 1
+          fi
+          echo "APK gasit: $APK"
+          ls -lh "$APK"
+          apksigner verify --print-certs "$APK" || echo "verify skip - unsigned or no apksigner"
 
       - name: Create GitHub Release
         if: success()
@@ -187,7 +192,7 @@ jobs:
         with:
           tag_name: clone-${{ github.run_number }}
           name: "RO-Operit Clone v1.13.6+${{ github.run_number }}"
-          files: app/build/outputs/apk/cloneRelease/*.apk
+          files: app/build/outputs/apk/**/*.apk
           generate_release_notes: true
 
       - name: Upload APK Clone
@@ -195,7 +200,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: apk-clone-release
-          path: app/build/outputs/apk/cloneRelease/*.apk
+          path: app/build/outputs/apk/**/*.apk
 
       - name: Upload log on fail
         if: failure()
@@ -205,7 +210,6 @@ jobs:
           path: |
             gradle.log
             app/build/outputs/logs/
-            llm/mnn/.cxx/**/CMakeFiles/CMakeError.log
 
       - name: Post Cache Rust cargo
         if: always()
