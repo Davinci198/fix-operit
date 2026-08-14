@@ -1,0 +1,13 @@
+name: Test Dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      test_input:
+        description: 'Test input'
+        required: false
+        default: 'hello'
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "Test successful - input: ${{ github.event.inputs.test_input }}"
