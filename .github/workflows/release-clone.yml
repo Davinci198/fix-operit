@@ -25,7 +25,9 @@ jobs:
 
       - name: Set up swap 10GB
         run: |
-          sudo fallocate -l 10G /swapfile
+          sudo swapoff /swapfile 2>/dev/null || true
+          sudo rm -f /swapfile || true
+          sudo fallocate -l 10G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=10240
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
@@ -95,7 +97,6 @@ jobs:
         run: |
           cargo install ripgrep --features pcre2 || true
 
-      # ================= FIXURILE PURIFICATOARE =================
       - name: FIX CRITICAL - DELETE qwen3_tts_demo COMPLETELY
         run: |
           echo "=== Deleting qwen3_tts_demo everywhere ==="
@@ -106,8 +107,6 @@ jobs:
           
           echo "=== Patching llm/mnn/build.gradle.kts - removing from targets ==="
           if [ -f llm/mnn/build.gradle.kts ]; then
-            cat llm/mnn/build.gradle.kts | grep -n qwen3 || echo "not in kts yet - good"
-            # Scoate targetul din lista
             sed -i 's/"qwen3_tts_demo",*//g' llm/mnn/build.gradle.kts || true
             sed -i "s/'qwen3_tts_demo',*//g" llm/mnn/build.gradle.kts || true
             sed -i 's/qwen3_tts_demo//g' llm/mnn/build.gradle.kts || true
@@ -126,22 +125,17 @@ jobs:
           rm -rf llm/mnn/.cxx || true
           rm -rf ~/.cxx || true
           
-          echo "FIX DONE - verifying"
-          grep -R "qwen3_tts_demo" llm/mnn/build.gradle.kts && echo "WARN: inca in gradle" || echo "CLEAN - qwen3_tts_demo removed from gradle"
-          ls llm/mnn/transformers/llm/engine/demo/ | grep qwen3 && echo "FAIL" || echo "CLEAN - cpp deleted"
+          echo "FIX DONE"
+          grep -R "qwen3_tts_demo" llm/mnn/build.gradle.kts && echo "WARN: inca in gradle" || echo "CLEAN"
 
       - name: FIX DEFINITIV - Scoate qwen3 din targets NINJA
         run: |
           echo "=== Dezactivez BUILD_DEMO complet pentru MNN ==="
           if [ -f llm/mnn/build.gradle.kts ]; then
-            # Inlocuieste lista de targets cu una fara qwen3 sau seteaza DEMO OFF
             sed -i 's/-DMNN_SEP_BUILD=false/-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF/g' llm/mnn/build.gradle.kts || true
-            # Daca deja are MNN_BUILD_DEMO, asigura ca e OFF
             sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts || true
+            sed -i 's/MNN_BUILD_DEMO", "ON/MNN_BUILD_DEMO", "OFF/g' llm/mnn/build.gradle.kts || true
           fi
-          
-          echo "=== Verificare finala targets ==="
-          grep -A5 -B5 "MNN_BUILD_DEMO\|qwen3\|targets" llm/mnn/build.gradle.kts | head -100 || true
           echo "=== Fix gata ==="
 
       - name: Clean CXX cache
@@ -149,11 +143,9 @@ jobs:
           rm -rf app/.cxx llm/mnn/.cxx
           ./gradlew clean --no-daemon || true
 
-      # ================= BUILD NORMAL =================
       - name: Setup DragonBones Prebuilt AAR
         run: |
           ls app/libs/ || echo "no libs"
-          # daca ai script pentru dragonbones, il rulezi aici
 
       - name: Install JS deps
         run: |
