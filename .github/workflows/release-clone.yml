@@ -4,15 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'Release tag (ex: v1.13.1)'
+        description: 'Release tag'
         required: true
         default: 'v1.16.1'
       version_name:
-        description: 'Version name shown in APK (ex: 1.13.2+1-clone)'
+        description: 'Version name'
         required: true
         default: '1.16.2+1-clone'
       version_code:
-        description: 'Numeric versionCode (MUST be higher than current installed, ex: 48)'
+        description: 'versionCode'
         required: true
         default: '52'
       gradle_task:
@@ -71,7 +71,6 @@ jobs:
 
       - name: Fix Gradle mirror + wrapper
         run: |
-          cat gradle/wrapper/gradle-wrapper.properties
           sed -i 's|https://mirrors.aliyun.com.*|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
           if grep -q "aliyun" gradle/wrapper/gradle-wrapper.properties; then
             printf "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n" > gradle/wrapper/gradle-wrapper.properties
@@ -141,56 +140,43 @@ jobs:
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
 
-      - name: FIX CRITICAL - KILL qwen3_tts_demo DEFINITIV
+      - name: FIX CRITICAL - DELETE qwen3 DEFINITIV + REWRITE TARGETS
         run: |
-          echo "=== PATCH build.gradle.kts ==="
+          echo "=== PATCH build.gradle.kts - REWRITE TARGETS ==="
           python3 << 'PY'
           import pathlib, re
           p = pathlib.Path("llm/mnn/build.gradle.kts")
           txt = p.read_text()
+          print("--- BEFORE ---")
+          print(txt[:2000])
 
-          # 1. Sterge qwen3_tts_demo din orice loc (targets, strings)
-          txt = txt.replace('"qwen3_tts_demo"', '')
-          txt = txt.replace("'qwen3_tts_demo'", '')
-          txt = txt.replace('qwen3_tts_demo', '')
+          # Fortam arguments cu DEMO OFF
+          if "-DMNN_BUILD_DEMO=OFF" not in txt:
+              txt = txt.replace("-DMNN_SEP_BUILD=false", "-DMNN_SEP_BUILD=false\", \"-DMNN_BUILD_DEMO=OFF\", \"-DMNN_BUILD_TOOLS=OFF")
 
-          # curata virgule si newline-uri duble ramase
+          txt = txt.replace("MNN_BUILD_DEMO=ON", "MNN_BUILD_DEMO=OFF")
+          txt = txt.replace('"ON"', '"OFF"')
+          # Lista curata FARA qwen3_tts_demo - asta e cheia!
+          clean_targets = 'targets "MNN", "MNNWrapper", "apply_template", "embedding_demo", "generateLlmIO", "llm_bench", "llm_demo", "llm_logits_diff", "ppl_eval", "quantize_llm", "reranker_demo", "rollback_demo", "tokenizer_demo"'
+          # Inlocuieste orice linie care contine targets
+          txt = re.sub(r'targets.*qwen3.*', clean_targets, txt)
+          txt = re.sub(r'targets\s+.*MNN.*', clean_targets, txt, count=1)
+          # sterge orice ramasita qwen3
+          txt = txt.replace("qwen3_tts_demo", "")
+          txt = txt.replace('""', '"')
           txt = re.sub(r',\s*,', ',', txt)
-          txt = re.sub(r',\s*\n\s*\)', '\n)', txt)
-          txt = re.sub(r',\s*,', ',', txt)
-
-          # 2. Forteaza MNN_BUILD_DEMO=OFF si TOOLS=OFF - injectie sigura
-          if '-DMNN_BUILD_DEMO=OFF' not in txt:
-              if '-DMNN_SEP_BUILD=false' in txt:
-                  txt = txt.replace('-DMNN_SEP_BUILD=false', '-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF')
-              elif 'MNN_SEP_BUILD' in txt:
-                  txt = re.sub(r'(-DMNN_SEP_BUILD[^"]*)', r'\1", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF', txt)
-              else:
-                  # fallback - adauga in arguments
-                  txt = txt.replace('arguments(', 'arguments("-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF", ')
-
-          # asigura ca ON devine OFF
-          txt = txt.replace('MNN_BUILD_DEMO=ON', 'MNN_BUILD_DEMO=OFF')
-          txt = re.sub(r'MNN_BUILD_DEMO"\s*,\s*"ON"', 'MNN_BUILD_DEMO", "OFF"', txt)
-          txt = re.sub(r'"-DMNN_BUILD_DEMO=ON"', '"-DMNN_BUILD_DEMO=OFF"', txt)
-
-          if '-DMNN_BUILD_TOOLS=OFF' not in txt:
-              txt = txt.replace('-DMNN_BUILD_DEMO=OFF', '-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF')
-
-          # curata duplicate OFF
-          txt = txt.replace('"-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_DEMO=OFF"', '"-DMNN_BUILD_DEMO=OFF"')
-          txt = txt.replace('"-DMNN_BUILD_TOOLS=OFF", "-DMNN_BUILD_TOOLS=OFF"', '"-DMNN_BUILD_TOOLS=OFF"')
 
           p.write_text(txt)
-          print(txt)
+          print("--- AFTER ---")
+          print(txt[:3000])
           PY
 
-          echo "--- VERIFY PATCH ---"
-          grep -n "MNN_BUILD\|qwen3\|targets\|arguments" llm/mnn/build.gradle.kts | head -50 || true
+          echo "=== VERIFY ==="
+          grep -n "targets\|MNN_BUILD\|qwen3" llm/mnn/build.gradle.kts || true
 
-          echo "=== Sterge sursa locala ==="
-          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
-          rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
+          echo "=== DELETE LOCAL SOURCE ==="
+          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp
+          rm -rf llm/mnn/transformers/llm/engine/demo/audio
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
           cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
           #pragma once
@@ -198,19 +184,16 @@ jobs:
           namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
           EOF
 
-          echo "=== Patch CMakeLists.txt care listeaza demo-urile ==="
-          find llm -name "CMakeLists.txt" -exec sed -i 's/qwen3_tts_demo//g' {} \; 2>/dev/null || true
-
-          echo "=== Sterge .cxx ca sa refaca fetch cu DEMO=OFF - ASTA REZOLVA EROAREA TA ==="
+          echo "=== CLEAN CXX - OBLIGATORIU ==="
           rm -rf llm/mnn/.cxx
           rm -rf app/.cxx
           rm -rf app/src/main/cpp/.cxx
           rm -rf app/build/.cxx
           rm -rf app/build/intermediates/cxx
+          rm -rf ~/.cxx
 
-          echo "=== Check final ==="
-          ! grep -r "qwen3_tts_demo" llm/mnn/build.gradle.kts && echo "OK - no qwen3 in gradle" || echo "FAIL still there"
-          ls -lh llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
+          echo "=== CHECK NO QWEN3 ==="
+          if grep -q "qwen3" llm/mnn/build.gradle.kts; then echo "FAIL - still qwen3 in gradle"; exit 1; else echo "OK - clean"; fi
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -271,7 +254,7 @@ jobs:
         run: |
           set -euo pipefail
           TASK="${TASK:-:app:assembleCloneRelease}"
-          echo "Building $TASK"
+          echo "Building $TASK - NINJA SHOULD NOT CONTAIN qwen3 NOW"
           chmod +x ./gradlew
           ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
@@ -301,7 +284,7 @@ jobs:
             ## RO-Operit ${{ inputs.version_name }} (clone)
             - Flavor: clone (com.ai.assistance.operit.clone)
             - Semnat: ✅ RO-Operit release keystore
-            - Fix: qwen3_tts_demo REMOVED complet + MNN_BUILD_DEMO=OFF
+            - Fix: qwen3_tts_demo REMOVED + DEMO=OFF + targets rewritten
             - Build: #${{ github.run_number }}
           draft: false
           prerelease: ${{ inputs.prerelease }}
