@@ -122,25 +122,6 @@ jobs:
         run: |
           python3 ci/script/prepare_android_dependencies.py --profile full --archives "$MANUAL_DEPS_DIR" --repository "$GITHUB_WORKSPACE"
 
-      - name: FIX - DELETE qwen3 PERMANENT EVERYWHERE
-        run: |
-          echo "=== FIX qwen3 EVERYWHERE ==="
-          find . -name "qwen3_tts_demo.cpp" -type f -delete -print 2>/dev/null || true
-          find . -name "qwen3_tts_demo*" -type f -delete -print 2>/dev/null || true
-          mkdir -p llm/mnn/transformers/llm/engine/demo/audio
-          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
-          #pragma once
-          #include <string>
-          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
-          EOF
-          find . -type d -path "*transformers/llm/engine/demo" -exec mkdir -p {}/audio \; 2>/dev/null || true
-          find . -type d -path "*transformers/llm/engine/demo" -exec sh -c 'echo "#pragma once
-          #include <string>
-          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }" > "{}/audio/audio.hpp"' \; 2>/dev/null || true
-          find . -name "CMakeLists.txt" -exec sed -i 's/qwen3_tts_demo//g' {} \; 2>/dev/null || true
-          echo "=== FIX DONE ==="
-          find . -name "qwen3_tts_demo*" -type f 2>/dev/null | head -5 || echo "No qwen3 files - GOOD!"
-
       - name: Cache Rust cargo
         uses: actions/cache@v5
         with:
@@ -159,6 +140,58 @@ jobs:
           rustup target add --toolchain 1.88.0 aarch64-linux-android
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
+
+      - name: FIX CRITICAL - DELETE qwen3_tts_demo COMPLETELY
+        run: |
+          echo "=== Deleting qwen3_tts_demo everywhere ==="
+          find . -name "qwen3_tts_demo*" -type f -delete -print 2>/dev/null || true
+          find . -path "*mnn*" -name "*qwen3*" -delete -print 2>/dev/null || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
+          
+          if [ -f llm/mnn/build.gradle.kts ]; then
+            sed -i 's/"qwen3_tts_demo",*//g' llm/mnn/build.gradle.kts || true
+            sed -i "s/'qwen3_tts_demo',*//g" llm/mnn/build.gradle.kts || true
+            sed -i 's/qwen3_tts_demo//g' llm/mnn/build.gradle.kts || true
+          fi
+          
+          echo "=== Dummy audio.hpp safety net ==="
+          mkdir -p llm/mnn/transformers/llm/engine/demo/audio
+          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
+          #pragma once
+          #include <string>
+          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
+          EOF
+          
+          # safety net pentru toate demo-urile care cer audio.hpp
+          find . -type d -path "*transformers/llm/engine/demo" -exec mkdir -p {}/audio \; 2>/dev/null || true
+          find . -type d -path "*transformers/llm/engine/demo" -exec sh -c 'echo "#pragma once
+          #include <string>
+          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }" > "{}/audio/audio.hpp"' \; 2>/dev/null || true
+          
+          find . -name "CMakeLists.txt" -exec sed -i 's/qwen3_tts_demo//g' {} \; 2>/dev/null || true
+          
+          rm -rf app/.cxx || true
+          rm -rf llm/mnn/.cxx || true
+          rm -rf ~/.cxx || true
+          
+          echo "=== FIX DONE ==="
+          find . -name "qwen3_tts_demo*" -type f 2>/dev/null | head -5 || echo "No qwen3 files - GOOD!"
+
+      - name: FIX DEFINITIV - Scoate qwen3 din targets NINJA
+        run: |
+          if [ -f llm/mnn/build.gradle.kts ]; then
+            echo "--- before ---"
+            grep -n "MNN_BUILD_DEMO\|MNN_SEP_BUILD\|qwen3" llm/mnn/build.gradle.kts || true
+            sed -i 's/-DMNN_SEP_BUILD=false/-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF/g' llm/mnn/build.gradle.kts || true
+            sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts || true
+            sed -i 's/MNN_BUILD_DEMO", "ON/MNN_BUILD_DEMO", "OFF/g' llm/mnn/build.gradle.kts || true
+            # curatare dubla OFF
+            sed -i 's/"-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_DEMO=OFF"/"-DMNN_BUILD_DEMO=OFF"/g' llm/mnn/build.gradle.kts || true
+            sed -i 's/"-DMNN_BUILD_TOOLS=OFF", "-DMNN_BUILD_TOOLS=OFF"/"-DMNN_BUILD_TOOLS=OFF"/g' llm/mnn/build.gradle.kts || true
+            echo "--- after ---"
+            grep -n "MNN_BUILD_DEMO\|MNN_SEP_BUILD\|qwen3" llm/mnn/build.gradle.kts || true
+          fi
 
       - name: Clean corrupted CXX cache (fix sherpa_ncnn / wamr)
         run: |
@@ -259,7 +292,7 @@ jobs:
             ## RO-Operit ${{ inputs.version_name }} (clone)
             - Flavor: clone (com.ai.assistance.operit.clone)
             - Semnat: ✅ RO-Operit release keystore
-            - Fix: qwen3_tts_demo.cpp removed EVERYWHERE + fake audio.hpp
+            - Fix: qwen3_tts_demo.cpp removed EVERYWHERE + fake audio.hpp + MNN_BUILD_DEMO=OFF
             - Build: #${{ github.run_number }}
           draft: false
           prerelease: ${{ inputs.prerelease }}
