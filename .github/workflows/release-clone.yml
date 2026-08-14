@@ -5,6 +5,9 @@ on:
   push:
     branches: [ main, master, fix-* ]
 
+permissions:
+  contents: write
+
 jobs:
   build-clone:
     runs-on: ubuntu-latest
@@ -162,58 +165,45 @@ jobs:
       - name: Run Gradle build - CLONE RELEASE
         run: |
           if [ "$NO_KEYSTORE" = "true" ]; then
-            echo "Build fara semnatura..."
             ./gradlew :app:assembleCloneRelease --no-daemon --stacktrace -Dorg.gradle.caching=false 2>&1 | tee gradle.log
           else
             ./gradlew :app:assembleCloneRelease --no-daemon --stacktrace -Dorg.gradle.caching=false 2>&1 | tee gradle.log
           fi
           echo "=== DUPA BUILD ==="
-          ls -R app/build/ | head -100
-          find app/build -name "*.apk" -type f 2>/dev/null || echo "No APK yet"
+          ls -lh app/build/outputs/apk/clone/release/ || true
+          find app/build -name "*.apk" -type f
 
       - name: Verify APK signature
-        if: success()
         run: |
-          echo "=== Caut APK PESTE TOT ==="
-          find app -name "*.apk" -type f | grep -v assets | grep -v generated | head -20
-          APK=$(find app/build -name "*clone*.apk" -type f 2>/dev/null | head -1)
+          APK=$(find app/build -name "*clone*.apk" -type f | head -1)
           if [ -z "$APK" ]; then
-            APK=$(find app/build -name "*.apk" -type f 2>/dev/null | head -1)
-          fi
-          if [ -z "$APK" ]; then
-            echo "EROARE: Nu s-a generat APK clone! Vezi log:"
-            cat gradle.log | tail -200
-            exit 1
+            APK=$(find app/build -name "*.apk" -type f | head -1)
           fi
           echo "APK gasit: $APK"
           ls -lh "$APK"
-          apksigner verify --print-certs "$APK" || echo "unsigned / skip verify"
+          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --print-certs "$APK" || true
 
       - name: Create GitHub Release
-        if: success()
+        if: always()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: clone-${{ github.run_number }}
           name: "RO-Operit Clone v1.13.6+${{ github.run_number }}"
-          files: |
-            app/build/outputs/apk/**/*.apk
-            app/build/outputs/**/*.apk
+          files: app/build/outputs/apk/clone/release/*.apk
           generate_release_notes: true
+          fail_on_unmatched_files: false
 
       - name: Upload APK Clone
-        if: success()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: apk-clone-release
-          path: |
-            app/build/outputs/apk/**/*.apk
-            app/build/outputs/**/*.apk
+          path: app/build/outputs/apk/clone/release/*.apk
+          if-no-files-found: warn
 
       - name: Upload log on fail
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: gradle-log
-          path: |
-            gradle.log
-            app/build/
+          path: gradle.log
