@@ -140,27 +140,20 @@ jobs:
 
       - name: FIX DEFINITIV - REWRITE TARGETS FARA QWEN3
         run: |
-          python3 << 'PY'
-          import pathlib, re
-          p = pathlib.Path("llm/mnn/build.gradle.kts")
-          txt = p.read_text()
-          txt = txt.replace("MNN_BUILD_DEMO=ON", "MNN_BUILD_DEMO=OFF")
-          if "-DMNN_BUILD_DEMO=OFF" not in txt:
-              txt = txt.replace("-DMNN_SEP_BUILD=false", '-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF')
-          clean = (
-              '        targets "MNN", "MNNWrapper", "apply_template", "embedding_demo", '
-              '"generateLlmIO", "llm_bench", "llm_demo", "llm_logits_diff", "ppl_eval", '
-              '"quantize_llm", "reranker_demo", "rollback_demo", "tokenizer_demo"'
-          )
-          txt = re.sub(r'targets\s+"MNN".*', clean, txt)
-          txt = txt.replace("qwen3_tts_demo", "")
-          txt = txt.replace('"",', '"')
-          p.write_text(txt)
-          print(txt)
-          PY
-          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx app/src/main/cpp/.cxx
+          echo "=== BEFORE ==="
+          grep -n "qwen3\|targets" llm/mnn/build.gradle.kts | head -20 || true
+          sed -i 's/qwen3_tts_demo//g' llm/mnn/build.gradle.kts
+          sed -i 's/multi_lora_demo//g' llm/mnn/build.gradle.kts
+          sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts
+          sed -i 's/"", "/"/g; s/"",/"/g; s/, ,/,/g; s/  ,/,/g' llm/mnn/build.gradle.kts
+          rm -f llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp
+          rm -f llm/mnn/transformers/llm/engine/demo/multi_lora_demo.cpp
+          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
           echo '#pragma once' > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
+          echo "=== AFTER ==="
+          grep -n "qwen3\|targets" llm/mnn/build.gradle.kts | head -20 || true
+          ! grep -q "qwen3" llm/mnn/build.gradle.kts && echo "OK CLEAN" || (echo "FAIL"; exit 1)
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
