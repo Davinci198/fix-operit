@@ -301,3 +301,4 @@ EOF
             gradle.log
           if-no-files-found: warn
           retention-days: 7
+# END OF WORKFLOW - Updated for MNN fixes and qwen3 cleanup
