@@ -55,7 +55,6 @@ jobs:
 
       - name: Free disk space
         run: |
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost 2>/dev/null || true
           sudo apt-get clean 2>/dev/null || true
           df -h
 
@@ -71,12 +70,10 @@ jobs:
 
       - name: Fix Gradle mirror + wrapper
         run: |
-          cat gradle/wrapper/gradle-wrapper.properties
           sed -i 's|https://mirrors.aliyun.com.*|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
           if grep -q "aliyun" gradle/wrapper/gradle-wrapper.properties; then
             printf "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n" > gradle/wrapper/gradle-wrapper.properties
           fi
-          cat gradle/wrapper/gradle-wrapper.properties
 
       - uses: actions/setup-python@v6
         with:
@@ -141,37 +138,25 @@ jobs:
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
 
-            - name: FIX DEFINITIV - REWRITE TARGETS FARA QWEN3
+      - name: FIX DEFINITIV - REWRITE TARGETS FARA QWEN3
         run: |
-          echo "=== BEFORE ==="
-          grep -n "targets\|MNN_BUILD_DEMO\|qwen3" llm/mnn/build.gradle.kts || true
           python3 << 'PY'
           import pathlib, re
           p = pathlib.Path("llm/mnn/build.gradle.kts")
           txt = p.read_text()
-          # 1. OFF
           txt = txt.replace("MNN_BUILD_DEMO=ON", "MNN_BUILD_DEMO=OFF")
           if "-DMNN_BUILD_DEMO=OFF" not in txt:
               txt = txt.replace("-DMNN_SEP_BUILD=false", '-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF')
-          # 2. REWRITE doar linia targets - FARA DOTALL
           clean = '        targets "MNN", "MNNWrapper", "apply_template", "embedding_demo", "generateLlmIO", "llm_bench", "llm_demo", "llm_logits_diff", "ppl_eval", "quantize_llm", "reranker_demo", "rollback_demo", "tokenizer_demo"'
           txt = re.sub(r'targets\s+"MNN".*', clean, txt)
-          # 3. sterge orice urma qwen3 ramasa
           txt = txt.replace("qwen3_tts_demo", "")
           txt = txt.replace('"",', '"')
           p.write_text(txt)
-          print("AFTER:")
           print(txt)
           PY
-          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx
-          mkdir -p llm/mnn/transformers/llm/engine/demo/audio
-          echo '#pragma once' > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
-          echo "=== CLEAN CXX ==="
           rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx app/src/main/cpp/.cxx
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
           echo '#pragma once' > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
-          echo "=== VERIFY NO QWEN3 ==="
-          ! grep -q "qwen3" llm/mnn/build.gradle.kts && echo "OK CLEAN" || (echo "FAIL STILL HAS QWEN3"; exit 1)
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -179,7 +164,6 @@ jobs:
           if [ ! -f app/libs/dragonbones-release.aar ]; then
             curl -L --retry 3 -o app/libs/dragonbones-release.aar https://github.com/Davinci198/dragonbones-aar-prebuilt/releases/download/v1.0.0-ndk27-fix/dragonbones-release.aar
           fi
-          ls -lh app/libs/dragonbones-release.aar
 
       - name: Install JS deps
         run: |
@@ -204,10 +188,8 @@ jobs:
           VERSION_NAME_BASE="${VERSION_NAME%-clone}"
           VERSION_NAME_BASE="${VERSION_NAME_BASE%%+*}"
           PATCH_INDEX="${VERSION_NAME#*+}"; PATCH_INDEX="${PATCH_INDEX%-clone}"
-          echo "Patching versionCode -> $VERSION_CODE, versionName -> ${VERSION_NAME_BASE}+${PATCH_INDEX}"
           sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" app/build.gradle.kts
           sed -i "s/versionName = \"[^\"]*\"/versionName = \"${VERSION_NAME_BASE}+${PATCH_INDEX}\"/" app/build.gradle.kts
-          grep -n "versionCode\|versionName" app/build.gradle.kts | head -4
           if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
             echo "$RO_OPERIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ro-operit-release.jks"
             {
@@ -216,7 +198,6 @@ jobs:
               echo "RELEASE_KEY_ALIAS=ro-operit"
               echo "RELEASE_KEY_PASSWORD=$RO_OPERIT_KEY_PASSWORD"
             } >> local.properties
-            echo "Release signing configured"
           else
             echo "::error::Release signing secrets NOT present!"
             exit 1
@@ -232,7 +213,6 @@ jobs:
         run: |
           set -euo pipefail
           TASK="${TASK:-:app:assembleCloneRelease}"
-          echo "Building $TASK"
           chmod +x ./gradlew
           ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
@@ -247,11 +227,9 @@ jobs:
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
           APK=$(find app/build/outputs/apk/clone/release -name '*.apk' -type f 2>/dev/null | head -1)
           if [ -z "$APK" ]; then APK=$(find app/build/outputs/apk -name '*.apk' | head -1); fi
-          echo "Verifying: $APK"
           "$APKSIGNER" verify --print-certs "$APK"
           echo "APK_PATH=$APK" >> "$GITHUB_ENV"
           ls -lh "$APK"
-          du -h "$APK"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -260,9 +238,7 @@ jobs:
           name: RO-Operit ${{ inputs.version_name }} (clone, signed)
           body: |
             ## RO-Operit ${{ inputs.version_name }} (clone)
-            - Flavor: clone (com.ai.assistance.operit.clone)
-            - Semnat: ✅ RO-Operit release keystore
-            - Fix: qwen3 removed + targets rewritten
+            - Fix: qwen3 removed
             - Build: #${{ github.run_number }}
           draft: false
           prerelease: ${{ inputs.prerelease }}
