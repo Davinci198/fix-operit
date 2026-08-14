@@ -1,161 +1,78 @@
 name: Clone Release Build
-
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master, fix-* ]
+    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
-  build-clone:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
-          fetch-depth: 0
 
-      - name: Free disk space
+      - name: Free space + Swap
         run: |
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
-          sudo apt-get clean
-          df -h
-
-      - name: Set up swap 10GB
-        run: |
-          sudo swapoff /swapfile 2>/dev/null || true
-          sudo rm -f /swapfile || true
-          sudo fallocate -l 10G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=10240
+          sudo rm -rf /usr/share/dotnet /opt/ghc
+          sudo swapoff -a
+          sudo fallocate -l 10G /swapfile
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
-          free -h
 
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
+      - uses: actions/setup-python@v6
+        with: { python-version: '3.11' }
+      - uses: actions/setup-java@v5
+        with: { distribution: 'temurin', java-version: '17' }
+      - uses: actions/setup-node@v5
+        with: { node-version: '20' }
+      - uses: android-actions/setup-android@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Setup Android
-        uses: android-actions/setup-android@v4
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-
-      - name: Install SDK/NDK/CMake
+      - name: Install NDK
         run: |
           sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" "platforms;android-34" "build-tools;34.0.0"
           yes | sdkmanager --licenses
 
-      - name: Download Android dependencies - FORCED
+      - name: Download deps
         run: |
-          echo "=== CLEAN ASSETS ==="
           rm -rf app/src/main/assets
-          mkdir -p app/src/main/assets
           python3 scripts/download_deps.py
           python3 scripts/prepare_android.py || true
-          echo "=== ASSETS SIZE ==="
-          du -sh app/src/main/assets/*
-          ls -lh app/src/main/assets/ | head -30
+          du -sh app/src/main/assets
 
-      - name: FIX - DELETE qwen3 PERMANENT
+      - name: Fix qwen3 bug
         run: |
-          find . -name "qwen3_tts_demo*" -type f -delete 2>/dev/null || true
-          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
-          rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp
+          rm -rf app/.cxx llm/mnn/.cxx
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
-          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
-          #pragma once
-          #include <string>
-          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
-          EOF
-          rm -rf app/.cxx llm/mnn/.cxx ~/.cxx || true
+          echo '#pragma once
+          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }' > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
 
-      - name: Setup DragonBones + Check libs
+      - name: Build
         run: |
-          ls app/libs/ || true
-          ls app/src/main/jniLibs/ 2>/dev/null || true
+          npm ci
+          npm run build || true
+          ./gradlew :app:assembleCloneRelease --no-daemon --stacktrace
 
-      - name: Install JS deps
-        run: npm ci || npm install
-
-      - name: Build WebChat + ToolPkg
-        run: npm run build || npx tsc || true
-
-      - name: Configure Signing
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Collect APK
         run: |
-          if [ ! -z "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > app/release.keystore
-            cat > app/keystore.properties << PROP
-          storeFile=release.keystore
-          storePassword=$KEYSTORE_PASSWORD
-          keyAlias=$KEY_ALIAS
-          keyPassword=$KEY_PASSWORD
-          PROP
-          fi
+          mkdir -p apk_out
+          find . -path "*build/outputs/apk/*/*.apk" -exec cp {} apk_out/ \;
+          ls -lh apk_out/
 
-      - name: Run Gradle build - CLONE RELEASE
-        run: |
-          ./gradlew :app:assembleCloneRelease --no-daemon --stacktrace -Dorg.gradle.caching=false 2>&1 | tee gradle.log
-          echo "=== APKs FOUND ==="
-          find . -name "*.apk" -type f -exec ls -lh {} \;
-
-      - name: Collect APKs
-        run: |
-          mkdir -p ./apk_out
-          find . -path "*/build/outputs/apk/*/*.apk" -type f -exec cp -v {} ./apk_out/ \;
-          find app/build -name "*.apk" -type f -exec cp -v {} ./apk_out/ \; 2>/dev/null || true
-          echo "=== FINAL APKs ==="
-          ls -lh ./apk_out/
-          du -sh ./apk_out/*
-
-      - name: Create GitHub Release
+      - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: clone-${{ github.run_number }}
-          name: "RO-Operit Clone v1.13.6+${{ github.run_number }}"
-          files: ./apk_out/*.apk
+          files: apk_out/*.apk
           generate_release_notes: true
-          fail_on_unmatched_files: false
 
-      - name: Upload APK
-        if: always()
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: apk-clone-release
-          path: ./apk_out/*.apk
-          if-no-files-found: warn
-
-      - name: Upload log on fail
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-log
-          path: gradle.log
+          path: apk_out/*.apk
