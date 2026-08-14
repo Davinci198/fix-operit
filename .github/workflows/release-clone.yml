@@ -36,12 +36,6 @@ jobs:
           sudo swapon /swapfile
           free -h
 
-      - name: Fix Gradle mirror + wrapper
-        run: |
-          mkdir -p ~/.gradle
-          echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g -Dorg.gradle.parallel=true" >> ~/.gradle/gradle.properties
-          chmod +x gradlew || true
-
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -68,49 +62,29 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: gradle-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Install SDK/NDK/CMake
         run: |
           sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" "platforms;android-34" "build-tools;34.0.0"
           yes | sdkmanager --licenses
 
-      - name: Restore manual deps cache
-        uses: actions/cache@v4
-        with:
-          path: app/src/main/assets
-          key: manual-deps-${{ hashFiles('scripts/**') }}
-          restore-keys: manual-deps-
-
-      - name: Download Android dependencies
+      - name: Download Android dependencies - FORCED
         run: |
-          python3 scripts/download_deps.py || true
-
-      - name: Prepare Android dependencies
-        run: |
+          echo "=== CLEAN ASSETS ==="
+          rm -rf app/src/main/assets
+          mkdir -p app/src/main/assets
+          python3 scripts/download_deps.py
           python3 scripts/prepare_android.py || true
+          echo "=== ASSETS SIZE ==="
+          du -sh app/src/main/assets/*
+          ls -lh app/src/main/assets/ | head -30
 
-      - name: Cache Rust cargo
-        uses: actions/cache@v4
-        with:
-          path: ~/.cargo
-          key: cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Build native ripgrep
-        run: |
-          cargo install ripgrep --features pcre2 || true
-
-      - name: FIX CRITICAL - DELETE qwen3_tts_demo COMPLETELY
+      - name: FIX - DELETE qwen3 PERMANENT
         run: |
           find . -name "qwen3_tts_demo*" -type f -delete 2>/dev/null || true
-          find . -path "*mnn*" -name "*qwen3*" -delete 2>/dev/null || true
           rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
           rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
-          if [ -f llm/mnn/build.gradle.kts ]; then
-            sed -i 's/"qwen3_tts_demo",*//g' llm/mnn/build.gradle.kts || true
-            sed -i "s/'qwen3_tts_demo',*//g" llm/mnn/build.gradle.kts || true
-            sed -i 's/qwen3_tts_demo//g' llm/mnn/build.gradle.kts || true
-          fi
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
           cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
           #pragma once
@@ -119,20 +93,10 @@ jobs:
           EOF
           rm -rf app/.cxx llm/mnn/.cxx ~/.cxx || true
 
-      - name: FIX DEFINITIV - Scoate qwen3 din targets NINJA
+      - name: Setup DragonBones + Check libs
         run: |
-          if [ -f llm/mnn/build.gradle.kts ]; then
-            sed -i 's/-DMNN_SEP_BUILD=false/-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF/g' llm/mnn/build.gradle.kts || true
-            sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts || true
-          fi
-
-      - name: Clean CXX cache
-        run: |
-          rm -rf app/.cxx llm/mnn/.cxx
-          ./gradlew clean --no-daemon || true
-
-      - name: Setup DragonBones Prebuilt AAR
-        run: ls app/libs/ || true
+          ls app/libs/ || true
+          ls app/src/main/jniLibs/ 2>/dev/null || true
 
       - name: Install JS deps
         run: npm ci || npm install
@@ -140,7 +104,7 @@ jobs:
       - name: Build WebChat + ToolPkg
         run: npm run build || npx tsc || true
 
-      - name: Configure SDK + Signing
+      - name: Configure Signing
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -149,34 +113,30 @@ jobs:
         run: |
           if [ ! -z "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > app/release.keystore
-            ls -lh app/release.keystore
             cat > app/keystore.properties << PROP
           storeFile=release.keystore
           storePassword=$KEYSTORE_PASSWORD
           keyAlias=$KEY_ALIAS
           keyPassword=$KEY_PASSWORD
           PROP
-          else
-            echo "No keystore"
-            echo "NO_KEYSTORE=true" >> $GITHUB_ENV
           fi
 
       - name: Run Gradle build - CLONE RELEASE
         run: |
           ./gradlew :app:assembleCloneRelease --no-daemon --stacktrace -Dorg.gradle.caching=false 2>&1 | tee gradle.log
-          echo "=== LIST ALL APKs ==="
+          echo "=== APKs FOUND ==="
           find . -name "*.apk" -type f -exec ls -lh {} \;
 
-      - name: Collect APKs to root
+      - name: Collect APKs
         run: |
           mkdir -p ./apk_out
-          find . -path "*/build/outputs/apk/*/*.apk" -type f -exec cp -v {} ./apk_out/ \; 2>/dev/null || true
+          find . -path "*/build/outputs/apk/*/*.apk" -type f -exec cp -v {} ./apk_out/ \;
           find app/build -name "*.apk" -type f -exec cp -v {} ./apk_out/ \; 2>/dev/null || true
+          echo "=== FINAL APKs ==="
           ls -lh ./apk_out/
-          echo "APK_COUNT=$(ls ./apk_out/*.apk 2>/dev/null | wc -l)" >> $GITHUB_ENV
+          du -sh ./apk_out/*
 
       - name: Create GitHub Release
-        if: env.APK_COUNT != '0'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: clone-${{ github.run_number }}
@@ -185,10 +145,17 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: false
 
-      - name: Upload APK Clone
+      - name: Upload APK
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: apk-clone-release
           path: ./apk_out/*.apk
           if-no-files-found: warn
+
+      - name: Upload log on fail
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-log
+          path: gradle.log
