@@ -147,7 +147,11 @@ jobs:
           txt = txt.replace("MNN_BUILD_DEMO=ON", "MNN_BUILD_DEMO=OFF")
           if "-DMNN_BUILD_DEMO=OFF" not in txt:
               txt = txt.replace("-DMNN_SEP_BUILD=false", '-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF')
-          clean = '        targets "MNN", "MNNWrapper", "apply_template", "embedding_demo", "generateLlmIO", "llm_bench", "llm_demo", "llm_logits_diff", "ppl_eval", "quantize_llm", "reranker_demo", "rollback_demo", "tokenizer_demo"'
+          clean = (
+              '        targets "MNN", "MNNWrapper", "apply_template", "embedding_demo", '
+              '"generateLlmIO", "llm_bench", "llm_demo", "llm_logits_diff", "ppl_eval", '
+              '"quantize_llm", "reranker_demo", "rollback_demo", "tokenizer_demo"'
+          )
           txt = re.sub(r'targets\s+"MNN".*', clean, txt)
           txt = txt.replace("qwen3_tts_demo", "")
           txt = txt.replace('"",', '"')
