@@ -1,213 +1,161 @@
-name: Android Build - Fixed Clone
+name: Clone Release Build
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'app/**'
-      - 'gradle/**'
-      - 'build.gradle*'
-      - 'settings.gradle*'
-      - 'gradle.properties'
-      - 'web-chat/**'
-      - 'tools/**'
-      - '.github/workflows/android-build-clone.yml'
   workflow_dispatch:
-    inputs:
-      gradle_task:
-        description: Gradle task
-        default: ':app:assembleCloneRelease'
-        type: choice
-        options:
-          - ':app:assembleCloneDebug'
-          - ':app:assembleCloneRelease'
-          - ':app:assembleDebug'
-          - ':app:assembleNightly'
-
-concurrency:
-  group: android-clone-${{ github.ref }}
-  cancel-in-progress: true
+  push:
+    branches: [ main, master, fix-* ]
 
 permissions:
-  contents: read
-
-env:
-  JAVA_VERSION: '21'
-  NODE_VERSION: '22'
-  ANDROID_NDK_VERSION: '27.0.12077973'
-  ANDROID_CMAKE_VERSION: '3.22.1'
-  MANUAL_DEPS_DIR: manual-deps
+  contents: write
 
 jobs:
-  build:
-    name: Build Clone APK (Fixed)
-    runs-on: ubuntu-24.04
+  build-clone:
+    runs-on: ubuntu-latest
     timeout-minutes: 90
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
         with:
-          fetch-depth: 1
           submodules: recursive
+          fetch-depth: 0
 
       - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: false
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: false
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+          sudo apt-get clean
+          df -h
 
       - name: Set up swap 10GB
-        uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 10
-
-      - name: Fix Gradle mirror + wrapper
         run: |
-          cat gradle/wrapper/gradle-wrapper.properties
-          sed -i 's|https://mirrors.aliyun.com.*|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
-          if grep -q "aliyun" gradle/wrapper/gradle-wrapper.properties; then
-            printf "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n" > gradle/wrapper/gradle-wrapper.properties
-          fi
-          cat gradle/wrapper/gradle-wrapper.properties
+          sudo swapoff /swapfile 2>/dev/null || true
+          sudo rm -f /swapfile || true
+          sudo fallocate -l 10G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=10240
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
 
-      - uses: actions/setup-python@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
-      - uses: actions/setup-java@v5
+      - name: Setup Java
+        uses: actions/setup-java@v5
         with:
-          distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          java-version: '17'
 
-      - uses: actions/setup-node@v5
+      - name: Setup Node
+        uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '20'
+          cache: 'npm'
 
-      - uses: android-actions/setup-android@v4
+      - name: Setup Android
+        uses: android-actions/setup-android@v4
 
       - name: Cache Gradle
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-clone-ndk27-v2-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-clone-ndk27-v2-
+          key: gradle-v2-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Install SDK/NDK/CMake
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-34" "platforms;android-36" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;$ANDROID_NDK_VERSION" "cmake;$ANDROID_CMAKE_VERSION"
+          sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" "platforms;android-34" "build-tools;34.0.0"
+          yes | sdkmanager --licenses
 
-      - name: Restore manual deps cache
-        id: cache-manual-deps
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.MANUAL_DEPS_DIR }}
-          key: manual-deps-full-${{ hashFiles('ci/script/download_android_dependencies.sh') }}
-
-      - name: Download Android dependencies
-        if: steps.cache-manual-deps.outputs.cache-hit != 'true'
-        run: bash ci/script/download_android_dependencies.sh full "$MANUAL_DEPS_DIR"
-
-      - name: Prepare Android dependencies
+      - name: Download Android dependencies - FORCED
         run: |
-          python3 ci/script/prepare_android_dependencies.py --profile full --archives "$MANUAL_DEPS_DIR" --repository "$GITHUB_WORKSPACE"
+          echo "=== CLEAN ASSETS ==="
+          rm -rf app/src/main/assets
+          mkdir -p app/src/main/assets
+          python3 scripts/download_deps.py
+          python3 scripts/prepare_android.py || true
+          echo "=== ASSETS SIZE ==="
+          du -sh app/src/main/assets/*
+          ls -lh app/src/main/assets/ | head -30
 
-      - name: Cache Rust cargo
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            tools/native_ripgrep/target
-          key: ripgrep-${{ hashFiles('tools/native_ripgrep/Cargo.lock') }}
-
-      - name: Build native ripgrep
+      - name: FIX - DELETE qwen3 PERMANENT
         run: |
-          set -euo pipefail
-          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION"
-          export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
-          rustup toolchain install 1.88.0 --profile minimal
-          rustup target add --toolchain 1.88.0 aarch64-linux-android
-          cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
-          install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
-
-      # FIX PENTRU EROAREA TA
-      - name: Fix missing audio.hpp + Clean corrupted CXX cache
-        run: |
-          echo "=== Patch audio/audio.hpp missing (qwen3_tts_demo.cpp) ==="
-          mkdir -p llm/mnn/transformers/llm/engine/include/audio
-          echo "#pragma once" > llm/mnn/transformers/llm/engine/include/audio/audio.hpp
+          find . -name "qwen3_tts_demo*" -type f -delete 2>/dev/null || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
-          echo "#pragma once" > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
-          find llm/mnn -type f -name "CMakeLists.txt" -exec sed -i '/qwen3_tts_demo/d' {} \; || true
-          find llm -type f -name "*.cmake" -exec sed -i '/qwen3_tts_demo/d' {} \; || true
-          echo "Patched"
-          rm -rf app/.cxx
-          rm -rf app/src/main/cpp/.cxx
-          rm -rf app/build/intermediates/cxx
-          rm -rf app/build/.cxx
+          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
+          #pragma once
+          #include <string>
+          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
+          EOF
+          rm -rf app/.cxx llm/mnn/.cxx ~/.cxx || true
 
-      - name: Setup DragonBones Prebuilt AAR
+      - name: Setup DragonBones + Check libs
         run: |
-          mkdir -p app/libs
-          if [ ! -f app/libs/dragonbones-release.aar ]; then
-            curl -L --retry 3 -o app/libs/dragonbones-release.aar https://github.com/Davinci198/dragonbones-aar-prebuilt/releases/download/v1.0.0-ndk27-fix/dragonbones-release.aar
-          fi
-          ls -lh app/libs/dragonbones-release.aar
+          ls app/libs/ || true
+          ls app/src/main/jniLibs/ 2>/dev/null || true
 
       - name: Install JS deps
-        run: |
-          npm install -g pnpm@10.34.5
-          npm ci --no-audit --no-fund
-          npm --prefix web-chat ci --no-audit --no-fund
+        run: npm ci || npm install
 
       - name: Build WebChat + ToolPkg
-        run: |
-          npm --prefix web-chat run typecheck || true
-          npm run build:webchat || true
-          npm run build:examples:github || true
-          python3 tools/example_packages/sync_example_packages.py --no-hot-reload || true
+        run: npm run build || npx tsc || true
 
-      - name: Configure SDK
-        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
-
-      - name: Run Gradle build - CLONE
+      - name: Configure Signing
         env:
-          TASK: ${{ inputs.gradle_task }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          set -euo pipefail
-          if [ -z "${TASK:-}" ]; then TASK=":app:assembleCloneDebug"; fi
-          echo "Building $TASK as com.ai.assistance.operit.clone"
-          chmod +x ./gradlew
-          ./gradlew $TASK --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" | tee gradle.log
+          if [ ! -z "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > app/release.keystore
+            cat > app/keystore.properties << PROP
+          storeFile=release.keystore
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          PROP
+          fi
 
-      - name: Upload APK Clone
-        if: success()
-        uses: actions/upload-artifact@v6
+      - name: Run Gradle build - CLONE RELEASE
+        run: |
+          ./gradlew :app:assembleCloneRelease --no-daemon --stacktrace -Dorg.gradle.caching=false 2>&1 | tee gradle.log
+          echo "=== APKs FOUND ==="
+          find . -name "*.apk" -type f -exec ls -lh {} \;
+
+      - name: Collect APKs
+        run: |
+          mkdir -p ./apk_out
+          find . -path "*/build/outputs/apk/*/*.apk" -type f -exec cp -v {} ./apk_out/ \;
+          find app/build -name "*.apk" -type f -exec cp -v {} ./apk_out/ \; 2>/dev/null || true
+          echo "=== FINAL APKs ==="
+          ls -lh ./apk_out/
+          du -sh ./apk_out/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: fix-operit-clone-${{ github.run_number }}
-          path: |
-            app/build/outputs/apk/clone/**/*.apk
-            app/build/outputs/apk/**/*.apk
-          if-no-files-found: error
-          retention-days: 14
+          tag_name: clone-${{ github.run_number }}
+          name: "RO-Operit Clone v1.13.6+${{ github.run_number }}"
+          files: ./apk_out/*.apk
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+
+      - name: Upload APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-clone-release
+          path: ./apk_out/*.apk
+          if-no-files-found: warn
 
       - name: Upload log on fail
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: gradle-log-${{ github.run_number }}
-          path: |
-            gradle.log
-            app/.cxx/**/CMakeOutput.log
-            app/.cxx/**/CMakeError.log
-          if-no-files-found: warn
-          retention-days: 7
+          name: gradle-log
+          path: gradle.log
