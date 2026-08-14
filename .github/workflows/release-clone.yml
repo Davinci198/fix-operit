@@ -54,20 +54,20 @@ jobs:
           submodules: recursive
 
       - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: false
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: false
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost 2>/dev/null || true
+          sudo apt-get clean 2>/dev/null || true
+          df -h
 
       - name: Set up swap 10GB
-        uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 10
+        run: |
+          sudo swapoff /swapfile 2>/dev/null || true
+          sudo rm -f /swapfile 2>/dev/null || true
+          sudo fallocate -l 10G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=10240
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
 
       - name: Fix Gradle mirror + wrapper
         run: |
@@ -99,9 +99,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-clone-ndk27-v2-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          key: gradle-clone-ndk27-v3-${{ github.run_number }}
           restore-keys: |
-            gradle-clone-ndk27-v2-
+            gradle-clone-ndk27-v3-
 
       - name: Install SDK/NDK/CMake
         run: |
@@ -122,23 +122,24 @@ jobs:
         run: |
           python3 ci/script/prepare_android_dependencies.py --profile full --archives "$MANUAL_DEPS_DIR" --repository "$GITHUB_WORKSPACE"
 
-      # >>> FIX QWEN3 + LEAKED KEYSTORE <<<
-      - name: FIX - DELETE qwen3 PERMANENT + clean leaked keys
+      - name: FIX - DELETE qwen3 PERMANENT EVERYWHERE
         run: |
-          echo "=== FIX qwen3_tts_demo.cpp ==="
-          find . -name "qwen3_tts_demo*" -type f -delete 2>/dev/null || true
-          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
-          rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
+          echo "=== FIX qwen3 EVERYWHERE ==="
+          find . -name "qwen3_tts_demo.cpp" -type f -delete -print 2>/dev/null || true
+          find . -name "qwen3_tts_demo*" -type f -delete -print 2>/dev/null || true
           mkdir -p llm/mnn/transformers/llm/engine/demo/audio
           cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
           #pragma once
           #include <string>
           namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
           EOF
-          echo "=== Clean leaked jks/keystore from assets ==="
-          rm -f app/src/main/assets/*.jks app/src/main/assets/*.keystore app/src/main/assets/*.p12 2>/dev/null || true
-          rm -rf app/src/main/assets/jks.jks 2>/dev/null || true
-          ls -lh llm/mnn/transformers/llm/engine/demo/audio/
+          find . -type d -path "*transformers/llm/engine/demo" -exec mkdir -p {}/audio \; 2>/dev/null || true
+          find . -type d -path "*transformers/llm/engine/demo" -exec sh -c 'echo "#pragma once
+          #include <string>
+          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }" > "{}/audio/audio.hpp"' \; 2>/dev/null || true
+          find . -name "CMakeLists.txt" -exec sed -i 's/qwen3_tts_demo//g' {} \; 2>/dev/null || true
+          echo "=== FIX DONE ==="
+          find . -name "qwen3_tts_demo*" -type f 2>/dev/null | head -5 || echo "No qwen3 files - GOOD!"
 
       - name: Cache Rust cargo
         uses: actions/cache@v5
@@ -166,7 +167,8 @@ jobs:
           rm -rf app/src/main/cpp/.cxx
           rm -rf app/build/intermediates/cxx
           rm -rf app/build/.cxx
-          find app/src/main/cpp -maxdepth 1 -ls | head -20
+          rm -rf llm/mnn/.cxx
+          find app/src/main/cpp -maxdepth 1 -ls 2>/dev/null | head -20 || true
 
       - name: Setup DragonBones Prebuilt AAR
         run: |
@@ -231,7 +233,7 @@ jobs:
           chmod +x ./gradlew
           ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
-            tail -120 gradle.log
+            tail -200 gradle.log
             exit 1
           fi
 
@@ -257,7 +259,7 @@ jobs:
             ## RO-Operit ${{ inputs.version_name }} (clone)
             - Flavor: clone (com.ai.assistance.operit.clone)
             - Semnat: ✅ RO-Operit release keystore
-            - Fix: qwen3_tts_demo.cpp removed + fake audio.hpp
+            - Fix: qwen3_tts_demo.cpp removed EVERYWHERE + fake audio.hpp
             - Build: #${{ github.run_number }}
           draft: false
           prerelease: ${{ inputs.prerelease }}
