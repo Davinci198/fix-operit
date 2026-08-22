@@ -282,7 +282,8 @@ jobs:
           echo "Building $gradle_task - for parallel install com.ai.assistance.operit.clone"
           chmod +x ./gradlew
           ./gradlew "$gradle_task" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log || true
-          if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
+          # Verificăm dacă build-ul a avut erori majore
+          if grep -qi "FAILED" gradle.log && ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
             echo "::error::GRADLE BUILD FAILED - last 120 lines of gradle.log:"
             tail -120 gradle.log | sed 's/^/::error::/' || true
             exit 1
