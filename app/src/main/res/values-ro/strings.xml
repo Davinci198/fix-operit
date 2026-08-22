@@ -87,7 +87,7 @@
     <string name="floating_hello">Bună ziua</string>
     <string name="nav_help">Manual de utilizare</string>
 
-    
+
 <!-- Setări terminal -->
     <string name="terminal_font_settings">Setări font terminal</string>
     <string name="terminal_font_size">Mărime font</string>
@@ -140,7 +140,7 @@
     <string name="package_category_plugin">Plugin</string>
     <string name="desktop_pet_start">Pornește animalul de companie de pe birou</string>
 
-    
+
 <!-- Cărți de personaj -->
     <string name="character_book_title">Carte de personaj</string>
     <string name="character_book_edit">Editare carte de personaj</string>
@@ -388,7 +388,7 @@
 
     <string name="error_title">Eroare</string>
 
-    
+
 <!-- Servere și conexiuni -->
     <string name="ftp_file_server">Server FTP</string>
     <string name="ftp_server_not_running">Serverul FTP nu rulează</string>
@@ -449,7 +449,7 @@
     <string name="rename_avatar_model_title">Redenumirea modelului</string>
     <string name="rename_avatar_model_message">Introduceți un nou nume pentru afișarea modelului</string>
     <string name="avatar_model_name_label">Denumirea modelului</string>
-    <string name="no_models_available">Nu există modele disponibile</string>
+    <string name="no_models_available">Nu există modele disponibile</string>u există modele disponibile</string>
     <string name="please_select_model">Vă rugăm să alegeți un model</string>
     <string name="unsupported_model_type">Tipuri de modele neacceptate: %1$s</string>
     <string name="avatar_preview_error_log">Eroare la previzualizarea imaginii de profil: %1$s</string>
@@ -8092,7 +8092,7 @@ Vă rugăm să sprijiniți autorul original și să fiți atenți la revânzare.
     <string name="user_configuration_rename">Redenumirea configurației utilizatorului</string>
     <string name="user_configuration_select">Selectați configurația utilizatorului</string>
     <string name="user_configuration_unlock_notice">Această configurație a fost migrată din setările de blocare ale versiunii vechi; după salvare, blocarea întregii fișe de date va fi eliminată.</string>
-</resources>
+
     <string name="delete_file">Ștergere fișier</string>
     <string name="make_directory">Creare director</string>
     <string name="find_files">Căutare fișiere</string>
@@ -8116,3 +8116,4 @@ Vă rugăm să sprijiniți autorul original și să fiți atenți la revânzare.
     <string name="create_file">Creare fișier</string>
     <string name="edit_file">Editare fișier</string>
     <string name="etichete">Etichete</string>
+</resources>
