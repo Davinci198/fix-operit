@@ -87,7 +87,19 @@
     <string name="floating_hello">Bună ziua</string>
     <string name="nav_help">Manual de utilizare</string>
 
-    <!-- Color Picker -->
+    
+<!-- Setări terminal -->
+    <string name="terminal_font_settings">Setări font terminal</string>
+    <string name="terminal_font_size">Mărime font</string>
+    <string name="terminal_rendering_frame_rate">Rată de refresh (FPS)</string>
+    <string name="terminal_font_file_path">Cale font</string>
+    <string name="terminal_system_font_name">Nume font sistem</string>
+    <string name="terminal_software_source_management">Gestionare surse software</string>
+    <string name="terminal_current_source">Sursă curentă</string>
+    <string name="terminal_reset_to_default">Resetare la setări implicite</string>
+
+<!-- Color Picker -->
+
     <string name="colorpicker_select_primary">Alege culoarea principală</string>
     <string name="colorpicker_select_secondary">Alege o culoare secundară</string>
     <string name="colorpicker_select_statusbar">Alege culoarea barei de stare</string>
@@ -128,12 +140,55 @@
     <string name="package_category_plugin">Plugin</string>
     <string name="desktop_pet_start">Pornește animalul de companie de pe birou</string>
 
-    <!-- Fluxuri de lucru -->
+    
+<!-- Cărți de personaj -->
+    <string name="character_book_title">Carte de personaj</string>
+    <string name="character_book_edit">Editare carte de personaj</string>
+    <string name="character_book_manage">Gestionare cărți de personaj</string>
+    <string name="character_book_customize_tools">Personalizare instrumente permise</string>
+    <string name="character_book_integrated_tools">Instrumente integrate</string>
+    <string name="character_book_identifier">Identificator</string>
+    <string name="character_book_search_hint">Căutați după nume, descriere sau</string>
+
+    <!-- Instrumente noi -->
+    <string name="extended_http_tools">Instrumente HTTP extinse</string>
+    <string name="extended_memory_tools">Instrumente de memorie extinse</string>
+    <string name="extended_chat">Instrumente de conversație extinse</string>
+    <string name="extended_file_tools">Instrumente de fișiere extinse</string>
+    <string name="linux_ssh">Linux SSH</string>
+    <string name="operit_editor">Editor Operit</string>
+    <string name="automatic_ui_base">Bază UI automată</string>
+    <string name="automatic_ui_subagent">Subagent UI automat</string>
+    <string name="12306_ticket">Bilet 12306</string>
+    <string name="apk_reverse">Reverse APK</string>
+    <string name="super_admin">Administrator super</string>
+    <string name="crossref">Crossref</string>
+    <string name="ctx_limiter_c">Limitator de context</string>
+    <string name="daily_life">Funcții zilnice</string>
+    <string name="time">Timp</string>
+    <string name="system_tools">Instrumente sistem</string>
+    <string name="various_search">Căutare multiplă</string>
+    <string name="workflow">Flux de lucru</string>
+    <string name="delete_file">Ștergere fișier</string>
+    <string name="make_directory">Creare director</string>
+    <string name="find_files">Căutare fișiere</string>
+    <string name="grep_code">Căutare cod</string>
+    <string name="grep_context">Căutare context</string>
+    <string name="download_file">Descărcare fișier</string>
+    <string name="visit_web">Accesare pagină web</string>
+    <string name="sleep">Pauză</string>
+    <string name="list_files">Listare fișiere</string>
+    <string name="use_package">Activare pachet</string>
+    <string name="browser">Navigator web</string>
+    <string name="code_runner">Executor cod</string>
+
+<!-- Fluxuri de lucru -->
+
     <string name="workflow_list_title">Lista fluxurilor de lucru</string>
     <string name="workflow_create">Crearea unui flux de lucru</string>
     <string name="workflow_name">Denumirea fluxului de lucru</string>
     <string name="workflow_description">Descriere</string>
-    <string name="workflow_nodes">nod</string>
+    <string name="workflow_nodes">noduri</string>
     <string name="workflow_trigger">Declanșarea execuției</string>
     <string name="workflow_delete">Ștergere flux de lucru</string>
     <string name="workflow_empty_state">Nu există încă un flux de lucru; faceți clic în colțul din dreapta sus pentru a crea unul</string>
@@ -170,7 +225,7 @@
     <string name="workflow_schedule_type_cron">CronExpresie</string>
     <string name="workflow_interval_unit_minutes">minute</string>
     <string name="workflow_interval_unit_hours">oră</string>
-    <string name="workflow_interval_unit_days">Cerul</string>
+    <string name="workflow_interval_unit_days">zile</string>
     <string name="workflow_interval_config_title">Configurare la intervale fixe</string>
     <string name="workflow_interval_value_label">interval</string>
     <string name="workflow_interval_unit_label">Unitate</string>
@@ -191,15 +246,15 @@
     <string name="workflow_repeat_label">Executare repetată</string>
     <string name="workflow_schedule_enabled_label">Activare programare</string>
     <string name="workflow_cron_preset_daily_midnight">În fiecare noapte, la miezul nopții</string>
-    <string name="workflow_cron_preset_daily_9am">În fiecare dimineață9punct</string>
-    <string name="workflow_cron_preset_daily_noon">În fiecare zi, la prânz12punct</string>
-    <string name="workflow_cron_preset_daily_6pm">În fiecare după-amiază6punct</string>
+    <string name="workflow_cron_preset_daily_9am">În fiecare dimineață la 9:00</string>
+    <string name="workflow_cron_preset_daily_noon">În fiecare zi la prânz (12:00)</string>
+    <string name="workflow_cron_preset_daily_6pm">În fiecare după-amiază la 18:00</string>
     <string name="workflow_cron_preset_every_2_hours">În fiecare2oră</string>
     <string name="workflow_cron_preset_every_6_hours">În fiecare6oră</string>
     <string name="workflow_cron_preset_every_15_minutes">În fiecare15minute</string>
     <string name="workflow_cron_preset_every_30_minutes">În fiecare30minute</string>
     <string name="workflow_cron_preset_every_monday_midnight">În fiecare luni, la miezul nopții</string>
-    <string name="workflow_cron_preset_workday_9am">Dimineața, în zilele lucrătoare9punct</string>
+    <string name="workflow_cron_preset_workday_9am">Dimineața în zilele lucrătoare la 9:00</string>
     <string name="workflow_node_label_trigger">Declanșare</string>
     <string name="workflow_node_label_execute">Executare</string>
     <string name="workflow_node_label_condition">Condiții</string>
@@ -333,7 +388,23 @@
 
     <string name="error_title">Eroare</string>
 
-    <!-- Panou atașamente -->
+    
+<!-- Servere și conexiuni -->
+    <string name="ftp_file_server">Server FTP</string>
+    <string name="ftp_server_not_running">Serverul FTP nu rulează</string>
+    <string name="storage_management">Gestionare stocare</string>
+    <string name="ubuntu_environment_size">Dimensiune mediu Ubuntu</string>
+    <string name="project_path">Cale proiect</string>
+    <string name="ssh_connection">Conexiune SSH</string>
+    <string name="ssh_configuration">Configurare SSH</string>
+    <string name="no_ssh_configuration">Nu există configurație SSH</string>
+    <string name="enable_ssh_connection">Activare conexiune SSH</string>
+    <string name="ssh_start">Pornire</string>
+    <string name="ssh_check">Verificare</string>
+    <string name="ssh_refresh">Reîmprospătare</string>
+
+<!-- Panou atașamente -->
+
     <string name="screen_content">Conținutul ecranului</string>
     <string name="current_notifications">Anunțuri actuale</string>
     <string name="current_location">Poziția curentă</string>
@@ -8022,3 +8093,26 @@ Vă rugăm să sprijiniți autorul original și să fiți atenți la revânzare.
     <string name="user_configuration_select">Selectați configurația utilizatorului</string>
     <string name="user_configuration_unlock_notice">Această configurație a fost migrată din setările de blocare ale versiunii vechi; după salvare, blocarea întregii fișe de date va fi eliminată.</string>
 </resources>
+    <string name="delete_file">Ștergere fișier</string>
+    <string name="make_directory">Creare director</string>
+    <string name="find_files">Căutare fișiere</string>
+    <string name="grep_code">Căutare cod</string>
+    <string name="grep_context">Căutare context</string>
+    <string name="download_file">Descărcare fișier</string>
+    <string name="visit_web">Accesare pagină web</string>
+    <string name="sleep">Pauză</string>
+    <string name="list_files">Listare fișiere</string>
+    <string name="use_package">Activare pachet</string>
+    <string name="browser">Navigator web</string>
+    <string name="code_runner">Executor cod</string>
+    <string name="crossref">Crossref</string>
+    <string name="ctx_limiter_c">Limitator context</string>
+    <string name="daily_life">Funcții zilnice</string>
+    <string name="time">Timp</string>
+    <string name="system_tools">Instrumente sistem</string>
+    <string name="various_search">Căutare multiplă</string>
+    <string name="workflow">Flux de lucru</string>
+    <string name="extended_http_tools">Instrumente HTTP extinse</string>
+    <string name="create_file">Creare fișier</string>
+    <string name="edit_file">Editare fișier</string>
+    <string name="etichete">Etichete</string>
