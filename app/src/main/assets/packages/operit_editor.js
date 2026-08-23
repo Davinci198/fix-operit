@@ -2,7 +2,7 @@
 {
   name: "operit_editor"
   display_name: {
-    ro: "Editor de configurații Operit",
+  
     ro: "Modificare directă a setărilor platformei Operit (MCP, Skill, Sandbox, Modele, TTS/STT).",
     zh: "Operit平台编辑器"
     en: "Operit Platform Editor"
