@@ -203,13 +203,13 @@ class FloatingChatService : Service(), FloatingWindowCallback {
         AppLogger.d(TAG, "onCreate")
 
         instance = this
-
         try {
             sendBroadcast(
                 Intent(ACTION_FLOATING_CHAT_SERVICE_STARTED)
                     .setPackage(packageName)
             )
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Failed to send FLOATING_CHAT_SERVICE_STARTED broadcast", e)
         }
 
         Thread.setDefaultUncaughtExceptionHandler(customExceptionHandler)
@@ -470,7 +470,8 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                     colorScheme.value = it.toComposeColorScheme()
                     try {
                         prefs.edit().putString(PREF_KEY_COLOR_SCHEME, gson.toJson(it)).apply()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "Failed to persist COLOR_SCHEME to prefs", e)
                     }
                 }
             } else {
@@ -501,7 +502,8 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                     typography.value = it.toComposeTypography()
                     try {
                         prefs.edit().putString(PREF_KEY_TYPOGRAPHY, gson.toJson(it)).apply()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "Failed to persist TYPOGRAPHY to prefs", e)
                     }
                 }
             } else {
@@ -530,7 +532,8 @@ class FloatingChatService : Service(), FloatingWindowCallback {
     private fun sendLifecycleBroadcast(action: String) {
         try {
             sendBroadcast(Intent(action).setPackage(packageName))
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Failed to send lifecycle broadcast: $action", e)
         }
     }
 
@@ -590,17 +593,20 @@ class FloatingChatService : Service(), FloatingWindowCallback {
 
             try {
                 binder.clearCallbacks()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to clear binder callbacks in onDestroy", e)
             }
 
             try {
                 chatCore.setUiBridge(EmptyChatServiceUiBridge)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to set EmptyChatServiceUiBridge in onDestroy", e)
             }
 
             try {
                 chatCore.cancelCurrentMessage()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to cancel current message in onDestroy", e)
             }
 
             try {
@@ -608,16 +614,20 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                     try {
                         try {
                             SpeechServiceFactory.getInstance(applicationContext).cancelRecognition()
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            AppLogger.e(TAG, "Failed to cancel speech recognition in onDestroy", e)
                         }
                         try {
                             VoiceServiceFactory.getInstance(applicationContext).stop()
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            AppLogger.e(TAG, "Failed to stop voice service in onDestroy", e)
                         }
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "Failed to cleanup speech/voice services in onDestroy", e)
                     }
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to launch speech/voice cleanup coroutine in onDestroy", e)
             }
             
             serviceScope.cancel()
