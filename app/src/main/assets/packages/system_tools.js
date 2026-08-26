@@ -4,11 +4,11 @@
 
     "display_name": {
         "ro": "Instrumente de sistem",
-        "ro": "Gestionare setări, instalare/dezinstalare aplicații, notificări, servicii de localizare și informații dispozitiv.",
         "zh": "系统工具",
         "en": "System Tools"
     },
     "description": {
+        "ro": "Gestionare setări, instalare/dezinstalare aplicații, notificări, servicii de localizare și informații dispozitiv.",
         "zh": "提供系统级操作工具，包括设置管理、应用安装卸载与启动、通知获取、位置服务、设备信息查询，以及 Intent/广播调用。",
         "en": "System-level operations: settings management, app install/uninstall & launch, notification retrieval, location services, device info queries, plus Intent/broadcast execution."
     },
