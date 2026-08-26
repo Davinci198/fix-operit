@@ -1521,10 +1521,8 @@ class WorkflowViewModel(application: Application) : AndroidViewModel(application
     /**
      * Check if workflow is scheduled
      */
-    fun isWorkflowScheduled(workflowId: String): Boolean {
-        return kotlinx.coroutines.runBlocking {
-            repository.isWorkflowScheduled(workflowId)
-        }
+    suspend fun isWorkflowScheduled(workflowId: String): Boolean {
+        return repository.isWorkflowScheduled(workflowId)
     }
     
     /**

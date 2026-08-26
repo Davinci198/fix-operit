@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import com.ai.assistance.operit.data.repository.WorkflowRepository
+import com.ai.assistance.operit.util.AppLogger
 import com.joaomgcd.taskerpluginlibrary.action.TaskerPluginRunnerAction
 import com.joaomgcd.taskerpluginlibrary.config.TaskerPluginConfig
 import com.joaomgcd.taskerpluginlibrary.config.TaskerPluginConfigHelper
@@ -11,7 +12,10 @@ import com.joaomgcd.taskerpluginlibrary.input.TaskerInput
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResult
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultError
 import com.joaomgcd.taskerpluginlibrary.runner.TaskerPluginResultSucess
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 /**
@@ -79,16 +83,19 @@ class WorkflowTaskerRunner : TaskerPluginRunnerAction<WorkflowTaskerInput, Unit>
             return TaskerPluginResultSucess()
         }
 
-        return try {
-            val repository = WorkflowRepository(context)
-            // This new repository method will find and trigger workflows based on the passed params
-            runBlocking {
+        // ANR fix: trigger workflows asynchronously on IO dispatcher instead of
+        // runBlocking on the calling thread. Tasker receives an immediate success
+        // result; failures during execution are logged.
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            try {
+                val repository = WorkflowRepository(context)
+                // This new repository method will find and trigger workflows based on the passed params
                 repository.triggerWorkflowsByTaskerEvent(params)
+            } catch (e: Exception) {
+                AppLogger.e("WorkflowTaskerRunner", "Failed to trigger workflows from Tasker event", e)
             }
-            TaskerPluginResultSucess()
-        } catch (e: Exception) {
-            TaskerPluginResultError(e) // Return error to Tasker for debugging
         }
+        return TaskerPluginResultSucess()
     }
 }
 
