@@ -239,7 +239,7 @@ jobs:
           npm run build:examples:github || true
           python3 tools/example_packages/sync_example_packages.py --no-hot-reload || true
 
-      - name: Configure SDK + Signing
+      - name: Configure SDK + Signing + Memory FIX
         shell: bash
         run: |
           set -euo pipefail
@@ -266,6 +266,19 @@ jobs:
             echo "::error::Release signing secrets NOT present! Set RO_OPERIT_KEYSTORE_B64 / PASSWORD / KEY_PASSWORD"
             exit 1
           fi
+
+          # ===== FIX OOM GC OVERHEAD - 26.08.2026 =====
+          cat > gradle.properties << 'EOF'
+          org.gradle.jvmargs=-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+          org.gradle.workers.max=1
+          org.gradle.parallel=false
+          org.gradle.configureondemand=false
+          org.gradle.caching=false
+          kotlin.daemon.jvmargs=-Xmx6g -Xms1g -XX:MaxMetaspaceSize=768m -XX:+UseG1GC
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          EOF
+          cat gradle.properties
         env:
           RO_OPERIT_KEYSTORE_B64: ${{ secrets.RO_OPERIT_KEYSTORE_B64 }}
           RO_OPERIT_KEYSTORE_PASSWORD: ${{ secrets.RO_OPERIT_KEYSTORE_PASSWORD }}
@@ -277,12 +290,13 @@ jobs:
         run: |
           set -euo pipefail
           TASK="${TASK:-:app:assembleCloneRelease}"
-          echo "Running $TASK"
+          echo "Running $TASK with 8g Gradle + 6g Kotlin daemon"
           chmod +x ./gradlew
-          ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
+          # FIX OOM: max-workers=1 + kotlin.daemon.jvmargs=6g + org.gradle.jvmargs=8g
+          ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=1 -Dorg.gradle.jvmargs="-Xmx8g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" -Dkotlin.daemon.jvmargs="-Xmx6g -Xms1g -XX:MaxMetaspaceSize=768m" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
             echo "::error::Build failed"
-            tail -500 gradle.log
+            tail -800 gradle.log
             exit 1
           fi
           echo "BUILD SUCCESSFUL"
@@ -309,7 +323,7 @@ jobs:
           name: RO-Operit ${{ inputs.version_name }} (clone, signed)
           body: |
             ## RO-Operit ${{ inputs.version_name }} (clone)
-            - Fix: qwen3_tts_demo removed (MNN_BUILD_DEMO=OFF), ro duplicate keys fix #26
+            - Fix: qwen3_tts_demo removed (MNN_BUILD_DEMO=OFF), ro duplicate keys fix #26, OOM fix GC overhead #27
             - Build: #${{ github.run_number }}
             - Commit: ${{ github.sha }}
           draft: false
