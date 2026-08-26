@@ -6,15 +6,15 @@ on:
       version_tag:
         description: 'Release tag (ex: v1.13.1)'
         required: true
-        default: 'v1.16.1'
+        default: 'v1.17.2'
       version_name:
         description: 'Version name shown in APK (ex: 1.13.2+1-clone)'
         required: true
-        default: '1.16.2+1-clone'
+        default: '1.17.2+1-clone'
       version_code:
         description: 'Numeric versionCode (MUST be higher than current installed, ex: 48)'
         required: true
-        default: '52'
+        default: '58'
       gradle_task:
         description: 'Gradle task'
         type: choice
@@ -55,9 +55,9 @@ jobs:
 
       - name: Free disk space
         run: |
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost 2>/dev/null || true
           sudo apt-get clean 2>/dev/null || true
           df -h
+
       - name: Set up swap 10GB
         run: |
           sudo swapoff /swapfile 2>/dev/null || true
@@ -67,14 +67,15 @@ jobs:
           sudo mkswap /swapfile
           sudo swapon /swapfile
           free -h
+
       - name: Fix Gradle mirror + wrapper
         run: |
-          cat gradle/wrapper/gradle-wrapper.properties
           sed -i 's|https://mirrors.aliyun.com.*|https://services.gradle.org/distributions/gradle-8.13-bin.zip|g' gradle/wrapper/gradle-wrapper.properties || true
           if grep -q "aliyun" gradle/wrapper/gradle-wrapper.properties; then
             printf "distributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\n" > gradle/wrapper/gradle-wrapper.properties
           fi
           cat gradle/wrapper/gradle-wrapper.properties
+
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
@@ -96,12 +97,15 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-clone-ndk27-v3-${{ github.run_number }}
+          key: gradle-clone-ndk27-v4-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-${{ github.run_number }}
           restore-keys: |
-            gradle-clone-ndk27-v3-
+            gradle-clone-ndk27-v4-
+
       - name: Install SDK/NDK/CMake
         run: |
           sdkmanager --install "platform-tools" "platforms;android-34" "platforms;android-36" "build-tools;34.0.0" "build-tools;35.0.0" "ndk;$ANDROID_NDK_VERSION" "cmake;$ANDROID_CMAKE_VERSION"
+          sdkmanager --list | grep -E "ndk;|cmake;" | tail -20
+
       - name: Restore manual deps cache
         id: cache-manual-deps
         uses: actions/cache@v5
@@ -116,55 +120,103 @@ jobs:
       - name: Prepare Android dependencies
         run: |
           python3 ci/script/prepare_android_dependencies.py --profile full --archives "$MANUAL_DEPS_DIR" --repository "$GITHUB_WORKSPACE"
-      - name: FIX - DELETE qwen3 PERMANENT EVERYWHERE
-        run: |
-          echo "=== FIX qwen3 EVERYWHERE ==="
-      - name: FIX CRITICAL - DELETE qwen3_tts_demo COMPLETELY
-        run: |
-          find . -name "qwen3_tts_demo*" -type f -delete 2>/dev/null || true
-          mkdir -p llm/mnn/transformers/llm/engine/demo/audio
-          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
-          #pragma once
-          #include <string>
-          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
-          EOF
 
-      - name: FIX DEFINITIV - Scoate qwen3 din targets NINJA
-        run: |
-          if [ -f llm/mnn/build.gradle.kts ]; then
-            sed -i 's/-DMNN_SEP_BUILD=false/-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF/g' llm/mnn/build.gradle.kts || true
-            sed -i 's/MNN_BUILD_DEMO=ON/MNN_BUILD_DEMO=OFF/g' llm/mnn/build.gradle.kts || true
-            python3 << 'PY'
-          import re, pathlib
-          p=pathlib.Path("llm/mnn/build.gradle.kts")
-          txt=p.read_text()
-          clean='targets "MNN", "MNNWrapper", "apply_template", "embedding_demo", "generateLlmIO", "llm_bench", "llm_demo", "llm_logits_diff", "ppl_eval", "quantize_llm", "reranker_demo", "rollback_demo", "tokenizer_demo"'
-          txt=re.sub(r'targets.*MNN.*', clean, txt)
-          txt=txt.replace("qwen3_tts_demo","")
-          p.write_text(txt)
-          PY
-          fi
-          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx || true
-          grep -n "targets\|qwen3" llm/mnn/build.gradle.kts
+      - name: Cache Rust cargo
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            tools/native_ripgrep/target
+          key: ripgrep-${{ hashFiles('tools/native_ripgrep/Cargo.lock') }}-rust1.88
 
       - name: Build native ripgrep
         run: |
           set -euo pipefail
           export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION"
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
-          rustup toolchain install 1.88.0 --profile minimal
-          rustup target add --toolchain 1.88.0 aarch64-linux-android
+          rustup toolchain install 1.88.0 --profile minimal || true
+          rustup target add --toolchain 1.88.0 aarch64-linux-android || true
           cargo +1.88.0 build --manifest-path tools/native_ripgrep/Cargo.toml --release --target aarch64-linux-android --locked
           install -Dm755 tools/native_ripgrep/target/aarch64-linux-android/release/liboperit_ripgrep.so app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
-      - name: Clean corrupted CXX cache (fix sherpa_ncnn / wamr)
+          ls -lh app/src/main/jniLibs/arm64-v8a/liboperit_ripgrep.so
+
+      - name: FIX DEFINITIV QWEN3 - patch mnn build.gradle.kts (UN SINGUR STEP VERIFICAT)
         run: |
-          echo "Cleaning CXX caches"
-          rm -rf app/.cxx
-          rm -rf app/src/main/cpp/.cxx
-          rm -rf app/build/intermediates/cxx
-          rm -rf app/build/.cxx
-          rm -rf llm/mnn/.cxx
-          find app/src/main/cpp -maxdepth 1 -ls 2>/dev/null | head -20 || true
+          set -euo pipefail
+          FILE="llm/mnn/build.gradle.kts"
+          echo "=== BEFORE PATCH ==="
+          grep -n "qwen3\|multi_lora\|targets\|MNN_BUILD_DEMO" "$FILE" | head -40 || true
+          ls -l llm/mnn/transformers/llm/engine/demo/ | head -20 || true
+
+          # 1. Sterge sursele care trag audio.hpp si qwen3
+          echo "Deleting qwen3 sources..."
+          find . -type f -name "*qwen3*tts*demo*.cpp" -delete 2>/dev/null || true
+          find . -type f -name "*multi_lora_demo*.cpp" -delete 2>/dev/null || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/qwen3_tts_demo.cpp || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/multi_lora_demo.cpp || true
+          rm -rf llm/mnn/transformers/llm/engine/demo/audio || true
+          find . -path "*mnn*" -name "*qwen3*" -type f -delete 2>/dev/null || true
+
+          # 2. Patch inteligent in python - nu cu sed fragil
+          cat > /tmp/patch_mnn.py << 'PY'
+          import pathlib, re
+          p = pathlib.Path("llm/mnn/build.gradle.kts")
+          text = p.read_text()
+
+          # Force OFF pentru demo si tools - cheia fixului
+          text = text.replace("MNN_BUILD_DEMO=ON", "MNN_BUILD_DEMO=OFF")
+          if "MNN_BUILD_DEMO" not in text:
+              # daca nu exista, adaugam flag-ul in cmake args
+              text = text.replace("-DMNN_SEP_BUILD=false", '-DMNN_SEP_BUILD=false", "-DMNN_BUILD_DEMO=OFF", "-DMNN_BUILD_TOOLS=OFF')
+          else:
+              # asigura OFF peste tot
+              text = re.sub(r'MNN_BUILD_DEMO=\s*ON', 'MNN_BUILD_DEMO=OFF', text)
+
+          # Rescrie targets sa contina doar ce compileaza pe Android
+          # Pattern-urile comune: val targets = listOf(...)
+          # Inlocuim cu listOf("llm_demo") - cel mai sigur
+          text = re.sub(r'val\s+targets\s*=\s*listOf\s*\(.*?\)', 'val targets = listOf("llm_demo")', text, flags=re.DOTALL)
+
+          # Sterge orice ramasita qwen3 / multi_lora din text
+          text = text.replace("qwen3_tts_demo", "")
+          text = text.replace("multi_lora_demo", "")
+
+          # Curata virgule goale lasate de stergere: "", , etc
+          text = text.replace('", "",', '",')
+          text = text.replace('"",', '')
+          text = text.replace(', ""', '')
+          text = re.sub(r',\s*,', ',', text)
+          text = re.sub(r'listOf\(\s*,', 'listOf(', text)
+          text = re.sub(r',\s*\)', ')', text)
+
+          p.write_text(text)
+          print("=== AFTER PATCH (first 3000 chars) ===")
+          print(text[:3000])
+          PY
+          python3 /tmp/patch_mnn.py
+
+          # 3. Creaza stub audio.hpp ca sa nu mai dea NINJA eroare chiar daca mai cauta ceva
+          mkdir -p llm/mnn/transformers/llm/engine/demo/audio
+          cat > llm/mnn/transformers/llm/engine/demo/audio/audio.hpp << 'EOF'
+          #pragma once
+          #include <string>
+          namespace MNN { namespace AUDIO { template<typename... Args> inline void save(Args&&...) {} } }
+          EOF
+          cat llm/mnn/transformers/llm/engine/demo/audio/audio.hpp
+
+          # 4. Curata cache CMake vechi
+          rm -rf llm/mnn/.cxx app/.cxx app/build/.cxx ~/.cxx || true
+
+          echo "=== AFTER PATCH CHECK ==="
+          grep -n "qwen3\|multi_lora\|targets\|MNN_BUILD_DEMO" "$FILE" | head -40 || true
+
+          if grep -q "qwen3" "$FILE"; then
+            echo "::error::qwen3 still present in build.gradle.kts"
+            exit 1
+          fi
+          echo "OK QWEN3 CLEAN - Ready for clone build"
+
       - name: Setup DragonBones Prebuilt AAR
         run: |
           mkdir -p app/libs
@@ -172,17 +224,21 @@ jobs:
             curl -L --retry 3 -o app/libs/dragonbones-release.aar https://github.com/Davinci198/dragonbones-aar-prebuilt/releases/download/v1.0.0-ndk27-fix/dragonbones-release.aar
           fi
           ls -lh app/libs/dragonbones-release.aar
+
       - name: Install JS deps
         run: |
           npm install -g pnpm@10.34.5
+          pnpm --version
           npm ci --no-audit --no-fund
           npm --prefix web-chat ci --no-audit --no-fund
+
       - name: Build WebChat + ToolPkg
         run: |
           npm --prefix web-chat run typecheck || true
           npm run build:webchat || true
           npm run build:examples:github || true
           python3 tools/example_packages/sync_example_packages.py --no-hot-reload || true
+
       - name: Configure SDK + Signing
         shell: bash
         run: |
@@ -193,10 +249,10 @@ jobs:
           VERSION_NAME_BASE="${VERSION_NAME%-clone}"
           VERSION_NAME_BASE="${VERSION_NAME_BASE%%+*}"
           PATCH_INDEX="${VERSION_NAME#*+}"; PATCH_INDEX="${PATCH_INDEX%-clone}"
-          echo "Patching versionCode -> $VERSION_CODE, versionName -> ${VERSION_NAME_BASE}+${PATCH_INDEX}"
+          echo "VERSION_CODE=$VERSION_CODE VERSION_NAME_BASE=$VERSION_NAME_BASE PATCH=$PATCH_INDEX"
           sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" app/build.gradle.kts
           sed -i "s/versionName = \"[^\"]*\"/versionName = \"${VERSION_NAME_BASE}+${PATCH_INDEX}\"/" app/build.gradle.kts
-          grep -n "versionCode\|versionName" app/build.gradle.kts | head -4
+          grep -E "versionCode|versionName" app/build.gradle.kts | head -5
           if [[ -n "${RO_OPERIT_KEYSTORE_B64:-}" && -n "${RO_OPERIT_KEYSTORE_PASSWORD:-}" && -n "${RO_OPERIT_KEY_PASSWORD:-}" ]]; then
             echo "$RO_OPERIT_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/ro-operit-release.jks"
             {
@@ -205,9 +261,9 @@ jobs:
               echo "RELEASE_KEY_ALIAS=ro-operit"
               echo "RELEASE_KEY_PASSWORD=$RO_OPERIT_KEY_PASSWORD"
             } >> local.properties
-            echo "Release signing configured"
+            echo "Signing configured"
           else
-            echo "::error::Release signing secrets NOT present!"
+            echo "::error::Release signing secrets NOT present! Set RO_OPERIT_KEYSTORE_B64 / PASSWORD / KEY_PASSWORD"
             exit 1
           fi
         env:
@@ -221,25 +277,31 @@ jobs:
         run: |
           set -euo pipefail
           TASK="${TASK:-:app:assembleCloneRelease}"
-          echo "Building $TASK"
+          echo "Running $TASK"
           chmod +x ./gradlew
           ./gradlew "$TASK" --stacktrace --no-build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee gradle.log
           if ! grep -qi "BUILD SUCCESSFUL" gradle.log; then
-            tail -200 gradle.log
+            echo "::error::Build failed"
+            tail -500 gradle.log
             exit 1
           fi
+          echo "BUILD SUCCESSFUL"
+          find app/build/outputs -name "*.apk" -type f | xargs ls -lh
+
       - name: Verify APK signature
         shell: bash
         run: |
           set -euo pipefail
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          echo "Using apksigner: $APKSIGNER"
           APK=$(find app/build/outputs/apk/clone/release -name '*.apk' -type f 2>/dev/null | head -1)
           if [ -z "$APK" ]; then APK=$(find app/build/outputs/apk -name '*.apk' | head -1); fi
-          echo "Verifying: $APK"
+          if [ -z "$APK" ]; then echo "::error::No APK found"; exit 1; fi
+          echo "APK: $APK"
           "$APKSIGNER" verify --print-certs "$APK"
           echo "APK_PATH=$APK" >> "$GITHUB_ENV"
           ls -lh "$APK"
-          du -h "$APK"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -247,10 +309,9 @@ jobs:
           name: RO-Operit ${{ inputs.version_name }} (clone, signed)
           body: |
             ## RO-Operit ${{ inputs.version_name }} (clone)
-            - Flavor: clone (com.ai.assistance.operit.clone)
-            - Semnat: ✅ RO-Operit release keystore
-            - Fix: qwen3_tts_demo.cpp removed EVERYWHERE + fake audio.hpp
+            - Fix: qwen3_tts_demo removed (MNN_BUILD_DEMO=OFF), ro duplicate keys fix #26
             - Build: #${{ github.run_number }}
+            - Commit: ${{ github.sha }}
           draft: false
           prerelease: ${{ inputs.prerelease }}
           files: |
@@ -274,5 +335,7 @@ jobs:
           name: gradle-log-${{ github.run_number }}
           path: |
             gradle.log
+            app/build/outputs/logs/*
+            llm/mnn/.cxx/**/CMakeFiles/CMakeOutput.log
           if-no-files-found: warn
           retention-days: 7
