@@ -70,7 +70,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
@@ -494,76 +493,73 @@ class OperitApplication : Application(), ImageLoaderFactory, WorkConfiguration.P
     }
 
     private fun startGlobalAIForegroundServiceIfNeeded() {
-        try {
-            val alwaysListeningEnabled = runBlocking {
-                WakeWordPreferences(applicationContext).alwaysListeningEnabledFlow.first()
+        applicationScope.launch {
+            try {
+                val alwaysListeningEnabled =
+                    WakeWordPreferences(applicationContext).alwaysListeningEnabledFlow.first()
+                val externalHttpEnabled =
+                    ExternalHttpApiPreferences.getInstance(applicationContext).enabledFlow.first()
+                if ((!alwaysListeningEnabled && !externalHttpEnabled) || AIForegroundService.isRunning.get()) {
+                    return@launch
+                }
+                val intent = Intent(this@OperitApplication, AIForegroundService::class.java).apply {
+                    putExtra(AIForegroundService.EXTRA_STATE, AIForegroundService.STATE_IDLE)
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent)
+                } else {
+                    startService(intent)
+                }
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to start AIForegroundService based on persistent background duty state: ${e.message}", e)
             }
-            val externalHttpEnabled = runBlocking {
-                ExternalHttpApiPreferences.getInstance(applicationContext).enabledFlow.first()
-            }
-            if ((!alwaysListeningEnabled && !externalHttpEnabled) || AIForegroundService.isRunning.get()) {
-                return
-            }
-            val intent = Intent(this, AIForegroundService::class.java).apply {
-                putExtra(AIForegroundService.EXTRA_STATE, AIForegroundService.STATE_IDLE)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {
-                startService(intent)
-            }
-        } catch (e: Exception) {
-            AppLogger.e(TAG, "按持久后台职责状态启动 AIForegroundService 失败: ${e.message}", e)
         }
     }
 
     /** 初始化应用语言设置 */
     private fun initializeAppLanguage() {
-        try {
-            // 同步获取已保存的语言设置
-            val languageCode = runBlocking {
-                try {
-                    // 使用更安全的方式检查preferencesManager
-                    val manager = runCatching { preferencesManager }.getOrNull()
-                    if (manager != null) {
-                        manager.appLanguage.first()
-                    } else {
+        applicationScope.launch {
+            try {
+                // 异步获取已保存的语言设置
+                val languageCode =
+                    try {
+                        // 使用更安全的方式检查preferencesManager
+                        val manager = runCatching { preferencesManager }.getOrNull()
+                        if (manager != null) {
+                            manager.appLanguage.first()
+                        } else {
+                            UserPreferencesManager.DEFAULT_LANGUAGE
+                        }
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "获取语言设置失败", e)
                         UserPreferencesManager.DEFAULT_LANGUAGE
                     }
-                } catch (e: Exception) {
-                    AppLogger.e(TAG, "获取语言设置失败", e)
-                    UserPreferencesManager.DEFAULT_LANGUAGE
-                }
-            }
-
-            AppLogger.d(TAG, "获取语言设置: $languageCode")
-
-            // 立即应用语言设置
-            val locale = LocaleUtils.getLocaleForLanguageCode(languageCode, this)
-            // 设置默认语言
-            Locale.setDefault(locale)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                // Android 13+ 使用AppCompatDelegate API
-                val localeList = LocaleListCompat.create(locale)
-                AppCompatDelegate.setApplicationLocales(localeList)
-                AppLogger.d(TAG, "使用AppCompatDelegate设置语言: $languageCode")
-            } else {
-                // 较旧版本Android - 此处使用的部分更新将在attachBaseContext中完成更完整更新
-                val config = Configuration()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    val localeList = LocaleList(locale)
-                    LocaleList.setDefault(localeList)
-                    config.setLocales(localeList)
+                AppLogger.d(TAG, "获取语言设置: $languageCode")
+                // 立即应用语言设置
+                val locale = LocaleUtils.getLocaleForLanguageCode(languageCode, this@OperitApplication)
+                // 设置默认语言
+                Locale.setDefault(locale)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    // Android 13+ 使用AppCompatDelegate API
+                    val localeList = LocaleListCompat.create(locale)
+                    AppCompatDelegate.setApplicationLocales(localeList)
+                    AppLogger.d(TAG, "使用AppCompatDelegate设置语言: $languageCode")
                 } else {
-                    config.locale = locale
+                    // 较旧版本Android - 此处使用的部分更新将在attachBaseContext中完成更完整更新
+                    val config = Configuration()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        val localeList = LocaleList(locale)
+                        LocaleList.setDefault(localeList)
+                        config.setLocales(localeList)
+                    } else {
+                        config.locale = locale
+                    }
+                    resources.updateConfiguration(config, resources.displayMetrics)
+                    AppLogger.d(TAG, "使用Configuration设置语言: $languageCode")
                 }
-
-                resources.updateConfiguration(config, resources.displayMetrics)
-                AppLogger.d(TAG, "使用Configuration设置语言: $languageCode")
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "初始化语言设置失败", e)
             }
-        } catch (e: Exception) {
-            AppLogger.e(TAG, "初始化语言设置失败", e)
         }
     }
 
