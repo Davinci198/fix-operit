@@ -3,7 +3,6 @@ package com.ai.assistance.operit.api.voice
 import android.content.Context
 import com.ai.assistance.operit.data.preferences.SpeechServicesPreferences
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 /** 语音服务工厂，用于创建不同类型的语音服务实例 */
 object VoiceServiceFactory {
@@ -34,15 +33,13 @@ object VoiceServiceFactory {
      * @param context 应用上下文
      * @return 对应类型的VoiceService实例
      */
-    fun createVoiceService(
+    suspend fun createVoiceService(
         context: Context
     ): VoiceService {
         val prefs = SpeechServicesPreferences(context)
-        // 使用runBlocking同步获取配置，这在工厂方法中是可接受的
-        return runBlocking {
-            val type = prefs.ttsServiceTypeFlow.first()
-            
-            when (type) {
+        val type = prefs.ttsServiceTypeFlow.first()
+
+        return when (type) {
                 VoiceServiceType.SIMPLE_TTS -> {
                     val httpConfig = prefs.ttsHttpConfigFlow.first()
                     SimpleVoiceProvider(
@@ -114,7 +111,6 @@ object VoiceServiceFactory {
                         config = vitsConfig
                     )
                 }
-            }
         }
     }
 
@@ -128,9 +124,9 @@ object VoiceServiceFactory {
      * @param context 应用上下文
      * @return VoiceService实例
      */
-    fun getInstance(context: Context): VoiceService {
+    suspend fun getInstance(context: Context): VoiceService {
         val prefs = SpeechServicesPreferences(context)
-        val selectedType = runBlocking { prefs.ttsServiceTypeFlow.first() }
+        val selectedType = prefs.ttsServiceTypeFlow.first()
 
         if (instance == null || selectedType != currentType) {
             instance?.shutdown()

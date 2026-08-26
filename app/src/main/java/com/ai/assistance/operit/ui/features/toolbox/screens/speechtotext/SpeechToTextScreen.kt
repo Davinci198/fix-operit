@@ -124,12 +124,11 @@ fun SpeechToTextScreen(navController: NavController) {
     var recognitionMode by remember { mutableStateOf(SpeechServiceFactory.SpeechServiceType.SHERPA_NCNN) }
 
     var speechService by remember {
-        mutableStateOf(SpeechServiceFactory.createSpeechService(context, recognitionMode))
+        mutableStateOf<SpeechService?>(null)
     }
-
     LaunchedEffect(recognitionMode) {
         try {
-            speechService.shutdown()
+            speechService?.shutdown()
         } catch (_: Exception) {
         }
         speechService = SpeechServiceFactory.createSpeechService(context, recognitionMode)
@@ -138,24 +137,41 @@ fun SpeechToTextScreen(navController: NavController) {
     DisposableEffect(Unit) {
         onDispose {
             try {
-                speechService.shutdown()
+                speechService?.shutdown()
             } catch (_: Exception) {
             }
         }
     }
 
     // 从服务中收集状态
-    val isInitialized by speechService.isInitialized.collectAsState()
-    val recognitionState by speechService.recognitionStateFlow.collectAsState()
+    val isInitialized by produceState(
+        initialValue = false,
+        key1 = speechService
+    ) {
+        val svc = speechService
+        if (svc != null) {
+            svc.isInitialized.collect { value = it }
+        }
+    }
+    val recognitionState by produceState(
+        initialValue = SpeechService.RecognitionState.UNINITIALIZED,
+        key1 = speechService
+    ) {
+        val svc = speechService
+        if (svc != null) {
+            svc.recognitionStateFlow.collect { value = it }
+        }
+    }
     val isListening = recognitionState == SpeechService.RecognitionState.RECOGNIZING ||
                       recognitionState == SpeechService.RecognitionState.PROCESSING
 
     // 当服务实例改变时，执行初始化
     LaunchedEffect(speechService) {
         error = null // 清理旧的错误信息
-        val success = speechService.initialize()
+        val svc = speechService ?: return@LaunchedEffect
+        val success = svc.initialize()
         if (success) {
-            availableLanguages = speechService.getSupportedLanguages()
+            availableLanguages = svc.getSupportedLanguages()
         } else {
             error = context.getString(R.string.engine_init_failed, recognitionMode.name)
         } 
@@ -164,12 +180,12 @@ fun SpeechToTextScreen(navController: NavController) {
     // 当服务实例改变时，重新开始收集结果和错误
     LaunchedEffect(speechService) {
         launch {
-            speechService.recognitionResultFlow.collect { result ->
+            speechService?.recognitionResultFlow?.collect { result ->
                 recognizedText = result.text
             }
         }
         launch {
-            speechService.recognitionErrorFlow.collect { recognitionError ->
+            speechService?.recognitionErrorFlow?.collect { recognitionError ->
                 if (recognitionError.message.isNotBlank()) {
                     error = context.getString(R.string.recognition_error, recognitionError.message)
                 }
@@ -185,7 +201,7 @@ fun SpeechToTextScreen(navController: NavController) {
                 // 对于Sherpa引擎，启用连续模式和部分结果
                 val continuousMode = recognitionMode == SpeechServiceFactory.SpeechServiceType.SHERPA_NCNN
                 val partialResults = recognitionMode == SpeechServiceFactory.SpeechServiceType.SHERPA_NCNN
-                speechService.startRecognition(selectedLanguage, continuousMode, partialResults)
+                speechService?.startRecognition(selectedLanguage, continuousMode, partialResults)
             } catch (e: Exception) {
                 error = context.getString(R.string.start_recognition_error, e.message ?: "")
             }
@@ -196,7 +212,7 @@ fun SpeechToTextScreen(navController: NavController) {
     fun stopRecognition() {
         coroutineScope.launch {
             try {
-                speechService.stopRecognition()
+                speechService?.stopRecognition()
             } catch (e: Exception) {
                 error = context.getString(R.string.stop_recognition_error, e.message ?: "")
             }
