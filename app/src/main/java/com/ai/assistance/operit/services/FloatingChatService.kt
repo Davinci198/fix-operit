@@ -649,7 +649,8 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                 Intent(ACTION_FLOATING_CHAT_SERVICE_STOPPED)
                     .setPackage(packageName)
             )
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Failed to broadcast FLOATING_CHAT_SERVICE_STOPPED", e)
         }
         instance = null
     }
@@ -662,20 +663,24 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                 false
             )
             chatCore.cancelCurrentMessage()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Failed to cancel wake listening / current message", e)
         }
         try {
             serviceScope.launch(Dispatchers.IO) {
                 try {
                     try {
                         SpeechServiceFactory.getInstance(applicationContext).cancelRecognition()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "Failed to cancel speech recognition", e)
                     }
                     VoiceServiceFactory.getInstance(applicationContext).stop()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    AppLogger.e(TAG, "Failed to stop voice service", e)
                 }
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Failed to launch voice cleanup on close", e)
         }
         try {
             if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -684,11 +689,13 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                 Handler(Looper.getMainLooper()).post {
                     try {
                         windowManager.prepareForExit()
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "Failed to prepare window exit on main thread", e)
                     }
                 }
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppLogger.e(TAG, "Failed to prepare window exit", e)
         }
         binder.notifyClose()
         stopSelf()
