@@ -593,17 +593,20 @@ class FloatingChatService : Service(), FloatingWindowCallback {
 
             try {
                 binder.clearCallbacks()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to clear binder callbacks in onDestroy", e)
             }
 
             try {
                 chatCore.setUiBridge(EmptyChatServiceUiBridge)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to set EmptyChatServiceUiBridge in onDestroy", e)
             }
 
             try {
                 chatCore.cancelCurrentMessage()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to cancel current message in onDestroy", e)
             }
 
             try {
@@ -611,16 +614,20 @@ class FloatingChatService : Service(), FloatingWindowCallback {
                     try {
                         try {
                             SpeechServiceFactory.getInstance(applicationContext).cancelRecognition()
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            AppLogger.e(TAG, "Failed to cancel speech recognition in onDestroy", e)
                         }
                         try {
                             VoiceServiceFactory.getInstance(applicationContext).stop()
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            AppLogger.e(TAG, "Failed to stop voice service in onDestroy", e)
                         }
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        AppLogger.e(TAG, "Failed to cleanup speech/voice services in onDestroy", e)
                     }
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                AppLogger.e(TAG, "Failed to launch speech/voice cleanup coroutine in onDestroy", e)
             }
             
             serviceScope.cancel()
