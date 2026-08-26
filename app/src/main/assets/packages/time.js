@@ -4,11 +4,11 @@
 
   display_name: {
     ro: "Instrumente de timp",
-    ro: "Furnizează funcționalități legate de oră și fus orar.",
     zh: "时间"
     en: "Time"
   }
   description: {
+    ro: "Furnizează funcționalități legate de oră și fus orar."
     zh: "提供时间相关功能。实际上，激活本包的同时已经能够获取时间了。"
     en: "Provides time-related utilities. In practice, current time is already available once this package is enabled."
   }

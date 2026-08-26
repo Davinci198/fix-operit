@@ -3,11 +3,11 @@
     "name": "browser",
     "display_name": {
         "ro": "Automatizare browser",
-        "ro": "Automatizare browser web compatibilă Playwright pentru navigare și extragere date.",
         "zh": "Browser 自动化操作",
         "en": "Browser Automation"
     },
     "description": {
+        "ro": "Automatizare browser web compatibilă Playwright pentru navigare și extragere date.",
         "zh": "严格对齐 Playwright MCP 默认 browser 工具面的浏览器自动化工具集。",
         "en": "Browser automation tools aligned to the default Playwright MCP browser surface."
     },
@@ -175,7 +175,7 @@
                 { "name": "action", "description": { "zh": "操作：list/create/select/close。", "en": "Action: list/create/select/close." }, "type": "string", "required": true },
                 { "name": "index", "description": { "zh": "可选，0-based tab 索引。", "en": "Optional 0-based tab index." }, "type": "number", "required": false }
             ]
-        },
+        }
     ]
 }*/
 const MAX_INLINE_BROWSER_TEXT_CHARS = 24000;
