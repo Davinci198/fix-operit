@@ -110,3 +110,23 @@
 # Păstrează informațiile de tip generice necesare pentru Gson TypeToken
 -keepattributes Signature
 -keepattributes *Annotation*, EnclosingMethod, InnerClasses
+
+# ===== FIX R8 cloneRelease - 26.08.2026 - Missing classes din log 550KB =====
+# Eroarea: minifyCloneReleaseWithR8 FAILED - Missing class com.gemalto.jp2.JP2Decoder etc.
+
+-dontwarn com.gemalto.**
+-dontwarn javax.lang.model.**
+-dontwarn javax.management.**
+-dontwarn javax.annotation.**
+-dontwarn net.i2p.crypto.**
+-dontwarn net.i2p.crypto.eddsa.**
+-dontwarn net.i2p.crypto.eddsa.math.**
+-dontwarn net.i2p.crypto.eddsa.spec.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.apache.sshd.common.util.security.eddsa.**
+-dontwarn autovalue.shaded.com.squareup.javapoet.**
+
+-keep class com.tom_roush.pdfbox.** { *; }
+-keep class org.apache.sshd.** { *; }
+-keep class net.i2p.crypto.** { *; }
+-keep class com.gemalto.** { *; }
