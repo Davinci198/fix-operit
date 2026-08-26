@@ -124,7 +124,7 @@ fun SpeechToTextScreen(navController: NavController) {
     var recognitionMode by remember { mutableStateOf(SpeechServiceFactory.SpeechServiceType.SHERPA_NCNN) }
 
     var speechService by remember {
-        mutableStateOf<SpeechService?>()
+        mutableStateOf<SpeechService?>(null)
     }
     LaunchedEffect(recognitionMode) {
         try {
@@ -212,7 +212,7 @@ fun SpeechToTextScreen(navController: NavController) {
     fun stopRecognition() {
         coroutineScope.launch {
             try {
-                speechService.stopRecognition()
+                speechService?.stopRecognition()
             } catch (e: Exception) {
                 error = context.getString(R.string.stop_recognition_error, e.message ?: "")
             }

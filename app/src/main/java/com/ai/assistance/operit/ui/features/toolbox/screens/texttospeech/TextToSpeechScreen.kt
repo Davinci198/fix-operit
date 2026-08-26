@@ -48,7 +48,7 @@ fun TextToSpeechScreen(navController: NavController) {
         val httpConfig by prefs.ttsHttpConfigFlow.collectAsState(initial = SpeechServicesPreferences.DEFAULT_HTTP_TTS_PRESET)
         var voiceServiceVersion by remember { mutableStateOf(0) }
         var voiceService by remember(voiceServiceVersion) {
-                mutableStateOf<VoiceService?>()
+                mutableStateOf<VoiceService?>(null)
         }
         // 异步创建语音服务实例（工厂方法为 suspend）
         LaunchedEffect(voiceServiceVersion) {
