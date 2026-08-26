@@ -48,7 +48,11 @@ fun TextToSpeechScreen(navController: NavController) {
         val httpConfig by prefs.ttsHttpConfigFlow.collectAsState(initial = SpeechServicesPreferences.DEFAULT_HTTP_TTS_PRESET)
         var voiceServiceVersion by remember { mutableStateOf(0) }
         var voiceService by remember(voiceServiceVersion) {
-                mutableStateOf(VoiceServiceFactory.getInstance(context))
+                mutableStateOf<VoiceService?>()
+        }
+        // 异步创建语音服务实例（工厂方法为 suspend）
+        LaunchedEffect(voiceServiceVersion) {
+                voiceService = VoiceServiceFactory.getInstance(context)
         }
         
         // 状态变量
@@ -83,18 +87,17 @@ fun TextToSpeechScreen(navController: NavController) {
                 }
         }
 
-        fun refreshVoiceService(): VoiceService {
+        suspend fun refreshVoiceService(): VoiceService {
                 val latestVoiceService = VoiceServiceFactory.getInstance(context)
-                if (voiceService !== latestVoiceService) {
-                        voiceService = latestVoiceService
-                }
-                return voiceService
+                voiceService = latestVoiceService
+                return latestVoiceService
         }
 
         // 监听语音服务状态
         LaunchedEffect(voiceService) {
+                val service = voiceService ?: return@LaunchedEffect
                 try {
-                        isInitialized = voiceService.initialize()
+                        isInitialized = service.initialize()
                         if (!isInitialized) {
                                 error = context.getString(R.string.tts_init_failed)
                                 errorDetails = context.getString(R.string.tts_init_error_details)
@@ -102,10 +105,9 @@ fun TextToSpeechScreen(navController: NavController) {
                 } catch (e: Exception) {
                         error = context.getString(R.string.tts_init_error)
                         errorDetails = handleTtsError(e)
-                        debugInfo = context.getString(R.string.tts_debug_service_type, voiceService.javaClass.simpleName)
+                        debugInfo = context.getString(R.string.tts_debug_service_type, service.javaClass.simpleName)
                 }
-
-                voiceService.speakingStateFlow.collect { speaking -> isSpeaking = speaking }
+                service.speakingStateFlow.collect { speaking -> isSpeaking = speaking }
         }
 
         LaunchedEffect(ttsServiceType) {

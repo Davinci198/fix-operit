@@ -4,7 +4,6 @@ import android.content.Context
 import com.ai.assistance.operit.util.AppLogger
 import com.ai.assistance.operit.data.preferences.SpeechServicesPreferences
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
 
 /** 语音识别服务工厂类 用于创建和管理不同类型的语音识别服务 */
@@ -25,20 +24,20 @@ object SpeechServiceFactory {
      * @param context 应用上下文
      * @return 对应类型的语音识别服务实例
      */
-    fun createSpeechService(
+    suspend fun createSpeechService(
         context: Context
     ): SpeechService {
         val prefs = SpeechServicesPreferences(context)
-        val type = runBlocking { prefs.sttServiceTypeFlow.first() }
+        val type = prefs.sttServiceTypeFlow.first()
 
         return createSpeechService(context, type)
     }
 
-    fun createWakeSpeechService(
+    suspend fun createWakeSpeechService(
         context: Context,
     ): SpeechService {
         val prefs = SpeechServicesPreferences(context)
-        val selectedType = runBlocking { prefs.sttServiceTypeFlow.first() }
+        val selectedType = prefs.sttServiceTypeFlow.first()
         val effectiveType = when (selectedType) {
             SpeechServiceType.OPENAI_STT,
             SpeechServiceType.DEEPGRAM_STT,
@@ -48,7 +47,7 @@ object SpeechServiceFactory {
         return createSpeechService(context, effectiveType)
     }
 
-    fun createSpeechService(
+    suspend fun createSpeechService(
         context: Context,
         type: SpeechServiceType,
     ): SpeechService {
@@ -56,26 +55,22 @@ object SpeechServiceFactory {
         return when (type) {
             SpeechServiceType.SHERPA_NCNN -> acquireLocalSpeechService(context, type)
             SpeechServiceType.OPENAI_STT -> {
-                runBlocking {
-                    val sttConfig = prefs.sttHttpConfigFlow.first()
-                    OpenAISttProvider(
-                        context = context,
-                        endpointUrl = sttConfig.endpointUrl,
-                        apiKey = sttConfig.apiKey,
-                        model = sttConfig.modelName,
-                    )
-                }
+                val sttConfig = prefs.sttHttpConfigFlow.first()
+                OpenAISttProvider(
+                    context = context,
+                    endpointUrl = sttConfig.endpointUrl,
+                    apiKey = sttConfig.apiKey,
+                    model = sttConfig.modelName,
+                )
             }
             SpeechServiceType.DEEPGRAM_STT -> {
-                runBlocking {
-                    val sttConfig = prefs.sttHttpConfigFlow.first()
-                    DeepgramSttProvider(
-                        context = context,
-                        endpointUrl = sttConfig.endpointUrl,
-                        apiKey = sttConfig.apiKey,
-                        model = sttConfig.modelName,
-                    )
-                }
+                val sttConfig = prefs.sttHttpConfigFlow.first()
+                DeepgramSttProvider(
+                    context = context,
+                    endpointUrl = sttConfig.endpointUrl,
+                    apiKey = sttConfig.apiKey,
+                    model = sttConfig.modelName,
+                )
             }
         }
     }
@@ -170,11 +165,11 @@ object SpeechServiceFactory {
      * @param context 应用上下文
      * @return 语音识别服务实例
      */
-    fun getInstance(
+    suspend fun getInstance(
         context: Context,
     ): SpeechService {
         val prefs = SpeechServicesPreferences(context)
-        val selectedType = runBlocking { prefs.sttServiceTypeFlow.first() }
+        val selectedType = prefs.sttServiceTypeFlow.first()
         
         val needNewInstance = instance == null || selectedType != currentType
         

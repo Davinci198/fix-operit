@@ -130,11 +130,11 @@ class FloatingFullscreenModeViewModel(
     private fun stopCurrentTtsPlayback() {
         ttsSpeakJob?.cancel()
         ttsSpeakJob = null
-        coroutineScope.launch { speechManager.voiceService.stop() }
+        coroutineScope.launch { speechManager.voiceService?.stop() }
     }
 
     private fun isAiBusyOrSpeaking(): Boolean {
-        return isAiBusy() || speechManager.voiceService.isSpeaking
+        return isAiBusy() || speechManager.voiceService?.isSpeaking == true
     }
 
     private fun shouldInterceptCenterAvatarClick(): Boolean {
@@ -298,7 +298,7 @@ class FloatingFullscreenModeViewModel(
             coroutineScope.launch {
                 try {
                     previousJob?.join()
-                    speechManager.voiceService.speak(text, interrupt)
+                    speechManager.voiceService?.speak(text, interrupt)
                 } catch (_: kotlinx.coroutines.CancellationException) {
                 } catch (e: Exception) {
                     AppLogger.e(TAG, "TTS playback failed", e)
@@ -361,7 +361,7 @@ class FloatingFullscreenModeViewModel(
         suppressRecognitionUntilMs = 0L
         waveModeAutoTimeoutEnabled = false
         stopVoiceCapture(true)
-        coroutineScope.launch { speechManager.voiceService.stop() }
+        coroutineScope.launch { speechManager.voiceService?.stop() }
         isWaveActive = false
         showBottomControls = true
         inactivityJob?.cancel()
@@ -396,7 +396,7 @@ class FloatingFullscreenModeViewModel(
                 floatContext.onCancelMessage?.invoke()
             }
             coroutineScope.launch {
-                speechManager.voiceService.stop()
+                speechManager.voiceService?.stop()
                 if (!speechManager.isRecording && !speechManager.isProcessingSpeech) {
                     startVoiceCapture()
                 }
@@ -489,7 +489,7 @@ class FloatingFullscreenModeViewModel(
                     // 如果 AI 正在朗读，不要在朗读过程中退出/关闭。
                     // 等朗读结束后再重新评估 remaining。
                     val voiceService = speechManager.voiceService
-                    if (voiceService.isSpeaking) {
+                    if (voiceService != null && voiceService.isSpeaking) {
                         withTimeoutOrNull(20_000L) {
                             voiceService.speakingStateFlow.filter { speaking -> !speaking }.first()
                         }

@@ -416,7 +416,7 @@ class AIForegroundService : Service() {
             }
         }
 
-        fun ensureMicrophoneForeground(context: Context, forceStart: Boolean = false) {
+        suspend fun ensureMicrophoneForeground(context: Context, forceStart: Boolean = false) {
             val appContext = context.applicationContext
             if (!forceStart && !isRunning.get() && !hasPersistentForegroundResponsibilityConfigured(appContext)) {
                 return
@@ -497,17 +497,13 @@ class AIForegroundService : Service() {
             }
         }
 
-        private fun hasPersistentForegroundResponsibilityConfigured(context: Context): Boolean {
+        private suspend fun hasPersistentForegroundResponsibilityConfigured(context: Context): Boolean {
             val appContext = context.applicationContext
             val alwaysListeningEnabled = runCatching {
-                runBlocking {
-                    WakeWordPreferences(appContext).alwaysListeningEnabledFlow.first()
-                }
+                WakeWordPreferences(appContext).alwaysListeningEnabledFlow.first()
             }.getOrDefault(false)
             val backgroundKeepAliveEnabled = runCatching {
-                runBlocking {
-                    DisplayPreferencesManager.getInstance(appContext).enableBackgroundKeepAlive.first()
-                }
+                DisplayPreferencesManager.getInstance(appContext).enableBackgroundKeepAlive.first()
             }.getOrDefault(false)
             val externalHttpEnabled = runCatching {
                 ExternalHttpApiPreferences.getInstance(appContext).getConfigSync().let { config ->
@@ -788,7 +784,7 @@ class AIForegroundService : Service() {
 
     private var lastSpeechWorkflowCheckAtMs: Long = 0L
 
-    private fun ensureWakeSpeechProvider(): SpeechService {
+    private suspend fun ensureWakeSpeechProvider(): SpeechService {
         val existing = wakeSpeechProvider
         if (existing != null) return existing
         return SpeechServiceFactory.createWakeSpeechService(applicationContext).also {

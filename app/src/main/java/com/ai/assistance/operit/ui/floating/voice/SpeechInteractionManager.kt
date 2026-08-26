@@ -13,13 +13,17 @@ import androidx.compose.runtime.setValue
 import com.ai.assistance.operit.api.chat.AIForegroundService
 import com.ai.assistance.operit.api.speech.SpeechPrerollStore
 import com.ai.assistance.operit.api.speech.WakePhraseSnapshot
+import com.ai.assistance.operit.api.speech.SpeechService
 import com.ai.assistance.operit.api.speech.SpeechServiceFactory
+import com.ai.assistance.operit.api.voice.VoiceService
 import com.ai.assistance.operit.api.voice.VoiceServiceFactory
 import com.ai.assistance.operit.util.TtsCleaner
 import com.ai.assistance.operit.util.WaifuMessageProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "SpeechInteractionManager"
@@ -55,31 +59,49 @@ class SpeechInteractionManager(
     private var silenceTimeoutJob: Job? = null
 
     // ===== 服务 =====
-    val speechService = SpeechServiceFactory.getInstance(context)
-    val voiceService
-        get() = VoiceServiceFactory.getInstance(context)
+    var speechService: SpeechService? = null
+        private set
+    var voiceService: VoiceService? = null
+        private set
     private val inputMethodManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-    // 暴露 Flow 给外部使用
-    val volumeLevelFlow get() = speechService.volumeLevelFlow
-    val recognitionResultFlow get() = speechService.recognitionResultFlow
+    // 暴露 Flow 给外部使用（proxy flows：实例创建前后引用保持稳定）
+    private val _volumeLevelFlow = MutableStateFlow(0f)
+    private val _recognitionResultFlow =
+        MutableStateFlow(SpeechService.RecognitionResult(text = "", isFinal = false))
+    val volumeLevelFlow: StateFlow<Float> get() = _volumeLevelFlow
+    val recognitionResultFlow: StateFlow<SpeechService.RecognitionResult> get() = _recognitionResultFlow
 
     // ===== 初始化与清理 =====
     suspend fun initialize() {
         resetState()
         try {
-            speechService.initialize()
-            voiceService.initialize()
+            if (speechService == null || voiceService == null) {
+                speechService = SpeechServiceFactory.getInstance(context)
+                voiceService = VoiceServiceFactory.getInstance(context)
+                bridgeServiceFlows()
+            }
+            speechService?.initialize()
+            voiceService?.initialize()
         } catch (e: Exception) {
             AppLogger.e(TAG, "Failed to initialize speech services", e)
+        }
+    }
+    private fun bridgeServiceFlows() {
+        val speech = speechService ?: return
+        coroutineScope.launch {
+            speech.volumeLevelFlow.collect { value -> _volumeLevelFlow.value = value }
+        }
+        coroutineScope.launch {
+            speech.recognitionResultFlow.collect { value -> _recognitionResultFlow.value = value }
         }
     }
 
     fun cleanup() {
         stopListening(isCancel = true)
         coroutineScope.launch {
-            speechService.cancelRecognition()
-            voiceService.stop()
+            speechService?.cancelRecognition()
+            voiceService?.stop()
         }
         timeoutJob?.cancel()
         silenceTimeoutJob?.cancel()
@@ -161,11 +183,11 @@ class SpeechInteractionManager(
                     if (attempt > 0) {
                         delay(160)
                     }
-                    ok = speechService.startRecognition(
+                    ok = speechService?.startRecognition(
                         languageCode = "zh-CN",
                         continuousMode = true,
                         partialResults = true
-                    )
+                    ) ?: false
                     attempt++
                 }
 
@@ -197,14 +219,14 @@ class SpeechInteractionManager(
 
         coroutineScope.launch {
             if (isCancel) {
-                speechService.cancelRecognition()
+                speechService?.cancelRecognition()
                 isProcessingSpeech = false
                 resetState()
                 onStateChange(context.getString(R.string.floating_hold_microphone))
             } else {
                 isProcessingSpeech = true
                 onStateChange(context.getString(R.string.floating_recognizing))
-                speechService.stopRecognition()
+                speechService?.stopRecognition()
                 startFallbackTimeout()
             }
         }
@@ -309,7 +331,7 @@ class SpeechInteractionManager(
         if (text.isBlank()) return
         coroutineScope.launch {
             try {
-                voiceService.speak(text, interrupt)
+                voiceService?.speak(text, interrupt)
             } catch (e: Exception) {
                 AppLogger.e(TAG, "TTS Error", e)
             }
