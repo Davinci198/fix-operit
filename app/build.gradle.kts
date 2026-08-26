@@ -286,8 +286,8 @@ android {
         applicationId = "com.ai.assistance.operit"
         minSdk = 26
         targetSdk = 34
-        versionCode = 51
-        versionName = "1.13.5.1+1"
+        versionCode = 54
+        versionName = "1.16.2+1-clone"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -295,9 +295,6 @@ android {
         }
         
         ndk {
-            // Explicitly specify the ABIs we package for the app process.
-            // terminal now also ships x86_64 runtime binaries for the Android Studio emulator,
-            // while the rest of the app remains primarily ARM-focused.
             abiFilters.addAll(listOf("arm64-v8a"))
         }
 
@@ -325,8 +322,11 @@ android {
         val releaseSigningConfig = signingConfigs.findByName("release")
 
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // FIX R8: cloneRelease pica cu Missing class com.gemalto.jp2.JP2Decoder etc.
+            // Pentru clone dezactivam minify, pentru standard il pastram dar cu dontwarn in proguard
+            // Daca vrei sa pui minify true la loc, pune proguard rules din comentariu
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -382,10 +382,7 @@ android {
         
         jniLibs {
             useLegacyPackaging = true
-            // libsudo.so (2-byte placeholder from terminal jniLibs) is not a
-            // valid ELF; llvm-strip fails on it during release packaging.
             keepDebugSymbols += setOf("**/libsudo.so")
-            // Fix duplicate libc++_shared.so from dragonbones + ffmpeg-kit-local
             pickFirsts += "**/libc++_shared.so"
         }
         resources {
@@ -394,8 +391,6 @@ android {
             excludes += "LICENSE-EPL-1.0.txt"
             excludes += "/META-INF/LICENSE-EDL-1.0.txt"
             excludes += "LICENSE-EDL-1.0.txt"
-            
-            // Resolve merge conflicts for document libraries
             excludes += "/META-INF/DEPENDENCIES"
             excludes += "/META-INF/LICENSE"
             excludes += "/META-INF/LICENSE.txt"
@@ -409,18 +404,11 @@ android {
             excludes += "/META-INF/*.RSA"
             excludes += "/META-INF/*.kotlin_module"
             excludes += "META-INF/versions/9/module-info.class"
-            
-            // Fix for duplicate Netty files
             excludes += "META-INF/io.netty.versions.properties"
             excludes += "META-INF/INDEX.LIST"
-            
-            // Fix for any other potential duplicate files
             pickFirsts += "**/*.so"
         }
     }
-//    aaptOptions {
-//        noCompress += "tflite"
-//    }
 }
 
 tasks.named("preBuild") {
@@ -448,13 +436,10 @@ dependencies {
     implementation(project(":fbx"))
     implementation(project(":showerclient"))
     implementation(project(":quickjs"))
-
-    // glTF runtime rendering (Filament)
     implementation("com.google.android.filament:filament-android:1.69.2")
     implementation("com.google.android.filament:gltfio-android:1.69.2")
     implementation("com.google.android.filament:filament-utils-android:1.69.2")
     implementation(libs.androidx.ui.graphics.android)
-    // FFmpegKit AAR este optional: exista doar local pe dispozitivul de build.
     if (hasFfmpegKit) {
         implementation(files("libs/ffmpeg-kit-local.aar"))
     }
@@ -465,240 +450,124 @@ dependencies {
     implementation(libs.androidx.animation.android)
     implementation(libs.androidx.ui.android)
     implementation(libs.androidx.activity.ktx)
-
-    // Desugaring support for modern Java APIs on older Android
     coreLibraryDesugaring(libs.desugar.jdk)
-
-    // ML Kit - 文本识别
     implementation(libs.mlkit.text.recognition)
-    // ML Kit - 多语言识别支持
     implementation(libs.mlkit.text.chinese)
     implementation(libs.mlkit.text.japanese)
     implementation(libs.mlkit.text.korean)
     implementation(libs.mlkit.text.devanagari)
-    
     implementation(libs.zxing.core)
-    
-    // diff
     implementation(libs.java.diff.utils)
-    
-    // APK解析和修改库
-    implementation(libs.android.apksig) // APK签名工具
-    implementation(libs.apk.parser) // 用于解析和处理AndroidManifest.xml
-    implementation(libs.sable.axml) // 用于Android二进制XML的读写
-    implementation(libs.zipalign.java) // 用于处理ZIP文件对齐
-    
-    // ZIP处理库 - 用于APK解压和重打包
+    implementation(libs.android.apksig)
+    implementation(libs.apk.parser)
+    implementation(libs.sable.axml)
+    implementation(libs.zipalign.java)
     implementation(libs.commons.compress)
-    implementation(libs.commons.io) // 添加Apache Commons IO
-    
-    // 图片处理库
-    implementation(libs.glide) // 用于处理图像
-    
-    // XML处理
+    implementation(libs.commons.io)
+    implementation(libs.glide)
     implementation(libs.androidx.core.ktx)
-    
-    // libsu - root access library
     implementation("com.github.topjohnwu.libsu:core:6.0.0")
     implementation("com.github.topjohnwu.libsu:service:6.0.0")
     implementation("com.github.topjohnwu.libsu:nio:6.0.0")
-    
-    // Add missing SVG support
     implementation(libs.androidsvg)
-    
-    // Add missing GIF support for Markwon
     implementation(libs.android.gif)
-    
-    // Image Cropper for background image cropping
     implementation(libs.image.cropper)
-    
-    // ExoPlayer for video background
     implementation(libs.exoplayer)
     implementation(libs.exoplayer.core)
     implementation(libs.exoplayer.ui)
-    
-    // Material 3 Window Size Class
     implementation(libs.material3.window)
-    
-    // Window metrics library for foldables and adaptive layouts
     implementation(libs.window)
     implementation(libs.androidx.webkit)
-
-    // Document conversion libraries
     implementation(libs.itextg)
     implementation(libs.pdfbox)
     implementation(libs.zip4j)
-    
-    // 图片加载库
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
-    
-    // LaTeX rendering libraries
     implementation(libs.jlatexmath)
-    implementation(libs.renderx) // RenderX library for LaTeX rendering
-    
-    // Base Android dependencies
+    implementation(libs.renderx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.lifecycle.runtime.ktx)
-
-    // Kotlin Serialization
     implementation(libs.kotlinx.serialization)
     implementation(libs.kotlin.reflect)
-    
-    // UUID dependencies
     implementation(libs.uuid)
-    
-    // Gson for JSON parsing
     implementation(libs.gson)
-
-    // HJSON dependency for human-friendly JSON parsing
     implementation(libs.hjson)
-
-    // 中文分词库 - Jieba Android
     implementation(libs.jieba)
-
-    // 向量搜索库 - 轻量级实现，适合Android
     implementation(libs.hnswlib.core)
     implementation(libs.hnswlib.utils)
-    
-    // 用于向量嵌入的TF Lite (如果需要自定义嵌入)
     implementation(libs.tensorflow.lite)
     implementation(libs.mediapipe.tasks.text)
-    
-    // ONNX Runtime for Android - 支持更强大的多语言Embedding模型
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.17.1")
-
-    // Room 数据库
     implementation(libs.room.runtime)
-    implementation(libs.room.ktx) // Kotlin扩展和协程支持
-    kapt(libs.room.compiler) // 使用kapt代替ksp
-
-    // ObjectBox
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
     implementation(libs.objectbox.kotlin)
     kapt(libs.objectbox.processor)
     implementation(libs.commons.compress.v2)
     implementation(libs.junrar)
-
-    // Compose dependencies - use BOM for version consistency
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.activity.compose)
-    // Use BOM version for all Compose dependencies
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.animation)
     implementation(libs.compose.animation.core)
-
-    // Navigation Compose
     implementation(libs.navigation.compose)
-
-    // Shizuku dependencies
     implementation(libs.shizuku.api)
     implementation(libs.shizuku.provider)
-
-    // Tasker Plugin Library
     implementation("com.joaomgcd:taskerpluginlibrary:0.4.10")
-    
-    // WorkManager for scheduled workflows
     implementation(libs.work.runtime.ktx)
-
-    // Network dependencies
     implementation(libs.okhttp)
     implementation(libs.okhttp.sse)
     implementation(libs.jsoup)
-
-    // DataStore dependencies
     implementation(libs.datastore.preferences)
     implementation(libs.datastore.preferences.core)
-
-    // Debug dependencies
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
-
-    // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
-
-    // Apache POI - for Document processing (DOC, DOCX, etc.)
     implementation(libs.poi)
     implementation(libs.poi.ooxml)
     implementation(libs.poi.scratchpad)
-
-    // Color picker for theme customization
     implementation(libs.colorpicker)
     implementation(libs.backdrop)
     implementation(libs.liquid)
-    
-    // NanoHTTPD for local web server
     implementation(libs.nanohttpd)
-
-    // 添加测试依赖
     testImplementation(libs.junit)
-    
-    // Android测试依赖
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     androidTestImplementation(libs.test.runner)
     androidTestImplementation(libs.test.rules)
-    
-    // 协程测试依赖
     testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.coroutines.test)
-    
-    // 模拟测试框架 - 保留现有的 mockito 并新增 mockk
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
     androidTestImplementation(libs.mockito.android)
-    
-    // // 新增的测试依赖 - mockk 和 kotlin-test
-    // testImplementation(libs.mockk)
-    // testImplementation(libs.ktor.server.test.host)
-    // testImplementation(libs.kotlinx.coroutines.debug)
-    // androidTestImplementation(libs.mockk)
-    
     implementation(libs.reorderable)
-
-    // Swipe to reveal actions
     implementation(libs.swipe)
-
-    // Coroutine
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
-
     implementation(libs.mcp.sdk.client)
     implementation(libs.ktor.client.okhttp)
-    
-    // Exclude bcprov-jdk15to18 from all configurations to avoid duplicate classes
     configurations.all {
         exclude(group = "org.bouncycastle", module = "bcprov-jdk15to18")
     }
-
-    // Security
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    
-    // BouncyCastle - explicitly include jdk18on version to avoid conflicts
     implementation("org.bouncycastle:bcprov-jdk18on:1.78")
-
-    // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     implementation(libs.okhttp.logging.interceptor)
-
-
-    // Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
-
-    // Glance for Widgets (Compose for Widgets)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
 }
