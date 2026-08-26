@@ -94,3 +94,19 @@
 # Reactor BlockHound integration with Netty
 -dontwarn reactor.blockhound.integration.BlockHoundIntegration
 -dontwarn io.netty.util.internal.Hidden$NettyBlockHoundIntegration
+
+# ===== R8 / Minify rules (Faza 2) =====
+
+# Păstrează metodele JNI native — R8 nu trebuie să le redenumească,
+# altfel legătura cu .so files se pierde (UnsatisfiedLinkError)
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Păstrează modelele Gson — serializarea/deserializarea depinde de numele câmpurilor
+-keep class com.ai.assistance.operit.data.model.** { *; }
+-keep class com.ai.assistance.operit.data.mcp.** { *; }
+
+# Păstrează informațiile de tip generice necesare pentru Gson TypeToken
+-keepattributes Signature
+-keepattributes *Annotation*, EnclosingMethod, InnerClasses
