@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ai.assistance.operit.R
+import com.ai.assistance.operit.ui.features.chat.components.style.common.ContextUsageBar
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -300,6 +301,12 @@ fun ClassicChatInputSection(
                 ),
     ) {
         Column {
+            // Cline 风格上下文用量条：projectedTokens = 当前窗口 + 草稿预估，置顶于输入卡片
+            ContextUsageBar(
+                currentTokens = projectedTokens,
+                maxTokens = maxTokens,
+            )
+
             // Reply preview section
             replyToMessage?.let { message ->
                 Surface(
