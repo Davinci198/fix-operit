@@ -134,18 +134,14 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                     description: {
                         zh: "在主屏幕运行 UI 子代理（强制主屏）。",
                         en: "Run the UI sub-agent on the main screen (forced main screen)."
-
-        ro: "Run the UI sub-agent on the main screen (forced main screen)."
-    }
+                    }
                     parameters: [
                         {
                             name: "intent"
                             description: {
                                 zh: "任务意图描述",
                                 en: "Task intent description"
-
-        ro: "Task intent description"
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -154,9 +150,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "目标应用名/包名（可选）",
                                 en: "Target app name/package (optional)"
-
-        ro: "Target app name/package (optional)"
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -165,9 +159,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "最大执行步数（默认20）",
                                 en: "Maximum execution steps (default: 20)"
-
-        ro: "Maximum execution steps (default: 20)"
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -179,18 +171,14 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                     description: {
                         zh: "在虚拟屏幕会话运行 UI 子代理（强制虚拟屏）。",
                         en: "Run the UI sub-agent on a virtual-display session (forced virtual screen)."
-
-        ro: "Run the UI sub-agent on a virtual-display session (forced virtual screen)."
-    }
+                    }
                     parameters: [
                         {
                             name: "intent"
                             description: {
                                 zh: "任务意图描述",
                                 en: "Task intent description"
-
-        ro: "Task intent description"
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -199,9 +187,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "目标应用名/包名（可选）",
                                 en: "Target app name/package (optional)"
-
-        ro: "Target app name/package (optional)"
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -210,9 +196,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "最大执行步数（默认20）",
                                 en: "Maximum execution steps (default: 20)"
-
-        ro: "Maximum execution steps (default: 20)"
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -221,9 +205,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "虚拟屏会话 agent_id（必须为非 'default'；可传入复用，或留空复用上次返回的 data.agentId）。",
                                 en: "Virtual-screen session agent_id (must be non-'default'; pass to reuse, or omit to reuse returned data.agentId)."
-
-        ro: "Virtual-screen session agent_id (must be non-'default'; pass to reuse, or omit to reuse returned data.agentId)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -249,9 +231,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第1个子代理意图（推荐使用：当前任务已经完成/你需要进一步完成/可能用到的信息 三段式）",
                                 en: "Intent for sub-agent #1 (recommended template: Completed so far / Next objective / Useful info)."
-
-        ro: "Intent for sub-agent #1 (recommended template: Completed so far / Next objective / Useful info)."
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -260,9 +240,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第1个子代理目标应用名（必填，用于并行冲突检测；各分支必须不同）",
                                 en: "Target app name for sub-agent #1 (required for conflict detection; must be different across branches)."
-
-        ro: "Target app name for sub-agent #1 (required for conflict detection; must be different across branches)."
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -271,9 +249,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第1个子代理最大步数（默认20）",
                                 en: "Max steps for sub-agent #1 (default: 20)."
-
-        ro: "Max steps for sub-agent #1 (default: 20)."
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -282,9 +258,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第1个子代理 agent_id（必填，且不能为 'default'；用于指定虚拟屏会话；并行建议不同）",
                                 en: "agent_id for sub-agent #1 (required, must not be 'default'; selects a virtual-display session; use different agent_id per branch)."
-
-        ro: "agent_id for sub-agent #1 (required, must not be 'default'; selects a virtual-display session; use different agent_id per branch)."
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -294,9 +268,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第2个子代理意图（可选）",
                                 en: "Intent for sub-agent #2 (optional)."
-
-        ro: "Intent for sub-agent #2 (optional)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -305,9 +277,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第2个子代理目标应用名（当 intent_2 存在时必填；各分支必须不同）",
                                 en: "Target app name for sub-agent #2 (required when intent_2 is provided; must be different across branches)."
-
-        ro: "Target app name for sub-agent #2 (required when intent_2 is provided; must be different across branches)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -316,9 +286,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第2个子代理最大步数（默认20）",
                                 en: "Max steps for sub-agent #2 (default: 20)."
-
-        ro: "Max steps for sub-agent #2 (default: 20)."
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -327,9 +295,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第2个子代理 agent_id（当 intent_2 存在时必填，且不能为 'default'；用于指定虚拟屏会话；并行建议不同）",
                                 en: "agent_id for sub-agent #2 (required when intent_2 is provided, must not be 'default'; selects a virtual-display session; use different agent_id per branch)."
-
-        ro: "agent_id for sub-agent #2 (required when intent_2 is provided, must not be 'default'; selects a virtual-display session; use different agent_id per branch)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -339,9 +305,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第3个子代理意图（可选）",
                                 en: "Intent for sub-agent #3 (optional)."
-
-        ro: "Intent for sub-agent #3 (optional)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -350,9 +314,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第3个子代理目标应用名（当 intent_3 存在时必填；各分支必须不同）",
                                 en: "Target app name for sub-agent #3 (required when intent_3 is provided; must be different across branches)."
-
-        ro: "Target app name for sub-agent #3 (required when intent_3 is provided; must be different across branches)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -361,9 +323,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第3个子代理最大步数（默认20）",
                                 en: "Max steps for sub-agent #3 (default: 20)."
-
-        ro: "Max steps for sub-agent #3 (default: 20)."
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -372,9 +332,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第3个子代理 agent_id（当 intent_3 存在时必填，且不能为 'default'）",
                                 en: "agent_id for sub-agent #3 (required when intent_3 is provided; must not be 'default')."
-
-        ro: "agent_id for sub-agent #3 (required when intent_3 is provided; must not be 'default')."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -384,9 +342,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第4个子代理意图（可选）",
                                 en: "Intent for sub-agent #4 (optional)."
-
-        ro: "Intent for sub-agent #4 (optional)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -395,9 +351,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第4个子代理目标应用名（当 intent_4 存在时必填；各分支必须不同）",
                                 en: "Target app name for sub-agent #4 (required when intent_4 is provided; must be different across branches)."
-
-        ro: "Target app name for sub-agent #4 (required when intent_4 is provided; must be different across branches)."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -406,9 +360,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第4个子代理最大步数（默认20）",
                                 en: "Max steps for sub-agent #4 (default: 20)."
-
-        ro: "Max steps for sub-agent #4 (default: 20)."
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -417,9 +369,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "第4个子代理 agent_id（当 intent_4 存在时必填，且不能为 'default'）",
                                 en: "agent_id for sub-agent #4 (required when intent_4 is provided; must not be 'default')."
-
-        ro: "agent_id for sub-agent #4 (required when intent_4 is provided; must not be 'default')."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -431,9 +381,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                     description: {
                         zh: "关闭所有虚拟屏幕。",
                         en: "Close all virtual displays."
-
-        ro: "Close all virtual displays."
-    }
+                    }
                     parameters: []
                 }
 
@@ -442,18 +390,14 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                     description: {
                         zh: "在主屏幕运行 UI 子代理（强制主屏）。",
                         en: "Run the UI sub-agent on the main screen (forced main screen)."
-
-        ro: "Run the UI sub-agent on the main screen (forced main screen)."
-    }
+                    }
                     parameters: [
                         {
                             name: "intent"
                             description: {
                                 zh: "任务意图描述",
                                 en: "Task intent description"
-
-        ro: "Task intent description"
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -462,9 +406,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "目标应用名/包名（可选）",
                                 en: "Target app name/package (optional)"
-
-        ro: "Target app name/package (optional)"
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -473,9 +415,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "最大执行步数（默认20）",
                                 en: "Maximum execution steps (default: 20)"
-
-        ro: "Maximum execution steps (default: 20)"
-    }
+                            }
                             type: "number"
                             required: false
                         }
@@ -544,9 +484,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "任务意图描述，例如：'打开微信并发送一条消息' 或 '在B站搜索某个视频'",
                                 en: "Task intent description, e.g. 'Open WeChat and send a message' or 'Search a video on Bilibili'."
-
-        ro: "Task intent description, e.g. 'Open WeChat and send a message' or 'Search a video on Bilibili'."
-    }
+                            }
                             type: "string"
                             required: true
                         }
@@ -555,9 +493,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "目标应用名/包名（建议传入，用于在虚拟屏未创建时先执行一次默认 Launch 预热虚拟屏，避免在主屏误操作；约定：当用户要求分析当前屏幕/页面内容时不要传 target_app，也不要预热虚拟屏）",
                                 en: "Target app name/package (recommended). Helps with a default Launch/warm-up and avoids operating on the wrong screen. Convention: when the user asks to analyze the current screen/page, do not pass target_app and do not prewarm the virtual display."
-
-        ro: "Target app name/package (recommended). Helps with a default Launch/warm-up and avoids operating on the wrong screen. Convention: when the user asks to analyze the current screen/page, do not pass target_app and do not prewarm the virtual display."
-    }
+                            }
                             type: "string"
                             required: false
                         }
@@ -566,9 +502,7 @@ When the user asks you to complete a UI task (e.g. open an app, search content, 
                             description: {
                                 zh: "最大执行步数，默认20，可根据任务复杂度调整。",
                                 en: "Maximum execution steps (default: 20). Adjust based on task complexity."
-
-        ro: "Maximum execution steps (default: 20). Adjust based on task complexity."
-    }
+                            }
                             type: "number"
                             required: false
                         }

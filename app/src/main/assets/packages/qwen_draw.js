@@ -1,170 +1,65 @@
 /* METADATA
 {
-    "name": "qwen_draw",
-    "display_name": {
-        "zh": "Qwen 绘图",
-        "en": "Qwen Draw",
-        "ro": "Qwen Draw"
+  "name": "qwen_draw",
+
+  "display_name": {
+      "zh": "Qwen 绘图",
+      "en": "Qwen Draw"
+  },
+  "description": {
+    "zh": "使用阿里云百炼/DashScope 文生图接口（通义万相/通义千问图像）根据提示词画图（异步任务轮询），将图片保存到本地 /sdcard/Download/Operit/plugins/draw/qwen_draw/draws/ 目录，并返回 Markdown 图片提示。",
+    "en": "Generate images via Alibaba Cloud Model Studio (DashScope) text-to-image API (async task polling), save to /sdcard/Download/Operit/plugins/draw/qwen_draw/draws/, and return a Markdown image reference."
+  },
+  "env": [
+    {
+      "name": "DASHSCOPE_API_KEY",
+      "description": {
+        "zh": "DashScope API Key（必填）",
+        "en": "DashScope API key (required)"
+      },
+      "required": true
     },
-    "description": {
-        "zh": "使用阿里云百炼/DashScope 文生图接口（通义万相/通义千问图像）根据提示词画图（异步任务轮询），将图片保存到本地 /sdcard/Download/Operit/plugins/draw/qwen_draw/draws/ 目录，并返回 Markdown 图片提示。",
-        "en": "Generate images via Alibaba Cloud Model Studio (DashScope) text-to-image API (async task polling), save to /sdcard/Download/Operit/plugins/draw/qwen_draw/draws/, and return a Markdown image reference.",
-        "ro": "Generate images via Alibaba Cloud Model Studio (DashScope) text-to-image API (async task polling), save to /sdcard/Download/Operit/plugins/draw/qwen_draw/draws/, and return a Markdown image reference."
+    {
+      "name": "DASHSCOPE_API_BASE_URL",
+      "description": {
+        "zh": "DashScope API Base URL（可选，不填则默认 https://dashscope.aliyuncs.com；国际站可用 https://dashscope-intl.aliyuncs.com）",
+        "en": "DashScope API base URL (optional; defaults to https://dashscope.aliyuncs.com; intl: https://dashscope-intl.aliyuncs.com)"
+      },
+      "required": false
     },
-    "env": [
-        {
-            "name": "DASHSCOPE_API_KEY",
-            "description": {
-                "zh": "DashScope API Key（必填）",
-                "en": "DashScope API key (required)",
-                "ro": "DashScope API key (required)"
-            },
-            "required": true
-        },
-        {
-            "name": "DASHSCOPE_API_BASE_URL",
-            "description": {
-                "zh": "DashScope API Base URL（可选，不填则默认 https://dashscope.aliyuncs.com；国际站可用 https://dashscope-intl.aliyuncs.com）",
-                "en": "DashScope API base URL (optional; defaults to https://dashscope.aliyuncs.com; intl: https://dashscope-intl.aliyuncs.com)",
-                "ro": "DashScope API base URL (optional; defaults to https://dashscope.aliyuncs.com; intl: https://dashscope-intl.aliyuncs.com)"
-            },
-            "required": false
-        },
-        {
-            "name": "QWEN_IMAGE_MODEL",
-            "description": {
-                "zh": "默认文生图模型（可选；当 draw_image 未传 model 时使用，例如 qwen-image-plus 或 wan2.2-t2i-flash）",
-                "en": "Default image model (optional; used when draw_image doesn't pass model), e.g. qwen-image-plus or wan2.2-t2i-flash",
-                "ro": "Default image model (optional; used when draw_image doesn't pass model), e.g. qwen-image-plus or wan2.2-t2i-flash"
-            },
-            "required": false
-        }
-    ],
-    "category": "Draw",
-    "tools": [
-        {
-            "name": "draw_image",
-            "description": {
-                "zh": "根据提示词调用 DashScope 文生图接口生成图片，保存到本地并返回 Markdown 图片提示。",
-                "en": "Generate an image via DashScope text-to-image API using a prompt, save it locally, and return a Markdown image reference.",
-                "ro": "Generate an image via DashScope text-to-image API using a prompt, save it locally, and return a Markdown image reference."
-            },
-            "parameters": [
-                {
-                    "name": "prompt",
-                    "description": {
-                        "zh": "绘图提示词（英文或中文皆可）",
-                        "en": "Prompt for image generation (Chinese or English)",
-                        "ro": "Prompt for image generation (Chinese or English)"
-                    },
-                    "type": "string",
-                    "required": true
-                },
-                {
-                    "name": "model",
-                    "description": {
-                        "zh": "模型名称（可选；不传则使用环境变量 QWEN_IMAGE_MODEL，再不行使用默认值）",
-                        "en": "Model name (optional; falls back to env QWEN_IMAGE_MODEL, then default)",
-                        "ro": "Model name (optional; falls back to env QWEN_IMAGE_MODEL, then default)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "size",
-                    "description": {
-                        "zh": "输出图像分辨率，如 '1664*928' 或 '1024x1024'（可选）",
-                        "en": "Output image resolution, e.g. '1664*928' or '1024x1024' (optional)",
-                        "ro": "Output image resolution, e.g. '1664*928' or '1024x1024' (optional)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "n",
-                    "description": {
-                        "zh": "生成图片数量（可选，默认 1）",
-                        "en": "Number of images (optional; default 1)",
-                        "ro": "Number of images (optional; default 1)"
-                    },
-                    "type": "number",
-                    "required": false
-                },
-                {
-                    "name": "negative_prompt",
-                    "description": {
-                        "zh": "负面提示词（可选）",
-                        "en": "Negative prompt (optional)",
-                        "ro": "Negative prompt (optional)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "prompt_extend",
-                    "description": {
-                        "zh": "是否开启 prompt 智能改写（可选，默认 true）",
-                        "en": "Enable prompt extension (optional; default true)",
-                        "ro": "Enable prompt extension (optional; default true)"
-                    },
-                    "type": "boolean",
-                    "required": false
-                },
-                {
-                    "name": "watermark",
-                    "description": {
-                        "zh": "是否加水印（可选，默认 false）",
-                        "en": "Enable watermark (optional; default false)",
-                        "ro": "Enable watermark (optional; default false)"
-                    },
-                    "type": "boolean",
-                    "required": false
-                },
-                {
-                    "name": "file_name",
-                    "description": {
-                        "zh": "自定义保存到本地的文件名（不含路径和扩展名）",
-                        "en": "Custom output file name (without path or extension)",
-                        "ro": "Custom output file name (without path or extension)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "api_base_url",
-                    "description": {
-                        "zh": "DashScope API Base URL（不传则取环境变量 DASHSCOPE_API_BASE_URL 或默认 https://dashscope.aliyuncs.com ）",
-                        "en": "DashScope API base URL (optional; falls back to env DASHSCOPE_API_BASE_URL or https://dashscope.aliyuncs.com)",
-                        "ro": "DashScope API base URL (optional; falls back to env DASHSCOPE_API_BASE_URL or https://dashscope.aliyuncs.com)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "poll_interval_ms",
-                    "description": {
-                        "zh": "轮询间隔（毫秒），默认 2000",
-                        "en": "Polling interval (milliseconds), default 2000",
-                        "ro": "Polling interval (milliseconds), default 2000"
-                    },
-                    "type": "number",
-                    "required": false
-                },
-                {
-                    "name": "max_wait_time_ms",
-                    "description": {
-                        "zh": "最长等待时间（毫秒），默认 10 分钟",
-                        "en": "Max wait time (milliseconds), default 10 minutes",
-                        "ro": "Max wait time (milliseconds), default 10 minutes"
-                    },
-                    "type": "number",
-                    "required": false
-                }
-            ]
-        }
-    ]
-}
-*/
+    {
+      "name": "QWEN_IMAGE_MODEL",
+      "description": {
+        "zh": "默认文生图模型（可选；当 draw_image 未传 model 时使用，例如 qwen-image-plus 或 wan2.2-t2i-flash）",
+        "en": "Default image model (optional; used when draw_image doesn't pass model), e.g. qwen-image-plus or wan2.2-t2i-flash"
+      },
+      "required": false
+    }
+  ],
+  "category": "Draw",
+  "tools": [
+    {
+      "name": "draw_image",
+      "description": {
+        "zh": "根据提示词调用 DashScope 文生图接口生成图片，保存到本地并返回 Markdown 图片提示。",
+        "en": "Generate an image via DashScope text-to-image API using a prompt, save it locally, and return a Markdown image reference."
+      },
+      "parameters": [
+        { "name": "prompt", "description": { "zh": "绘图提示词（英文或中文皆可）", "en": "Prompt for image generation (Chinese or English)" }, "type": "string", "required": true },
+        { "name": "model", "description": { "zh": "模型名称（可选；不传则使用环境变量 QWEN_IMAGE_MODEL，再不行使用默认值）", "en": "Model name (optional; falls back to env QWEN_IMAGE_MODEL, then default)" }, "type": "string", "required": false },
+        { "name": "size", "description": { "zh": "输出图像分辨率，如 '1664*928' 或 '1024x1024'（可选）", "en": "Output image resolution, e.g. '1664*928' or '1024x1024' (optional)" }, "type": "string", "required": false },
+        { "name": "n", "description": { "zh": "生成图片数量（可选，默认 1）", "en": "Number of images (optional; default 1)" }, "type": "number", "required": false },
+        { "name": "negative_prompt", "description": { "zh": "负面提示词（可选）", "en": "Negative prompt (optional)" }, "type": "string", "required": false },
+        { "name": "prompt_extend", "description": { "zh": "是否开启 prompt 智能改写（可选，默认 true）", "en": "Enable prompt extension (optional; default true)" }, "type": "boolean", "required": false },
+        { "name": "watermark", "description": { "zh": "是否加水印（可选，默认 false）", "en": "Enable watermark (optional; default false)" }, "type": "boolean", "required": false },
+        { "name": "file_name", "description": { "zh": "自定义保存到本地的文件名（不含路径和扩展名）", "en": "Custom output file name (without path or extension)" }, "type": "string", "required": false },
+        { "name": "api_base_url", "description": { "zh": "DashScope API Base URL（不传则取环境变量 DASHSCOPE_API_BASE_URL 或默认 https://dashscope.aliyuncs.com ）", "en": "DashScope API base URL (optional; falls back to env DASHSCOPE_API_BASE_URL or https://dashscope.aliyuncs.com)" }, "type": "string", "required": false },
+        { "name": "poll_interval_ms", "description": { "zh": "轮询间隔（毫秒），默认 2000", "en": "Polling interval (milliseconds), default 2000" }, "type": "number", "required": false },
+        { "name": "max_wait_time_ms", "description": { "zh": "最长等待时间（毫秒），默认 10 分钟", "en": "Max wait time (milliseconds), default 10 minutes" }, "type": "number", "required": false }
+      ]
+    }
+  ]
+}*/
 /// <reference path="./types/index.d.ts" />
 const qwenDraw = (function () {
     const HTTP_TIMEOUT_MS = 600000;
