@@ -2,7 +2,7 @@
 {
   name: "operit_editor"
   display_name: {
-  
+
     ro: "Modificare directă a setărilor platformei Operit (MCP, Skill, Sandbox, Modele, TTS/STT).",
     zh: "Operit平台编辑器"
     en: "Operit Platform Editor"
@@ -560,7 +560,9 @@
           description: {
             zh: "沙盒包名称"
             en: "Sandbox package name"
-          }
+
+        ro: "Sandbox package name"
+    }
           type: string
           required: true
         },
@@ -569,7 +571,9 @@
           description: {
             zh: "是否启用（true/false）"
             en: "Enable state (true/false)"
-          }
+
+        ro: "Enable state (true/false)"
+    }
           type: boolean
           required: true
         }
@@ -587,7 +591,9 @@
           description: {
             zh: "Android 侧 `.js` 源文件路径"
             en: "Android-side `.js` source file path"
-          }
+
+        ro: "Android-side `.js` source file path"
+    }
           type: string
           required: true
         },
@@ -596,7 +602,9 @@
           description: {
             zh: "安装后是否自动启用，默认 true"
             en: "Whether to enable it automatically after install, default true"
-          }
+
+        ro: "Whether to enable it automatically after install, default true"
+    }
           type: boolean
           required: false
         },
@@ -605,7 +613,9 @@
           description: {
             zh: "安装后是否自动 use_package 重新加载，默认 true"
             en: "Whether to automatically call use_package after install, default true"
-          }
+
+        ro: "Whether to automatically call use_package after install, default true"
+    }
           type: boolean
           required: false
         }
@@ -623,7 +633,9 @@
           description: {
             zh: "Android 侧 ToolPkg 目录、manifest.json/manifest.hjson 或 `.toolpkg` 路径"
             en: "Android-side ToolPkg folder, manifest.json/manifest.hjson, or `.toolpkg` path"
-          }
+
+        ro: "Android-side ToolPkg folder, manifest.json/manifest.hjson, or `.toolpkg` path"
+    }
           type: string
           required: true
         },
@@ -632,7 +644,9 @@
           description: {
             zh: "是否按 manifest 默认值重置子包启用状态，默认 true"
             en: "Whether to reset subpackage enable states from manifest defaults, default true"
-          }
+
+        ro: "Whether to reset subpackage enable states from manifest defaults, default true"
+    }
           type: boolean
           required: false
         },
@@ -641,7 +655,9 @@
           description: {
             zh: "可选，逗号或换行分隔的子包 ID；安装后会自动启用并 use_package"
             en: "Optional comma/newline separated subpackage IDs; they will be enabled and activated after install"
-          }
+
+        ro: "Optional comma/newline separated subpackage IDs; they will be enabled and activated after install"
+    }
           type: string
           required: false
         },
@@ -650,7 +666,9 @@
           description: {
             zh: "安装广播后等待并轮询刷新的毫秒数，默认 1500"
             en: "Milliseconds to wait and poll for refresh after sending the install broadcast, default 1500"
-          }
+
+        ro: "Milliseconds to wait and poll for refresh after sending the install broadcast, default 1500"
+    }
           type: integer
           required: false
         }
@@ -668,7 +686,9 @@
           description: {
             zh: "Android 侧脚本文件路径；与 source_code 二选一"
             en: "Android-side script file path; use either this or source_code"
-          }
+
+        ro: "Android-side script file path; use either this or source_code"
+    }
           type: string
           required: false
         },
@@ -677,7 +697,9 @@
           description: {
             zh: "直接执行的内联 JavaScript 代码；与 source_path 二选一"
             en: "Inline JavaScript code to execute directly; use either this or source_path"
-          }
+
+        ro: "Inline JavaScript code to execute directly; use either this or source_path"
+    }
           type: string
           required: false
         },
@@ -695,7 +717,9 @@
           description: {
             zh: "可选，Android 侧 env 文件路径"
             en: "Optional Android-side env file path"
-          }
+
+        ro: "Optional Android-side env file path"
+    }
           type: string
           required: false
         },
@@ -704,7 +728,9 @@
           description: {
             zh: "可选，仅用于内联代码模式下生成结果文件名和显示标识"
             en: "Optional label used only for inline-code mode to name the result file and display path"
-          }
+
+        ro: "Optional label used only for inline-code mode to name the result file and display path"
+    }
           type: string
           required: false
         },
@@ -713,7 +739,9 @@
           description: {
             zh: "等待结构化结果文件的毫秒数，默认 15000"
             en: "Milliseconds to wait for the structured result file, default 15000"
-          }
+
+        ro: "Milliseconds to wait for the structured result file, default 15000"
+    }
           type: integer
           required: false
         }
@@ -731,7 +759,9 @@
           description: {
             zh: "环境变量名"
             en: "Environment variable key"
-          }
+
+        ro: "Environment variable key"
+    }
           type: string
           required: true
         }
@@ -749,7 +779,9 @@
           description: {
             zh: "环境变量名"
             en: "Environment variable key"
-          }
+
+        ro: "Environment variable key"
+    }
           type: string
           required: true
         },
@@ -758,7 +790,9 @@
           description: {
             zh: "变量值；为空时清除该变量"
             en: "Variable value; empty clears the variable"
-          }
+
+        ro: "Variable value; empty clears the variable"
+    }
           type: string
           required: false
         }
@@ -776,7 +810,9 @@
           description: {
             zh: "可选，最大等待时长（毫秒）"
             en: "Optional max wait time in milliseconds"
-          }
+
+        ro: "Optional max wait time in milliseconds"
+    }
           type: integer
           required: false
         }
@@ -802,7 +838,9 @@
           description: {
             zh: "可选，SIMPLE_TTS/HTTP_TTS/OPENAI_WS_TTS/SILICONFLOW_TTS/MINIMAX_TTS/MIMO_TTS/DOUBAO_TTS/OPENAI_TTS/VITS_TTS"
             en: "Optional, SIMPLE_TTS/HTTP_TTS/OPENAI_WS_TTS/SILICONFLOW_TTS/MINIMAX_TTS/MIMO_TTS/DOUBAO_TTS/OPENAI_TTS/VITS_TTS"
-          }
+
+        ro: "Optional, SIMPLE_TTS/HTTP_TTS/OPENAI_WS_TTS/SILICONFLOW_TTS/MINIMAX_TTS/MIMO_TTS/DOUBAO_TTS/OPENAI_TTS/VITS_TTS"
+    }
           type: string
           required: false
         },
@@ -820,7 +858,9 @@
           description: {
             zh: "可选，TTS API Key"
             en: "Optional TTS API key"
-          }
+
+        ro: "Optional TTS API key"
+    }
           type: string
           required: false
         },
@@ -829,7 +869,9 @@
           description: {
             zh: "可选，HTTP 类 TTS headers 的 JSON 对象字符串"
             en: "Optional JSON object string for HTTP-style TTS headers"
-          }
+
+        ro: "Optional JSON object string for HTTP-style TTS headers"
+    }
           type: string
           required: false
         },
@@ -838,7 +880,9 @@
           description: {
             zh: "可选，GET/POST"
             en: "Optional, GET/POST"
-          }
+
+        ro: "Optional, GET/POST"
+    }
           type: string
           required: false
         },
@@ -856,7 +900,9 @@
           description: {
             zh: "可选，TTS Content-Type"
             en: "Optional TTS content type"
-          }
+
+        ro: "Optional TTS content type"
+    }
           type: string
           required: false
         },
@@ -865,7 +911,9 @@
           description: {
             zh: "可选，TTS 语言标签，例如 zh-CN 或 en-US"
             en: "Optional TTS locale tag, for example zh-CN or en-US"
-          }
+
+        ro: "Optional TTS locale tag, for example zh-CN or en-US"
+    }
           type: string
           required: false
         },
@@ -874,7 +922,9 @@
           description: {
             zh: "可选，TTS 音色 ID。MIMO voiceclone 可填写完整 data:audio/...;base64,... 音频样本"
             en: "Optional TTS voice id. For MIMO voiceclone, this may be the full data:audio/...;base64,... audio sample"
-          }
+
+        ro: "Optional TTS voice id. For MIMO voiceclone, this may be the full data:audio/...;base64,... audio sample"
+    }
           type: string
           required: false
         },
@@ -883,7 +933,9 @@
           description: {
             zh: "可选，TTS 模型名"
             en: "Optional TTS model name"
-          }
+
+        ro: "Optional TTS model name"
+    }
           type: string
           required: false
         },
@@ -892,7 +944,9 @@
           description: {
             zh: "可选，本地 VITS/Piper TTS 模型包路径，支持 .zip 文件或已解压目录"
             en: "Optional local VITS/Piper TTS package path, supporting a .zip file or extracted package directory"
-          }
+
+        ro: "Optional local VITS/Piper TTS package path, supporting a .zip file or extracted package directory"
+    }
           type: string
           required: false
         },
@@ -901,7 +955,9 @@
           description: {
             zh: "可选，VITS/Piper TTS 模型包需要的数字 speaker id"
             en: "Optional numeric speaker id required by the VITS/Piper TTS package"
-          }
+
+        ro: "Optional numeric speaker id required by the VITS/Piper TTS package"
+    }
           type: string
           required: false
         },
@@ -910,7 +966,9 @@
           description: {
             zh: "可选，VITS/Piper TTS 模型包参数 JSON 对象字符串"
             en: "Optional JSON object string for VITS/Piper TTS package options"
-          }
+
+        ro: "Optional JSON object string for VITS/Piper TTS package options"
+    }
           type: string
           required: false
         },
@@ -919,7 +977,9 @@
           description: {
             zh: "可选，HTTP TTS 响应处理管线 JSON 数组字符串。留空或 `[]` 时保持旧行为，直接把响应体当音频"
             en: "Optional HTTP TTS response pipeline JSON array string. Leave empty or use `[]` to keep the old direct-audio behavior"
-          }
+
+        ro: "Optional HTTP TTS response pipeline JSON array string. Leave empty or use `[]` to keep the old direct-audio behavior"
+    }
           type: string
           required: false
         },
@@ -928,7 +988,9 @@
           description: {
             zh: "可选，TTS 清理正则列表 JSON 数组字符串"
             en: "Optional JSON array string for TTS cleaner regex list"
-          }
+
+        ro: "Optional JSON array string for TTS cleaner regex list"
+    }
           type: string
           required: false
         },
@@ -937,7 +999,9 @@
           description: {
             zh: "可选，TTS 语速"
             en: "Optional TTS speech rate"
-          }
+
+        ro: "Optional TTS speech rate"
+    }
           type: number
           required: false
         },
@@ -946,7 +1010,9 @@
           description: {
             zh: "可选，TTS 音调"
             en: "Optional TTS pitch"
-          }
+
+        ro: "Optional TTS pitch"
+    }
           type: number
           required: false
         },
@@ -955,7 +1021,9 @@
           description: {
             zh: "可选，SHERPA_NCNN/OPENAI_STT/DEEPGRAM_STT"
             en: "Optional, SHERPA_NCNN/OPENAI_STT/DEEPGRAM_STT"
-          }
+
+        ro: "Optional, SHERPA_NCNN/OPENAI_STT/DEEPGRAM_STT"
+    }
           type: string
           required: false
         },
@@ -964,7 +1032,9 @@
           description: {
             zh: "可选，STT endpoint URL"
             en: "Optional STT endpoint URL"
-          }
+
+        ro: "Optional STT endpoint URL"
+    }
           type: string
           required: false
         },
@@ -973,7 +1043,9 @@
           description: {
             zh: "可选，STT API Key"
             en: "Optional STT API key"
-          }
+
+        ro: "Optional STT API key"
+    }
           type: string
           required: false
         },
@@ -982,7 +1054,9 @@
           description: {
             zh: "可选，STT 模型名"
             en: "Optional STT model name"
-          }
+
+        ro: "Optional STT model name"
+    }
           type: string
           required: false
         }
@@ -1000,7 +1074,9 @@
           description: {
             zh: "必填，要播放的测试文本"
             en: "Required test text to play"
-          }
+
+        ro: "Required test text to play"
+    }
           type: string
           required: true
         },
@@ -1009,7 +1085,9 @@
           description: {
             zh: "可选，播放前是否先中断当前播报"
             en: "Optional, interrupt current playback before this test"
-          }
+
+        ro: "Optional, interrupt current playback before this test"
+    }
           type: boolean
           required: false
         },
@@ -1018,7 +1096,9 @@
           description: {
             zh: "可选，仅本次测试生效的语速覆盖值"
             en: "Optional speech-rate override for this test only"
-          }
+
+        ro: "Optional speech-rate override for this test only"
+    }
           type: number
           required: false
         },
@@ -1027,7 +1107,9 @@
           description: {
             zh: "可选，仅本次测试生效的音调覆盖值"
             en: "Optional pitch override for this test only"
-          }
+
+        ro: "Optional pitch override for this test only"
+    }
           type: number
           required: false
         }
@@ -1053,7 +1135,9 @@
           description: {
             zh: "可选，配置名称"
             en: "Optional config name"
-          }
+
+        ro: "Optional config name"
+    }
           type: string
           required: false
         },
@@ -1062,7 +1146,9 @@
           description: {
             zh: "可选，提供商枚举名（如 OPENAI_GENERIC/OPENAI_LOCAL/OPENAI_RESPONSES_GENERIC/DEEPSEEK/GEMINI_GENERIC/LMSTUDIO/OLLAMA/MNN/LLAMA_CPP；其中 LMSTUDIO/OLLAMA/OPENAI_LOCAL/MNN/LLAMA_CPP 为本地模型链路）"
             en: "Optional provider enum name (e.g. OPENAI_GENERIC/OPENAI_LOCAL/OPENAI_RESPONSES_GENERIC/DEEPSEEK/GEMINI_GENERIC/LMSTUDIO/OLLAMA/MNN/LLAMA_CPP; LMSTUDIO/OLLAMA/OPENAI_LOCAL/MNN/LLAMA_CPP are local-model providers)"
-          }
+
+        ro: "Optional provider enum name (e.g. OPENAI_GENERIC/OPENAI_LOCAL/OPENAI_RESPONSES_GENERIC/DEEPSEEK/GEMINI_GENERIC/LMSTUDIO/OLLAMA/MNN/LLAMA_CPP; LMSTUDIO/OLLAMA/OPENAI_LOCAL/MNN/LLAMA_CPP are local-model providers)"
+    }
           type: string
           required: false
         },
@@ -1071,7 +1157,9 @@
           description: {
             zh: "可选，API端点"
             en: "Optional API endpoint"
-          }
+
+        ro: "Optional API endpoint"
+    }
           type: string
           required: false
         },
@@ -1080,7 +1168,9 @@
           description: {
             zh: "可选，API Key"
             en: "Optional API key"
-          }
+
+        ro: "Optional API key"
+    }
           type: string
           required: false
         },
@@ -1089,7 +1179,9 @@
           description: {
             zh: "可选，模型名（多个可逗号分隔）"
             en: "Optional model name (comma-separated for multiple models)"
-          }
+
+        ro: "Optional model name (comma-separated for multiple models)"
+    }
           type: string
           required: false
         },
@@ -1098,7 +1190,9 @@
           description: {
             zh: "可选，是否启用 max_tokens 参数"
             en: "Optional switch for max_tokens"
-          }
+
+        ro: "Optional switch for max_tokens"
+    }
           type: boolean
           required: false
         },
@@ -1107,7 +1201,9 @@
           description: {
             zh: "可选，max_tokens 数值"
             en: "Optional max_tokens value"
-          }
+
+        ro: "Optional max_tokens value"
+    }
           type: integer
           required: false
         },
@@ -1116,7 +1212,9 @@
           description: {
             zh: "可选，是否启用 temperature 参数"
             en: "Optional switch for temperature"
-          }
+
+        ro: "Optional switch for temperature"
+    }
           type: boolean
           required: false
         },
@@ -1125,7 +1223,9 @@
           description: {
             zh: "可选，temperature 数值"
             en: "Optional temperature value"
-          }
+
+        ro: "Optional temperature value"
+    }
           type: number
           required: false
         },
@@ -1134,7 +1234,9 @@
           description: {
             zh: "可选，是否启用 top_p 参数"
             en: "Optional switch for top_p"
-          }
+
+        ro: "Optional switch for top_p"
+    }
           type: boolean
           required: false
         },
@@ -1143,7 +1245,9 @@
           description: {
             zh: "可选，top_p 数值"
             en: "Optional top_p value"
-          }
+
+        ro: "Optional top_p value"
+    }
           type: number
           required: false
         },
@@ -1152,7 +1256,9 @@
           description: {
             zh: "可选，是否启用 top_k 参数"
             en: "Optional switch for top_k"
-          }
+
+        ro: "Optional switch for top_k"
+    }
           type: boolean
           required: false
         },
@@ -1161,7 +1267,9 @@
           description: {
             zh: "可选，top_k 数值"
             en: "Optional top_k value"
-          }
+
+        ro: "Optional top_k value"
+    }
           type: integer
           required: false
         },
@@ -1170,7 +1278,9 @@
           description: {
             zh: "可选，是否启用 presence_penalty 参数"
             en: "Optional switch for presence_penalty"
-          }
+
+        ro: "Optional switch for presence_penalty"
+    }
           type: boolean
           required: false
         },
@@ -1179,7 +1289,9 @@
           description: {
             zh: "可选，presence_penalty 数值"
             en: "Optional presence_penalty value"
-          }
+
+        ro: "Optional presence_penalty value"
+    }
           type: number
           required: false
         },
@@ -1188,7 +1300,9 @@
           description: {
             zh: "可选，是否启用 frequency_penalty 参数"
             en: "Optional switch for frequency_penalty"
-          }
+
+        ro: "Optional switch for frequency_penalty"
+    }
           type: boolean
           required: false
         },
@@ -1197,7 +1311,9 @@
           description: {
             zh: "可选，frequency_penalty 数值"
             en: "Optional frequency_penalty value"
-          }
+
+        ro: "Optional frequency_penalty value"
+    }
           type: number
           required: false
         },
@@ -1206,7 +1322,9 @@
           description: {
             zh: "可选，是否启用 repetition_penalty 参数"
             en: "Optional switch for repetition_penalty"
-          }
+
+        ro: "Optional switch for repetition_penalty"
+    }
           type: boolean
           required: false
         },
@@ -1215,7 +1333,9 @@
           description: {
             zh: "可选，repetition_penalty 数值"
             en: "Optional repetition_penalty value"
-          }
+
+        ro: "Optional repetition_penalty value"
+    }
           type: number
           required: false
         },
@@ -1224,7 +1344,9 @@
           description: {
             zh: "可选，自定义参数 JSON 字符串"
             en: "Optional custom parameters JSON string"
-          }
+
+        ro: "Optional custom parameters JSON string"
+    }
           type: string
           required: false
         },
@@ -1233,7 +1355,9 @@
           description: {
             zh: "可选，自定义请求头 JSON 对象字符串"
             en: "Optional custom request headers JSON object string"
-          }
+
+        ro: "Optional custom request headers JSON object string"
+    }
           type: string
           required: false
         },
@@ -1242,7 +1366,9 @@
           description: {
             zh: "可选，上下文长度倍率"
             en: "Optional context length multiplier"
-          }
+
+        ro: "Optional context length multiplier"
+    }
           type: number
           required: false
         },
@@ -1251,7 +1377,9 @@
           description: {
             zh: "可选，最大上下文长度倍率"
             en: "Optional max context length multiplier"
-          }
+
+        ro: "Optional max context length multiplier"
+    }
           type: number
           required: false
         },
@@ -1260,7 +1388,9 @@
           description: {
             zh: "可选，是否启用最大上下文模式"
             en: "Optional max-context mode switch"
-          }
+
+        ro: "Optional max-context mode switch"
+    }
           type: boolean
           required: false
         },
@@ -1269,7 +1399,9 @@
           description: {
             zh: "可选，总结触发阈值"
             en: "Optional summary trigger threshold"
-          }
+
+        ro: "Optional summary trigger threshold"
+    }
           type: number
           required: false
         },
@@ -1278,7 +1410,9 @@
           description: {
             zh: "可选，是否启用总结"
             en: "Optional summary switch"
-          }
+
+        ro: "Optional summary switch"
+    }
           type: boolean
           required: false
         },
@@ -1287,7 +1421,9 @@
           description: {
             zh: "可选，是否按消息数触发总结"
             en: "Optional summary-by-message-count switch"
-          }
+
+        ro: "Optional summary-by-message-count switch"
+    }
           type: boolean
           required: false
         },
@@ -1296,7 +1432,9 @@
           description: {
             zh: "可选，按消息数总结的阈值"
             en: "Optional message-count threshold for summary"
-          }
+
+        ro: "Optional message-count threshold for summary"
+    }
           type: integer
           required: false
         },
@@ -1305,7 +1443,9 @@
           description: {
             zh: "可选，是否启用直接图片处理"
             en: "Optional direct image processing switch"
-          }
+
+        ro: "Optional direct image processing switch"
+    }
           type: boolean
           required: false
         },
@@ -1314,7 +1454,9 @@
           description: {
             zh: "可选，是否启用直接音频处理"
             en: "Optional direct audio processing switch"
-          }
+
+        ro: "Optional direct audio processing switch"
+    }
           type: boolean
           required: false
         },
@@ -1323,7 +1465,9 @@
           description: {
             zh: "可选，是否启用直接视频处理"
             en: "Optional direct video processing switch"
-          }
+
+        ro: "Optional direct video processing switch"
+    }
           type: boolean
           required: false
         },
@@ -1332,7 +1476,9 @@
           description: {
             zh: "可选，是否启用 Google Search"
             en: "Optional Google Search switch"
-          }
+
+        ro: "Optional Google Search switch"
+    }
           type: boolean
           required: false
         },
@@ -1341,7 +1487,9 @@
           description: {
             zh: "可选，是否启用 Claude 1h Prompt Cache"
             en: "Optional Claude 1h prompt cache switch"
-          }
+
+        ro: "Optional Claude 1h prompt cache switch"
+    }
           type: boolean
           required: false
         },
@@ -1350,7 +1498,9 @@
           description: {
             zh: "可选，是否开启Tool Call"
             en: "Optional tool-call switch"
-          }
+
+        ro: "Optional tool-call switch"
+    }
           type: boolean
           required: false
         },
@@ -1359,7 +1509,9 @@
           description: {
             zh: "可选，MNN 前向类型"
             en: "Optional MNN forward type"
-          }
+
+        ro: "Optional MNN forward type"
+    }
           type: integer
           required: false
         },
@@ -1368,7 +1520,9 @@
           description: {
             zh: "可选，MNN 线程数"
             en: "Optional MNN thread count"
-          }
+
+        ro: "Optional MNN thread count"
+    }
           type: integer
           required: false
         },
@@ -1377,7 +1531,9 @@
           description: {
             zh: "可选，llama.cpp 线程数"
             en: "Optional llama.cpp thread count"
-          }
+
+        ro: "Optional llama.cpp thread count"
+    }
           type: integer
           required: false
         },
@@ -1386,7 +1542,9 @@
           description: {
             zh: "可选，llama.cpp 上下文长度"
             en: "Optional llama.cpp context size"
-          }
+
+        ro: "Optional llama.cpp context size"
+    }
           type: integer
           required: false
         },
@@ -1395,7 +1553,9 @@
           description: {
             zh: "可选，llama.cpp GPU 层数"
             en: "Optional llama.cpp GPU layer count"
-          }
+
+        ro: "Optional llama.cpp GPU layer count"
+    }
           type: integer
           required: false
         },
@@ -1404,7 +1564,9 @@
           description: {
             zh: "可选，每分钟请求限制"
             en: "Optional request-per-minute limit"
-          }
+
+        ro: "Optional request-per-minute limit"
+    }
           type: integer
           required: false
         },
@@ -1413,7 +1575,9 @@
           description: {
             zh: "可选，最大并发请求数"
             en: "Optional max concurrent requests"
-          }
+
+        ro: "Optional max concurrent requests"
+    }
           type: integer
           required: false
         }
@@ -1431,7 +1595,9 @@
           description: {
             zh: "目标配置ID"
             en: "Target config id"
-          }
+
+        ro: "Target config id"
+    }
           type: string
           required: true
         },
@@ -1440,7 +1606,9 @@
           description: {
             zh: "可选，配置名称"
             en: "Optional config name"
-          }
+
+        ro: "Optional config name"
+    }
           type: string
           required: false
         },
@@ -1449,7 +1617,9 @@
           description: {
             zh: "可选，提供商枚举名（如 OPENAI_GENERIC/OPENAI_LOCAL/OPENAI_RESPONSES_GENERIC/DEEPSEEK/GEMINI_GENERIC/LMSTUDIO/OLLAMA/MNN/LLAMA_CPP；其中 LMSTUDIO/OLLAMA/OPENAI_LOCAL/MNN/LLAMA_CPP 为本地模型链路）"
             en: "Optional provider enum name (e.g. OPENAI_GENERIC/OPENAI_LOCAL/OPENAI_RESPONSES_GENERIC/DEEPSEEK/GEMINI_GENERIC/LMSTUDIO/OLLAMA/MNN/LLAMA_CPP; LMSTUDIO/OLLAMA/OPENAI_LOCAL/MNN/LLAMA_CPP are local-model providers)"
-          }
+
+        ro: "Optional provider enum name (e.g. OPENAI_GENERIC/OPENAI_LOCAL/OPENAI_RESPONSES_GENERIC/DEEPSEEK/GEMINI_GENERIC/LMSTUDIO/OLLAMA/MNN/LLAMA_CPP; LMSTUDIO/OLLAMA/OPENAI_LOCAL/MNN/LLAMA_CPP are local-model providers)"
+    }
           type: string
           required: false
         },
@@ -1458,7 +1628,9 @@
           description: {
             zh: "可选，API端点"
             en: "Optional API endpoint"
-          }
+
+        ro: "Optional API endpoint"
+    }
           type: string
           required: false
         },
@@ -1467,7 +1639,9 @@
           description: {
             zh: "可选，API Key"
             en: "Optional API key"
-          }
+
+        ro: "Optional API key"
+    }
           type: string
           required: false
         },
@@ -1476,7 +1650,9 @@
           description: {
             zh: "可选，模型名（多个可逗号分隔）"
             en: "Optional model name (comma-separated for multiple models)"
-          }
+
+        ro: "Optional model name (comma-separated for multiple models)"
+    }
           type: string
           required: false
         },
@@ -1485,7 +1661,9 @@
           description: {
             zh: "可选，是否启用 max_tokens 参数"
             en: "Optional switch for max_tokens"
-          }
+
+        ro: "Optional switch for max_tokens"
+    }
           type: boolean
           required: false
         },
@@ -1494,7 +1672,9 @@
           description: {
             zh: "可选，max_tokens 数值"
             en: "Optional max_tokens value"
-          }
+
+        ro: "Optional max_tokens value"
+    }
           type: integer
           required: false
         },
@@ -1503,7 +1683,9 @@
           description: {
             zh: "可选，是否启用 temperature 参数"
             en: "Optional switch for temperature"
-          }
+
+        ro: "Optional switch for temperature"
+    }
           type: boolean
           required: false
         },
@@ -1512,7 +1694,9 @@
           description: {
             zh: "可选，temperature 数值"
             en: "Optional temperature value"
-          }
+
+        ro: "Optional temperature value"
+    }
           type: number
           required: false
         },
@@ -1521,7 +1705,9 @@
           description: {
             zh: "可选，是否启用 top_p 参数"
             en: "Optional switch for top_p"
-          }
+
+        ro: "Optional switch for top_p"
+    }
           type: boolean
           required: false
         },
@@ -1530,7 +1716,9 @@
           description: {
             zh: "可选，top_p 数值"
             en: "Optional top_p value"
-          }
+
+        ro: "Optional top_p value"
+    }
           type: number
           required: false
         },
@@ -1539,7 +1727,9 @@
           description: {
             zh: "可选，是否启用 top_k 参数"
             en: "Optional switch for top_k"
-          }
+
+        ro: "Optional switch for top_k"
+    }
           type: boolean
           required: false
         },
@@ -1548,7 +1738,9 @@
           description: {
             zh: "可选，top_k 数值"
             en: "Optional top_k value"
-          }
+
+        ro: "Optional top_k value"
+    }
           type: integer
           required: false
         },
@@ -1557,7 +1749,9 @@
           description: {
             zh: "可选，是否启用 presence_penalty 参数"
             en: "Optional switch for presence_penalty"
-          }
+
+        ro: "Optional switch for presence_penalty"
+    }
           type: boolean
           required: false
         },
@@ -1566,7 +1760,9 @@
           description: {
             zh: "可选，presence_penalty 数值"
             en: "Optional presence_penalty value"
-          }
+
+        ro: "Optional presence_penalty value"
+    }
           type: number
           required: false
         },
@@ -1575,7 +1771,9 @@
           description: {
             zh: "可选，是否启用 frequency_penalty 参数"
             en: "Optional switch for frequency_penalty"
-          }
+
+        ro: "Optional switch for frequency_penalty"
+    }
           type: boolean
           required: false
         },
@@ -1584,7 +1782,9 @@
           description: {
             zh: "可选，frequency_penalty 数值"
             en: "Optional frequency_penalty value"
-          }
+
+        ro: "Optional frequency_penalty value"
+    }
           type: number
           required: false
         },
@@ -1593,7 +1793,9 @@
           description: {
             zh: "可选，是否启用 repetition_penalty 参数"
             en: "Optional switch for repetition_penalty"
-          }
+
+        ro: "Optional switch for repetition_penalty"
+    }
           type: boolean
           required: false
         },
@@ -1602,7 +1804,9 @@
           description: {
             zh: "可选，repetition_penalty 数值"
             en: "Optional repetition_penalty value"
-          }
+
+        ro: "Optional repetition_penalty value"
+    }
           type: number
           required: false
         },
@@ -1611,7 +1815,9 @@
           description: {
             zh: "可选，自定义参数 JSON 字符串"
             en: "Optional custom parameters JSON string"
-          }
+
+        ro: "Optional custom parameters JSON string"
+    }
           type: string
           required: false
         },
@@ -1620,7 +1826,9 @@
           description: {
             zh: "可选，自定义请求头 JSON 对象字符串"
             en: "Optional custom request headers JSON object string"
-          }
+
+        ro: "Optional custom request headers JSON object string"
+    }
           type: string
           required: false
         },
@@ -1629,7 +1837,9 @@
           description: {
             zh: "可选，上下文长度倍率"
             en: "Optional context length multiplier"
-          }
+
+        ro: "Optional context length multiplier"
+    }
           type: number
           required: false
         },
@@ -1638,7 +1848,9 @@
           description: {
             zh: "可选，最大上下文长度倍率"
             en: "Optional max context length multiplier"
-          }
+
+        ro: "Optional max context length multiplier"
+    }
           type: number
           required: false
         },
@@ -1647,7 +1859,9 @@
           description: {
             zh: "可选，是否启用最大上下文模式"
             en: "Optional max-context mode switch"
-          }
+
+        ro: "Optional max-context mode switch"
+    }
           type: boolean
           required: false
         },
@@ -1656,7 +1870,9 @@
           description: {
             zh: "可选，总结触发阈值"
             en: "Optional summary trigger threshold"
-          }
+
+        ro: "Optional summary trigger threshold"
+    }
           type: number
           required: false
         },
@@ -1665,7 +1881,9 @@
           description: {
             zh: "可选，是否启用总结"
             en: "Optional summary switch"
-          }
+
+        ro: "Optional summary switch"
+    }
           type: boolean
           required: false
         },
@@ -1674,7 +1892,9 @@
           description: {
             zh: "可选，是否按消息数触发总结"
             en: "Optional summary-by-message-count switch"
-          }
+
+        ro: "Optional summary-by-message-count switch"
+    }
           type: boolean
           required: false
         },
@@ -1683,7 +1903,9 @@
           description: {
             zh: "可选，按消息数总结的阈值"
             en: "Optional message-count threshold for summary"
-          }
+
+        ro: "Optional message-count threshold for summary"
+    }
           type: integer
           required: false
         },
@@ -1692,7 +1914,9 @@
           description: {
             zh: "可选，是否启用直接图片处理"
             en: "Optional direct image processing switch"
-          }
+
+        ro: "Optional direct image processing switch"
+    }
           type: boolean
           required: false
         },
@@ -1701,7 +1925,9 @@
           description: {
             zh: "可选，是否启用直接音频处理"
             en: "Optional direct audio processing switch"
-          }
+
+        ro: "Optional direct audio processing switch"
+    }
           type: boolean
           required: false
         },
@@ -1710,7 +1936,9 @@
           description: {
             zh: "可选，是否启用直接视频处理"
             en: "Optional direct video processing switch"
-          }
+
+        ro: "Optional direct video processing switch"
+    }
           type: boolean
           required: false
         },
@@ -1719,7 +1947,9 @@
           description: {
             zh: "可选，是否启用 Google Search"
             en: "Optional Google Search switch"
-          }
+
+        ro: "Optional Google Search switch"
+    }
           type: boolean
           required: false
         },
@@ -1728,7 +1958,9 @@
           description: {
             zh: "可选，是否启用 Claude 1h Prompt Cache"
             en: "Optional Claude 1h prompt cache switch"
-          }
+
+        ro: "Optional Claude 1h prompt cache switch"
+    }
           type: boolean
           required: false
         },
@@ -1737,7 +1969,9 @@
           description: {
             zh: "可选，是否开启Tool Call"
             en: "Optional tool-call switch"
-          }
+
+        ro: "Optional tool-call switch"
+    }
           type: boolean
           required: false
         },
@@ -1746,7 +1980,9 @@
           description: {
             zh: "可选，MNN 前向类型"
             en: "Optional MNN forward type"
-          }
+
+        ro: "Optional MNN forward type"
+    }
           type: integer
           required: false
         },
@@ -1755,7 +1991,9 @@
           description: {
             zh: "可选，MNN 线程数"
             en: "Optional MNN thread count"
-          }
+
+        ro: "Optional MNN thread count"
+    }
           type: integer
           required: false
         },
@@ -1764,7 +2002,9 @@
           description: {
             zh: "可选，llama.cpp 线程数"
             en: "Optional llama.cpp thread count"
-          }
+
+        ro: "Optional llama.cpp thread count"
+    }
           type: integer
           required: false
         },
@@ -1773,7 +2013,9 @@
           description: {
             zh: "可选，llama.cpp 上下文长度"
             en: "Optional llama.cpp context size"
-          }
+
+        ro: "Optional llama.cpp context size"
+    }
           type: integer
           required: false
         },
@@ -1782,7 +2024,9 @@
           description: {
             zh: "可选，llama.cpp GPU 层数"
             en: "Optional llama.cpp GPU layer count"
-          }
+
+        ro: "Optional llama.cpp GPU layer count"
+    }
           type: integer
           required: false
         },
@@ -1791,7 +2035,9 @@
           description: {
             zh: "可选，每分钟请求限制"
             en: "Optional request-per-minute limit"
-          }
+
+        ro: "Optional request-per-minute limit"
+    }
           type: integer
           required: false
         },
@@ -1800,7 +2046,9 @@
           description: {
             zh: "可选，最大并发请求数"
             en: "Optional max concurrent requests"
-          }
+
+        ro: "Optional max concurrent requests"
+    }
           type: integer
           required: false
         }
@@ -1818,7 +2066,9 @@
           description: {
             zh: "目标配置ID"
             en: "Target config id"
-          }
+
+        ro: "Target config id"
+    }
           type: string
           required: true
         }
@@ -1844,7 +2094,9 @@
           description: {
             zh: "功能类型枚举名"
             en: "Function type enum name"
-          }
+
+        ro: "Function type enum name"
+    }
           type: string
           required: true
         }
@@ -1862,7 +2114,9 @@
           description: {
             zh: "可选，功能类型；默认 CHAT"
             en: "Optional function type; default CHAT"
-          }
+
+        ro: "Optional function type; default CHAT"
+    }
           type: string
           required: false
         }
@@ -1880,7 +2134,9 @@
           description: {
             zh: "可选，功能类型；默认 CHAT"
             en: "Optional function type; default CHAT"
-          }
+
+        ro: "Optional function type; default CHAT"
+    }
           type: string
           required: false
         },
@@ -1889,7 +2145,9 @@
           description: {
             zh: "可选，基础上下文长度"
             en: "Optional base context length"
-          }
+
+        ro: "Optional base context length"
+    }
           type: number
           required: false
         },
@@ -1898,7 +2156,9 @@
           description: {
             zh: "可选，最大上下文长度"
             en: "Optional max context length"
-          }
+
+        ro: "Optional max context length"
+    }
           type: number
           required: false
         },
@@ -1907,7 +2167,9 @@
           description: {
             zh: "可选，是否启用最大上下文模式"
             en: "Optional max-context-mode switch"
-          }
+
+        ro: "Optional max-context-mode switch"
+    }
           type: boolean
           required: false
         },
@@ -1916,7 +2178,9 @@
           description: {
             zh: "可选，总结触发 token 阈值（0~1）"
             en: "Optional token-ratio threshold for summary trigger (0~1)"
-          }
+
+        ro: "Optional token-ratio threshold for summary trigger (0~1)"
+    }
           type: number
           required: false
         },
@@ -1925,7 +2189,9 @@
           description: {
             zh: "可选，是否启用上下文总结"
             en: "Optional context-summary switch"
-          }
+
+        ro: "Optional context-summary switch"
+    }
           type: boolean
           required: false
         },
@@ -1934,7 +2200,9 @@
           description: {
             zh: "可选，是否启用按消息条数触发总结"
             en: "Optional message-count summary trigger switch"
-          }
+
+        ro: "Optional message-count summary trigger switch"
+    }
           type: boolean
           required: false
         },
@@ -1943,7 +2211,9 @@
           description: {
             zh: "可选，按消息条数触发总结阈值"
             en: "Optional message-count threshold for summary trigger"
-          }
+
+        ro: "Optional message-count threshold for summary trigger"
+    }
           type: integer
           required: false
         }
@@ -1961,7 +2231,9 @@
           description: {
             zh: "功能类型枚举名"
             en: "Function type enum name"
-          }
+
+        ro: "Function type enum name"
+    }
           type: string
           required: true
         },
@@ -1970,7 +2242,9 @@
           description: {
             zh: "模型配置ID"
             en: "Model config id"
-          }
+
+        ro: "Model config id"
+    }
           type: string
           required: true
         },
@@ -1979,7 +2253,9 @@
           description: {
             zh: "可选，模型索引"
             en: "Optional model index"
-          }
+
+        ro: "Optional model index"
+    }
           type: integer
           required: false
         }
@@ -1997,7 +2273,9 @@
           description: {
             zh: "目标配置ID"
             en: "Target config id"
-          }
+
+        ro: "Target config id"
+    }
           type: string
           required: true
         },
@@ -2006,7 +2284,9 @@
           description: {
             zh: "可选，模型索引"
             en: "Optional model index"
-          }
+
+        ro: "Optional model index"
+    }
           type: integer
           required: false
         }
@@ -2029,7 +2309,9 @@
       parameters: [
         {
           name: "character_card_id"
-          description: { zh: "角色卡 ID" en: "Character card id" }
+          description: { zh: "角色卡 ID" en: "Character card id"
+        ro: "Character card id"
+    }
           type: string
           required: true
         }
@@ -2044,115 +2326,153 @@
       parameters: [
         {
           name: "name"
-          description: { zh: "角色卡名称" en: "Character card name" }
+          description: { zh: "角色卡名称" en: "Character card name"
+        ro: "Character card name"
+    }
           type: string
           required: true
         },
         {
           name: "description"
-          description: { zh: "可选，简介" en: "Optional description" }
+          description: { zh: "可选，简介" en: "Optional description"
+        ro: "Optional description"
+    }
           type: string
           required: false
         },
         {
           name: "character_setting"
-          description: { zh: "可选，角色设定提示词" en: "Optional character-setting prompt" }
+          description: { zh: "可选，角色设定提示词" en: "Optional character-setting prompt"
+        ro: "Optional character-setting prompt"
+    }
           type: string
           required: false
         },
         {
           name: "opening_statement"
-          description: { zh: "可选，开场白" en: "Optional opening statement" }
+          description: { zh: "可选，开场白" en: "Optional opening statement"
+        ro: "Optional opening statement"
+    }
           type: string
           required: false
         },
         {
           name: "other_content_chat"
-          description: { zh: "可选，聊天附加内容" en: "Optional chat content" }
+          description: { zh: "可选，聊天附加内容" en: "Optional chat content"
+        ro: "Optional chat content"
+    }
           type: string
           required: false
         },
         {
           name: "other_content_voice"
-          description: { zh: "可选，语音附加内容" en: "Optional voice content" }
+          description: { zh: "可选，语音附加内容" en: "Optional voice content"
+        ro: "Optional voice content"
+    }
           type: string
           required: false
         },
         {
           name: "attached_tag_ids"
-          description: { zh: "可选，标签 ID 的 JSON 字符串数组" en: "Optional JSON string array of tag ids" }
+          description: { zh: "可选，标签 ID 的 JSON 字符串数组" en: "Optional JSON string array of tag ids"
+        ro: "Optional JSON string array of tag ids"
+    }
           type: string
           required: false
         },
         {
           name: "advanced_custom_prompt"
-          description: { zh: "可选，高级自定义提示词" en: "Optional advanced custom prompt" }
+          description: { zh: "可选，高级自定义提示词" en: "Optional advanced custom prompt"
+        ro: "Optional advanced custom prompt"
+    }
           type: string
           required: false
         },
         {
           name: "marks"
-          description: { zh: "可选，备注" en: "Optional marks" }
+          description: { zh: "可选，备注" en: "Optional marks"
+        ro: "Optional marks"
+    }
           type: string
           required: false
         },
         {
           name: "chat_model_binding_mode"
-          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_CONFIG" en: "Optional FOLLOW_GLOBAL or FIXED_CONFIG" }
+          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_CONFIG" en: "Optional FOLLOW_GLOBAL or FIXED_CONFIG"
+        ro: "Optional FOLLOW_GLOBAL or FIXED_CONFIG"
+    }
           type: string
           required: false
         },
         {
           name: "chat_model_config_id"
-          description: { zh: "可选，固定对话模型配置 ID；空字符串清除" en: "Optional fixed chat-model config id; empty string clears" }
+          description: { zh: "可选，固定对话模型配置 ID；空字符串清除" en: "Optional fixed chat-model config id; empty string clears"
+        ro: "Optional fixed chat-model config id; empty string clears"
+    }
           type: string
           required: false
         },
         {
           name: "chat_model_index"
-          description: { zh: "可选，固定对话模型索引" en: "Optional fixed chat-model index" }
+          description: { zh: "可选，固定对话模型索引" en: "Optional fixed chat-model index"
+        ro: "Optional fixed chat-model index"
+    }
           type: integer
           required: false
         },
         {
           name: "memory_profile_binding_mode"
-          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_PROFILE" en: "Optional FOLLOW_GLOBAL or FIXED_PROFILE" }
+          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_PROFILE" en: "Optional FOLLOW_GLOBAL or FIXED_PROFILE"
+        ro: "Optional FOLLOW_GLOBAL or FIXED_PROFILE"
+    }
           type: string
           required: false
         },
         {
           name: "memory_profile_id"
-          description: { zh: "可选，固定记忆配置 ID；空字符串清除" en: "Optional fixed memory-profile id; empty string clears" }
+          description: { zh: "可选，固定记忆配置 ID；空字符串清除" en: "Optional fixed memory-profile id; empty string clears"
+        ro: "Optional fixed memory-profile id; empty string clears"
+    }
           type: string
           required: false
         },
         {
           name: "tool_access_enabled"
-          description: { zh: "可选，启用角色卡工具白名单" en: "Optional switch for the card tool allowlist" }
+          description: { zh: "可选，启用角色卡工具白名单" en: "Optional switch for the card tool allowlist"
+        ro: "Optional switch for the card tool allowlist"
+    }
           type: boolean
           required: false
         },
         {
           name: "allowed_builtin_tools"
-          description: { zh: "可选，内置工具名的 JSON 字符串数组" en: "Optional JSON string array of built-in tool names" }
+          description: { zh: "可选，内置工具名的 JSON 字符串数组" en: "Optional JSON string array of built-in tool names"
+        ro: "Optional JSON string array of built-in tool names"
+    }
           type: string
           required: false
         },
         {
           name: "allowed_packages"
-          description: { zh: "可选，包名的 JSON 字符串数组" en: "Optional JSON string array of package names" }
+          description: { zh: "可选，包名的 JSON 字符串数组" en: "Optional JSON string array of package names"
+        ro: "Optional JSON string array of package names"
+    }
           type: string
           required: false
         },
         {
           name: "allowed_skills"
-          description: { zh: "可选，Skill 名称的 JSON 字符串数组" en: "Optional JSON string array of skill names" }
+          description: { zh: "可选，Skill 名称的 JSON 字符串数组" en: "Optional JSON string array of skill names"
+        ro: "Optional JSON string array of skill names"
+    }
           type: string
           required: false
         },
         {
           name: "allowed_mcp_servers"
-          description: { zh: "可选，MCP 服务名的 JSON 字符串数组" en: "Optional JSON string array of MCP server names" }
+          description: { zh: "可选，MCP 服务名的 JSON 字符串数组" en: "Optional JSON string array of MCP server names"
+        ro: "Optional JSON string array of MCP server names"
+    }
           type: string
           required: false
         }
@@ -2167,121 +2487,161 @@
       parameters: [
         {
           name: "character_card_id"
-          description: { zh: "角色卡 ID" en: "Character card id" }
+          description: { zh: "角色卡 ID" en: "Character card id"
+        ro: "Character card id"
+    }
           type: string
           required: true
         },
         {
           name: "name"
-          description: { zh: "可选，角色卡名称" en: "Optional character card name" }
+          description: { zh: "可选，角色卡名称" en: "Optional character card name"
+        ro: "Optional character card name"
+    }
           type: string
           required: false
         },
         {
           name: "description"
-          description: { zh: "可选，简介" en: "Optional description" }
+          description: { zh: "可选，简介" en: "Optional description"
+        ro: "Optional description"
+    }
           type: string
           required: false
         },
         {
           name: "character_setting"
-          description: { zh: "可选，角色设定提示词" en: "Optional character-setting prompt" }
+          description: { zh: "可选，角色设定提示词" en: "Optional character-setting prompt"
+        ro: "Optional character-setting prompt"
+    }
           type: string
           required: false
         },
         {
           name: "opening_statement"
-          description: { zh: "可选，开场白" en: "Optional opening statement" }
+          description: { zh: "可选，开场白" en: "Optional opening statement"
+        ro: "Optional opening statement"
+    }
           type: string
           required: false
         },
         {
           name: "other_content_chat"
-          description: { zh: "可选，聊天附加内容" en: "Optional chat content" }
+          description: { zh: "可选，聊天附加内容" en: "Optional chat content"
+        ro: "Optional chat content"
+    }
           type: string
           required: false
         },
         {
           name: "other_content_voice"
-          description: { zh: "可选，语音附加内容" en: "Optional voice content" }
+          description: { zh: "可选，语音附加内容" en: "Optional voice content"
+        ro: "Optional voice content"
+    }
           type: string
           required: false
         },
         {
           name: "attached_tag_ids"
-          description: { zh: "可选，标签 ID 的 JSON 字符串数组" en: "Optional JSON string array of tag ids" }
+          description: { zh: "可选，标签 ID 的 JSON 字符串数组" en: "Optional JSON string array of tag ids"
+        ro: "Optional JSON string array of tag ids"
+    }
           type: string
           required: false
         },
         {
           name: "advanced_custom_prompt"
-          description: { zh: "可选，高级自定义提示词" en: "Optional advanced custom prompt" }
+          description: { zh: "可选，高级自定义提示词" en: "Optional advanced custom prompt"
+        ro: "Optional advanced custom prompt"
+    }
           type: string
           required: false
         },
         {
           name: "marks"
-          description: { zh: "可选，备注" en: "Optional marks" }
+          description: { zh: "可选，备注" en: "Optional marks"
+        ro: "Optional marks"
+    }
           type: string
           required: false
         },
         {
           name: "chat_model_binding_mode"
-          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_CONFIG" en: "Optional FOLLOW_GLOBAL or FIXED_CONFIG" }
+          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_CONFIG" en: "Optional FOLLOW_GLOBAL or FIXED_CONFIG"
+        ro: "Optional FOLLOW_GLOBAL or FIXED_CONFIG"
+    }
           type: string
           required: false
         },
         {
           name: "chat_model_config_id"
-          description: { zh: "可选，固定对话模型配置 ID；空字符串清除" en: "Optional fixed chat-model config id; empty string clears" }
+          description: { zh: "可选，固定对话模型配置 ID；空字符串清除" en: "Optional fixed chat-model config id; empty string clears"
+        ro: "Optional fixed chat-model config id; empty string clears"
+    }
           type: string
           required: false
         },
         {
           name: "chat_model_index"
-          description: { zh: "可选，固定对话模型索引" en: "Optional fixed chat-model index" }
+          description: { zh: "可选，固定对话模型索引" en: "Optional fixed chat-model index"
+        ro: "Optional fixed chat-model index"
+    }
           type: integer
           required: false
         },
         {
           name: "memory_profile_binding_mode"
-          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_PROFILE" en: "Optional FOLLOW_GLOBAL or FIXED_PROFILE" }
+          description: { zh: "可选，FOLLOW_GLOBAL 或 FIXED_PROFILE" en: "Optional FOLLOW_GLOBAL or FIXED_PROFILE"
+        ro: "Optional FOLLOW_GLOBAL or FIXED_PROFILE"
+    }
           type: string
           required: false
         },
         {
           name: "memory_profile_id"
-          description: { zh: "可选，固定记忆配置 ID；空字符串清除" en: "Optional fixed memory-profile id; empty string clears" }
+          description: { zh: "可选，固定记忆配置 ID；空字符串清除" en: "Optional fixed memory-profile id; empty string clears"
+        ro: "Optional fixed memory-profile id; empty string clears"
+    }
           type: string
           required: false
         },
         {
           name: "tool_access_enabled"
-          description: { zh: "可选，启用角色卡工具白名单" en: "Optional switch for the card tool allowlist" }
+          description: { zh: "可选，启用角色卡工具白名单" en: "Optional switch for the card tool allowlist"
+        ro: "Optional switch for the card tool allowlist"
+    }
           type: boolean
           required: false
         },
         {
           name: "allowed_builtin_tools"
-          description: { zh: "可选，内置工具名的 JSON 字符串数组" en: "Optional JSON string array of built-in tool names" }
+          description: { zh: "可选，内置工具名的 JSON 字符串数组" en: "Optional JSON string array of built-in tool names"
+        ro: "Optional JSON string array of built-in tool names"
+    }
           type: string
           required: false
         },
         {
           name: "allowed_packages"
-          description: { zh: "可选，包名的 JSON 字符串数组" en: "Optional JSON string array of package names" }
+          description: { zh: "可选，包名的 JSON 字符串数组" en: "Optional JSON string array of package names"
+        ro: "Optional JSON string array of package names"
+    }
           type: string
           required: false
         },
         {
           name: "allowed_skills"
-          description: { zh: "可选，Skill 名称的 JSON 字符串数组" en: "Optional JSON string array of skill names" }
+          description: { zh: "可选，Skill 名称的 JSON 字符串数组" en: "Optional JSON string array of skill names"
+        ro: "Optional JSON string array of skill names"
+    }
           type: string
           required: false
         },
         {
           name: "allowed_mcp_servers"
-          description: { zh: "可选，MCP 服务名的 JSON 字符串数组" en: "Optional JSON string array of MCP server names" }
+          description: { zh: "可选，MCP 服务名的 JSON 字符串数组" en: "Optional JSON string array of MCP server names"
+        ro: "Optional JSON string array of MCP server names"
+    }
           type: string
           required: false
         }
@@ -2296,7 +2656,9 @@
       parameters: [
         {
           name: "character_card_id"
-          description: { zh: "角色卡 ID" en: "Character card id" }
+          description: { zh: "角色卡 ID" en: "Character card id"
+        ro: "Character card id"
+    }
           type: string
           required: true
         }
@@ -2311,7 +2673,9 @@
       parameters: [
         {
           name: "character_card_id"
-          description: { zh: "角色卡 ID" en: "Character card id" }
+          description: { zh: "角色卡 ID" en: "Character card id"
+        ro: "Character card id"
+    }
           type: string
           required: true
         }
@@ -2334,7 +2698,9 @@
       parameters: [
         {
           name: "tavern_json"
-          description: { zh: "Tavern 角色卡 JSON 内容" en: "Tavern character-card JSON content" }
+          description: { zh: "Tavern 角色卡 JSON 内容" en: "Tavern character-card JSON content"
+        ro: "Tavern character-card JSON content"
+    }
           type: string
           required: true
         }
@@ -2349,7 +2715,9 @@
       parameters: [
         {
           name: "character_card_id"
-          description: { zh: "角色卡 ID" en: "Character card id" }
+          description: { zh: "角色卡 ID" en: "Character card id"
+        ro: "Character card id"
+    }
           type: string
           required: true
         }
@@ -2367,7 +2735,9 @@
           description: {
             zh: "要探测的包名"
             en: "Package name to probe"
-          }
+
+        ro: "Package name to probe"
+    }
           type: string
           required: true
         }
