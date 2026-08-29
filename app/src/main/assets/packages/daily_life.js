@@ -2,34 +2,24 @@
 METADATA
 {
     "name": "daily_life",
+
     "display_name": {
+        "ro": "Instrumente pentru viața de zi cu zi",
         "ro": "Data/ora, stare baterie, vreme, mementouri, alarme, SMS, apeluri și comutatoare Wi-Fi/Lanternă.",
         "zh": "日常生活工具包",
         "en": "Daily Life Toolkit"
     },
-    "description": {
-        "zh": "日常生活工具集合：日期时间、设备状态、电量/内存概况、天气查询、提醒、闹钟、短信、电话、微信单条消息发送、QQ单条消息发送、朋友圈发布、手电筒、音量调节、Wi‑Fi 开关、截图、拍照、深色模式、指定时间唤醒 AI 执行一次性定时任务。",
-        "en": "Daily life utilities: date/time, device status, battery/memory overview, weather lookup, reminders, alarms, SMS, calls, single-message WeChat send, single-message QQ send, Moments posting, flashlight, volume control, Wi‑Fi toggle, screenshots, photos, dark mode, wake AI at a specified time for a one-time scheduled task.",
-        "ro": "Daily life utilities: date/time, device status, battery/memory overview, weather lookup, reminders, alarms, SMS, calls, single-message WeChat send, single-message QQ send, Moments posting, flashlight, volume control, Wi‑Fi toggle, screenshots, photos, dark mode, wake AI at a specified time for a one-time scheduled task."
-    },
+    "description": { "zh": "日常生活工具集合：日期时间、设备状态、电量/内存概况、天气查询、提醒、闹钟、短信、电话、微信单条消息发送、QQ单条消息发送、朋友圈发布、手电筒、音量调节、Wi‑Fi 开关、截图、拍照、深色模式、指定时间唤醒 AI 执行一次性定时任务。", "en": "Daily life utilities: date/time, device status, battery/memory overview, weather lookup, reminders, alarms, SMS, calls, single-message WeChat send, single-message QQ send, Moments posting, flashlight, volume control, Wi‑Fi toggle, screenshots, photos, dark mode, wake AI at a specified time for a one-time scheduled task." },
     "enabledByDefault": true,
     "category": "Life",
     "tools": [
         {
             "name": "get_current_date",
-            "description": {
-                "zh": "获取当前日期和时间，支持多种格式展示",
-                "en": "Get the current date and time in various formats.",
-                "ro": "Get the current date and time in various formats."
-            },
+            "description": { "zh": "获取当前日期和时间，支持多种格式展示", "en": "Get the current date and time in various formats." },
             "parameters": [
                 {
                     "name": "format",
-                    "description": {
-                        "zh": "日期格式（'short'简短格式, 'medium'中等格式, 'long'完整格式，或自定义格式）",
-                        "en": "Date format: 'short', 'medium', 'long', or a custom format.",
-                        "ro": "Date format: 'short', 'medium', 'long', or a custom format."
-                    },
+                    "description": { "zh": "日期格式（'short'简短格式, 'medium'中等格式, 'long'完整格式，或自定义格式）", "en": "Date format: 'short', 'medium', 'long', or a custom format." },
                     "type": "string",
                     "required": false
                 }
@@ -37,48 +27,28 @@ METADATA
         },
         {
             "name": "device_status",
-            "description": {
-                "zh": "获取设备状态信息，包括电池和内存使用情况",
-                "en": "Get device status information, including battery and memory usage.",
-                "ro": "Get device status information, including battery and memory usage."
-            },
+            "description": { "zh": "获取设备状态信息，包括电池和内存使用情况", "en": "Get device status information, including battery and memory usage." },
             "parameters": []
         },
         {
             "name": "set_reminder",
-            "description": {
-                "zh": "创建提醒或待办事项。",
-                "en": "Create a reminder or to-do item.",
-                "ro": "Create a reminder or to-do item."
-            },
+            "description": { "zh": "创建提醒或待办事项。", "en": "Create a reminder or to-do item." },
             "parameters": [
                 {
                     "name": "title",
-                    "description": {
-                        "zh": "提醒或待办事项的标题",
-                        "en": "Title of the reminder or to-do item.",
-                        "ro": "Title of the reminder or to-do item."
-                    },
+                    "description": { "zh": "提醒或待办事项的标题", "en": "Title of the reminder or to-do item." },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "description",
-                    "description": {
-                        "zh": "提醒的附加详细信息",
-                        "en": "Additional details for the reminder (optional).",
-                        "ro": "Additional details for the reminder (optional)."
-                    },
+                    "description": { "zh": "提醒的附加详细信息", "en": "Additional details for the reminder (optional)." },
                     "type": "string",
                     "required": false
                 },
                 {
                     "name": "due_date",
-                    "description": {
-                        "zh": "提醒的到期日期（ISO字符串格式）",
-                        "en": "Due date of the reminder (ISO string).",
-                        "ro": "Due date of the reminder (ISO string)."
-                    },
+                    "description": { "zh": "提醒的到期日期（ISO字符串格式）", "en": "Due date of the reminder (ISO string)." },
                     "type": "string",
                     "required": false
                 }
@@ -86,79 +56,47 @@ METADATA
         },
         {
             "name": "schedule_one_time_task",
-            "description": {
-                "zh": "在指定时间唤醒 AI 执行一次性定时任务（chat/role/sender 默认使用 getChatId/getCallerCardId/getCallerName）。",
-                "en": "Wake the AI at a specified time to execute a one-time scheduled task (chat/role/sender default to getChatId/getCallerCardId/getCallerName).",
-                "ro": "Wake the AI at a specified time to execute a one-time scheduled task (chat/role/sender default to getChatId/getCallerCardId/getCallerName)."
-            },
+            "description": { "zh": "在指定时间唤醒 AI 执行一次性定时任务（chat/role/sender 默认使用 getChatId/getCallerCardId/getCallerName）。", "en": "Wake the AI at a specified time to execute a one-time scheduled task (chat/role/sender default to getChatId/getCallerCardId/getCallerName)." },
             "parameters": [
                 {
                     "name": "trigger_time",
-                    "description": {
-                        "zh": "触发时间（格式示例，非当前时间：2026-01-04 10:30、2026-01-04 10:30:00、2026-01-04T10:30:00、2026-01-04）",
-                        "en": "Trigger time (format examples, not current time: 2026-01-04 10:30, 2026-01-04 10:30:00, 2026-01-04T10:30:00, 2026-01-04).",
-                        "ro": "Trigger time (format examples, not current time: 2026-01-04 10:30, 2026-01-04 10:30:00, 2026-01-04T10:30:00, 2026-01-04)."
-                    },
+                    "description": { "zh": "触发时间（格式示例，非当前时间：2026-01-04 10:30、2026-01-04 10:30:00、2026-01-04T10:30:00、2026-01-04）", "en": "Trigger time (format examples, not current time: 2026-01-04 10:30, 2026-01-04 10:30:00, 2026-01-04T10:30:00, 2026-01-04)." },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "message",
-                    "description": {
-                        "zh": "唤醒消息内容（可选）",
-                        "en": "Wake message content (optional).",
-                        "ro": "Wake message content (optional)."
-                    },
+                    "description": { "zh": "唤醒消息内容（可选）", "en": "Wake message content (optional)." },
                     "type": "string",
                     "required": false
-                }
+                },
             ]
         },
         {
             "name": "set_alarm",
-            "description": {
-                "zh": "在设备上设置闹钟。",
-                "en": "Set an alarm on the device.",
-                "ro": "Set an alarm on the device."
-            },
+            "description": { "zh": "在设备上设置闹钟。", "en": "Set an alarm on the device." },
             "parameters": [
                 {
                     "name": "hour",
-                    "description": {
-                        "zh": "闹钟小时（0-23）",
-                        "en": "Alarm hour (0-23).",
-                        "ro": "Alarm hour (0-23)."
-                    },
+                    "description": { "zh": "闹钟小时（0-23）", "en": "Alarm hour (0-23)." },
                     "type": "number",
                     "required": true
                 },
                 {
                     "name": "minute",
-                    "description": {
-                        "zh": "闹钟分钟（0-59）",
-                        "en": "Alarm minute (0-59).",
-                        "ro": "Alarm minute (0-59)."
-                    },
+                    "description": { "zh": "闹钟分钟（0-59）", "en": "Alarm minute (0-59)." },
                     "type": "number",
                     "required": true
                 },
                 {
                     "name": "message",
-                    "description": {
-                        "zh": "闹钟标签",
-                        "en": "Alarm label.",
-                        "ro": "Alarm label."
-                    },
+                    "description": { "zh": "闹钟标签", "en": "Alarm label." },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "days",
-                    "description": {
-                        "zh": "重复闹钟的天数（数字数组，1=周日，7=周六）",
-                        "en": "Repeat days for the alarm (number array, 1=Sunday, 7=Saturday).",
-                        "ro": "Repeat days for the alarm (number array, 1=Sunday, 7=Saturday)."
-                    },
+                    "description": { "zh": "重复闹钟的天数（数字数组，1=周日，7=周六）", "en": "Repeat days for the alarm (number array, 1=Sunday, 7=Saturday)." },
                     "type": "array",
                     "required": false
                 }
@@ -166,29 +104,17 @@ METADATA
         },
         {
             "name": "send_message",
-            "description": {
-                "zh": "发送短信",
-                "en": "Send an SMS message.",
-                "ro": "Send an SMS message."
-            },
+            "description": { "zh": "发送短信", "en": "Send an SMS message." },
             "parameters": [
                 {
                     "name": "phone_number",
-                    "description": {
-                        "zh": "接收者电话号码",
-                        "en": "Recipient phone number.",
-                        "ro": "Recipient phone number."
-                    },
+                    "description": { "zh": "接收者电话号码", "en": "Recipient phone number." },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "message",
-                    "description": {
-                        "zh": "短信内容",
-                        "en": "SMS message content.",
-                        "ro": "SMS message content."
-                    },
+                    "description": { "zh": "短信内容", "en": "SMS message content." },
                     "type": "string",
                     "required": true
                 }
@@ -196,19 +122,11 @@ METADATA
         },
         {
             "name": "wechat_send_message",
-            "description": {
-                "zh": "通过微信发送文本消息，调起微信分享界面，由用户选择联系人并确认发送。",
-                "en": "Send a text message via WeChat by opening the share UI; the user selects the contact and confirms sending.",
-                "ro": "Send a text message via WeChat by opening the share UI; the user selects the contact and confirms sending."
-            },
+            "description": { "zh": "通过微信发送文本消息，调起微信分享界面，由用户选择联系人并确认发送。", "en": "Send a text message via WeChat by opening the share UI; the user selects the contact and confirms sending." },
             "parameters": [
                 {
                     "name": "message",
-                    "description": {
-                        "zh": "要发送的文本内容",
-                        "en": "Text content to send.",
-                        "ro": "Text content to send."
-                    },
+                    "description": { "zh": "要发送的文本内容", "en": "Text content to send." },
                     "type": "string",
                     "required": true
                 }
@@ -216,19 +134,11 @@ METADATA
         },
         {
             "name": "qq_send_message",
-            "description": {
-                "zh": "通过QQ发送文本消息，调起QQ分享界面，由用户选择联系人并确认发送。",
-                "en": "Send a text message via QQ by opening the share UI; the user selects the contact and confirms sending.",
-                "ro": "Send a text message via QQ by opening the share UI; the user selects the contact and confirms sending."
-            },
+            "description": { "zh": "通过QQ发送文本消息，调起QQ分享界面，由用户选择联系人并确认发送。", "en": "Send a text message via QQ by opening the share UI; the user selects the contact and confirms sending." },
             "parameters": [
                 {
                     "name": "message",
-                    "description": {
-                        "zh": "要发送的文本内容",
-                        "en": "Text content to send.",
-                        "ro": "Text content to send."
-                    },
+                    "description": { "zh": "要发送的文本内容", "en": "Text content to send." },
                     "type": "string",
                     "required": true
                 }
@@ -236,19 +146,11 @@ METADATA
         },
         {
             "name": "wechat_post_moments",
-            "description": {
-                "zh": "通过微信朋友圈发表文本内容，调起朋友圈编辑界面并预填文案，由用户确认后发送。",
-                "en": "Post text to WeChat Moments by opening the editor with prefilled content; the user confirms and posts.",
-                "ro": "Post text to WeChat Moments by opening the editor with prefilled content; the user confirms and posts."
-            },
+            "description": { "zh": "通过微信朋友圈发表文本内容，调起朋友圈编辑界面并预填文案，由用户确认后发送。", "en": "Post text to WeChat Moments by opening the editor with prefilled content; the user confirms and posts." },
             "parameters": [
                 {
                     "name": "message",
-                    "description": {
-                        "zh": "要发布到朋友圈的文本内容",
-                        "en": "Text content to post to Moments.",
-                        "ro": "Text content to post to Moments."
-                    },
+                    "description": { "zh": "要发布到朋友圈的文本内容", "en": "Text content to post to Moments." },
                     "type": "string",
                     "required": true
                 }
@@ -256,29 +158,17 @@ METADATA
         },
         {
             "name": "make_phone_call",
-            "description": {
-                "zh": "拨打电话",
-                "en": "Make a phone call.",
-                "ro": "Make a phone call."
-            },
+            "description": { "zh": "拨打电话", "en": "Make a phone call." },
             "parameters": [
                 {
                     "name": "phone_number",
-                    "description": {
-                        "zh": "要拨打的电话号码",
-                        "en": "Phone number to dial.",
-                        "ro": "Phone number to dial."
-                    },
+                    "description": { "zh": "要拨打的电话号码", "en": "Phone number to dial." },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "emergency",
-                    "description": {
-                        "zh": "是否为紧急呼叫",
-                        "en": "Whether this is an emergency call.",
-                        "ro": "Whether this is an emergency call."
-                    },
+                    "description": { "zh": "是否为紧急呼叫", "en": "Whether this is an emergency call." },
                     "type": "boolean",
                     "required": false
                 }
@@ -286,19 +176,11 @@ METADATA
         },
         {
             "name": "search_weather",
-            "description": {
-                "zh": "搜索当前天气信息",
-                "en": "Search current weather information.",
-                "ro": "Search current weather information."
-            },
+            "description": { "zh": "搜索当前天气信息", "en": "Search current weather information." },
             "parameters": [
                 {
                     "name": "location",
-                    "description": {
-                        "zh": "要查询天气的位置（城市名称或'current'表示当前位置）",
-                        "en": "Location to query (city name or 'current' for current location).",
-                        "ro": "Location to query (city name or 'current' for current location)."
-                    },
+                    "description": { "zh": "要查询天气的位置（城市名称或'current'表示当前位置）", "en": "Location to query (city name or 'current' for current location)." },
                     "type": "string",
                     "required": false
                 }
@@ -306,19 +188,11 @@ METADATA
         },
         {
             "name": "toggle_flashlight",
-            "description": {
-                "zh": "打开或关闭手电筒",
-                "en": "Turn the flashlight on or off.",
-                "ro": "Turn the flashlight on or off."
-            },
+            "description": { "zh": "打开或关闭手电筒", "en": "Turn the flashlight on or off." },
             "parameters": [
                 {
                     "name": "state",
-                    "description": {
-                        "zh": "手电筒状态：'on'表示打开，'off'表示关闭",
-                        "en": "Flashlight state: 'on' to turn on, 'off' to turn off.",
-                        "ro": "Flashlight state: 'on' to turn on, 'off' to turn off."
-                    },
+                    "description": { "zh": "手电筒状态：'on'表示打开，'off'表示关闭", "en": "Flashlight state: 'on' to turn on, 'off' to turn off." },
                     "type": "string",
                     "required": true
                 }
@@ -326,29 +200,17 @@ METADATA
         },
         {
             "name": "adjust_volume",
-            "description": {
-                "zh": "调节设备音量，通过模拟按键点击实现",
-                "en": "Adjust device volume by simulating key presses.",
-                "ro": "Adjust device volume by simulating key presses."
-            },
+            "description": { "zh": "调节设备音量，通过模拟按键点击实现", "en": "Adjust device volume by simulating key presses." },
             "parameters": [
                 {
                     "name": "action",
-                    "description": {
-                        "zh": "音量调节动作：'up'增加音量，'down'减小音量，'mute'静音",
-                        "en": "Volume action: 'up' to increase, 'down' to decrease, 'mute' to mute.",
-                        "ro": "Volume action: 'up' to increase, 'down' to decrease, 'mute' to mute."
-                    },
+                    "description": { "zh": "音量调节动作：'up'增加音量，'down'减小音量，'mute'静音", "en": "Volume action: 'up' to increase, 'down' to decrease, 'mute' to mute." },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "count",
-                    "description": {
-                        "zh": "按键次数，默认为1次",
-                        "en": "Number of key presses (default: 1).",
-                        "ro": "Number of key presses (default: 1)."
-                    },
+                    "description": { "zh": "按键次数，默认为1次", "en": "Number of key presses (default: 1)." },
                     "type": "number",
                     "required": false
                 }
@@ -356,19 +218,11 @@ METADATA
         },
         {
             "name": "toggle_wifi",
-            "description": {
-                "zh": "打开或关闭Wi-Fi",
-                "en": "Turn Wi-Fi on or off.",
-                "ro": "Turn Wi-Fi on or off."
-            },
+            "description": { "zh": "打开或关闭Wi-Fi", "en": "Turn Wi-Fi on or off." },
             "parameters": [
                 {
                     "name": "state",
-                    "description": {
-                        "zh": "Wi-Fi状态：'on'表示打开，'off'表示关闭",
-                        "en": "Wi-Fi state: 'on' to enable, 'off' to disable.",
-                        "ro": "Wi-Fi state: 'on' to enable, 'off' to disable."
-                    },
+                    "description": { "zh": "Wi-Fi状态：'on'表示打开，'off'表示关闭", "en": "Wi-Fi state: 'on' to enable, 'off' to disable." },
                     "type": "string",
                     "required": true
                 }
@@ -376,19 +230,11 @@ METADATA
         },
         {
             "name": "take_screenshot",
-            "description": {
-                "zh": "截取当前屏幕",
-                "en": "Take a screenshot of the current screen.",
-                "ro": "Take a screenshot of the current screen."
-            },
+            "description": { "zh": "截取当前屏幕", "en": "Take a screenshot of the current screen." },
             "parameters": [
                 {
                     "name": "file_path",
-                    "description": {
-                        "zh": "截图保存路径，例如 /sdcard/Pictures/screenshot.png。如果未提供，将使用默认路径和时间戳文件名。",
-                        "en": "Screenshot save path, e.g. /sdcard/Pictures/screenshot.png. If omitted, a default path with a timestamp filename will be used.",
-                        "ro": "Screenshot save path, e.g. /sdcard/Pictures/screenshot.png. If omitted, a default path with a timestamp filename will be used."
-                    },
+                    "description": { "zh": "截图保存路径，例如 /sdcard/Pictures/screenshot.png。如果未提供，将使用默认路径和时间戳文件名。", "en": "Screenshot save path, e.g. /sdcard/Pictures/screenshot.png. If omitted, a default path with a timestamp filename will be used." },
                     "type": "string",
                     "required": false
                 }
@@ -396,36 +242,23 @@ METADATA
         },
         {
             "name": "take_photo",
-            "description": {
-                "zh": "打开相机应用拍照",
-                "en": "Open the camera app to take a photo.",
-                "ro": "Open the camera app to take a photo."
-            },
+            "description": { "zh": "打开相机应用拍照", "en": "Open the camera app to take a photo." },
             "parameters": []
         },
         {
             "name": "toggle_dark_mode",
-            "description": {
-                "zh": "切换系统深夜模式（暗色主题）",
-                "en": "Toggle system dark mode (dark theme).",
-                "ro": "Toggle system dark mode (dark theme)."
-            },
+            "description": { "zh": "切换系统深夜模式（暗色主题）", "en": "Toggle system dark mode (dark theme)." },
             "parameters": [
                 {
                     "name": "state",
-                    "description": {
-                        "zh": "模式：'on'开启, 'off'关闭, 'auto'自动",
-                        "en": "Mode: 'on' to enable, 'off' to disable, 'auto' for automatic.",
-                        "ro": "Mode: 'on' to enable, 'off' to disable, 'auto' for automatic."
-                    },
+                    "description": { "zh": "模式：'on'开启, 'off'关闭, 'auto'自动", "en": "Mode: 'on' to enable, 'off' to disable, 'auto' for automatic." },
                     "type": "string",
                     "required": true
                 }
             ]
         }
     ]
-}
-*/
+}*/
 const dailyLife = (function () {
     /**
      * Get the current date and time in various formats

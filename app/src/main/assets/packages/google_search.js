@@ -1,182 +1,53 @@
 /* METADATA
 {
     "name": "google_search",
+
     "display_name": {
+        "ro": "Căutare Google",
         "ro": "Căutare Google Web și Google Scholar pentru articole academice.",
         "zh": "Google 搜索",
         "en": "Google Search"
     },
     "description": {
         "zh": "提供 Google 普通搜索与 Google Scholar 学术搜索能力，支持设置语言与返回条数。",
-        "en": "Google web search and Google Scholar search, with configurable language and result count.",
-        "ro": "Google web search and Google Scholar search, with configurable language and result count."
+        "en": "Google web search and Google Scholar search, with configurable language and result count."
     },
     "enabledByDefault": false,
     "category": "Search",
     "tools": [
         {
             "name": "search_web",
-            "description": {
-                "zh": "执行 Google 普通搜索，返回网页搜索结果。",
-                "en": "Perform a regular Google search and return web results.",
-                "ro": "Perform a regular Google search and return web results."
-            },
+            "description": { "zh": "执行 Google 普通搜索，返回网页搜索结果。", "en": "Perform a regular Google search and return web results." },
             "parameters": [
-                {
-                    "name": "query",
-                    "description": {
-                        "zh": "搜索关键词",
-                        "en": "Search query",
-                        "ro": "Search query"
-                    },
-                    "type": "string",
-                    "required": true
-                },
-                {
-                    "name": "max_results",
-                    "description": {
-                        "zh": "返回结果数量，默认 10，最大 20",
-                        "en": "Number of results to return (default: 10, max: 20)",
-                        "ro": "Number of results to return (default: 10, max: 20)"
-                    },
-                    "type": "number",
-                    "required": false
-                },
-                {
-                    "name": "language",
-                    "description": {
-                        "zh": "界面语言参数，默认 en",
-                        "en": "Interface language (default: en)",
-                        "ro": "Interface language (default: en)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "region",
-                    "description": {
-                        "zh": "地区参数，例如 us、cn。默认 us",
-                        "en": "Region parameter, e.g. us, cn (default: us)",
-                        "ro": "Region parameter, e.g. us, cn (default: us)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "includeLinks",
-                    "description": {
-                        "zh": "是否在结果中包含可点击的链接列表，默认为false。",
-                        "en": "Whether to include a clickable link list in results (default: false)",
-                        "ro": "Whether to include a clickable link list in results (default: false)"
-                    },
-                    "type": "boolean",
-                    "required": false
-                }
+                { "name": "query", "description": { "zh": "搜索关键词", "en": "Search query" }, "type": "string", "required": true },
+                { "name": "max_results", "description": { "zh": "返回结果数量，默认 10，最大 20", "en": "Number of results to return (default: 10, max: 20)" }, "type": "number", "required": false },
+                { "name": "language", "description": { "zh": "界面语言参数，默认 en", "en": "Interface language (default: en)" }, "type": "string", "required": false },
+                { "name": "region", "description": { "zh": "地区参数，例如 us、cn。默认 us", "en": "Region parameter, e.g. us, cn (default: us)" }, "type": "string", "required": false },
+                { "name": "includeLinks", "description": { "zh": "是否在结果中包含可点击的链接列表，默认为false。", "en": "Whether to include a clickable link list in results (default: false)" }, "type": "boolean", "required": false }
             ]
         },
         {
             "name": "search_scholar",
-            "description": {
-                "zh": "执行 Google Scholar 学术搜索，返回学术文献结果。",
-                "en": "Perform a Google Scholar search and return academic results.",
-                "ro": "Perform a Google Scholar search and return academic results."
-            },
+            "description": { "zh": "执行 Google Scholar 学术搜索，返回学术文献结果。", "en": "Perform a Google Scholar search and return academic results." },
             "parameters": [
-                {
-                    "name": "query",
-                    "description": {
-                        "zh": "搜索关键词",
-                        "en": "Search query",
-                        "ro": "Search query"
-                    },
-                    "type": "string",
-                    "required": true
-                },
-                {
-                    "name": "max_results",
-                    "description": {
-                        "zh": "返回结果数量，默认 10，最大 20",
-                        "en": "Number of results to return (default: 10, max: 20)",
-                        "ro": "Number of results to return (default: 10, max: 20)"
-                    },
-                    "type": "number",
-                    "required": false
-                },
-                {
-                    "name": "language",
-                    "description": {
-                        "zh": "界面语言参数，默认 en",
-                        "en": "Interface language (default: en)",
-                        "ro": "Interface language (default: en)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "includeLinks",
-                    "description": {
-                        "zh": "是否在结果中包含可点击的链接列表，默认为false。",
-                        "en": "Whether to include a clickable link list in results (default: false)",
-                        "ro": "Whether to include a clickable link list in results (default: false)"
-                    },
-                    "type": "boolean",
-                    "required": false
-                }
+                { "name": "query", "description": { "zh": "搜索关键词", "en": "Search query" }, "type": "string", "required": true },
+                { "name": "max_results", "description": { "zh": "返回结果数量，默认 10，最大 20", "en": "Number of results to return (default: 10, max: 20)" }, "type": "number", "required": false },
+                { "name": "language", "description": { "zh": "界面语言参数，默认 en", "en": "Interface language (default: en)" }, "type": "string", "required": false },
+                { "name": "includeLinks", "description": { "zh": "是否在结果中包含可点击的链接列表，默认为false。", "en": "Whether to include a clickable link list in results (default: false)" }, "type": "boolean", "required": false }
             ]
         },
         {
             "name": "search_scholar_mirror",
-            "description": {
-                "zh": "通过镜像站执行 Google Scholar 学术搜索，以绕过人机验证。",
-                "en": "Use a mirror site to perform Google Scholar searches to bypass CAPTCHA checks.",
-                "ro": "Use a mirror site to perform Google Scholar searches to bypass CAPTCHA checks."
-            },
+            "description": { "zh": "通过镜像站执行 Google Scholar 学术搜索，以绕过人机验证。", "en": "Use a mirror site to perform Google Scholar searches to bypass CAPTCHA checks." },
             "parameters": [
-                {
-                    "name": "query",
-                    "description": {
-                        "zh": "搜索关键词",
-                        "en": "Search query",
-                        "ro": "Search query"
-                    },
-                    "type": "string",
-                    "required": true
-                },
-                {
-                    "name": "max_results",
-                    "description": {
-                        "zh": "返回结果数量，默认 10，最大 20",
-                        "en": "Number of results to return (default: 10, max: 20)",
-                        "ro": "Number of results to return (default: 10, max: 20)"
-                    },
-                    "type": "number",
-                    "required": false
-                },
-                {
-                    "name": "language",
-                    "description": {
-                        "zh": "界面语言参数，默认 en",
-                        "en": "Interface language (default: en)",
-                        "ro": "Interface language (default: en)"
-                    },
-                    "type": "string",
-                    "required": false
-                },
-                {
-                    "name": "includeLinks",
-                    "description": {
-                        "zh": "是否在结果中包含可点击的链接列表，默认为false。",
-                        "en": "Whether to include a clickable link list in results (default: false)",
-                        "ro": "Whether to include a clickable link list in results (default: false)"
-                    },
-                    "type": "boolean",
-                    "required": false
-                }
+                { "name": "query", "description": { "zh": "搜索关键词", "en": "Search query" }, "type": "string", "required": true },
+                { "name": "max_results", "description": { "zh": "返回结果数量，默认 10，最大 20", "en": "Number of results to return (default: 10, max: 20)" }, "type": "number", "required": false },
+                { "name": "language", "description": { "zh": "界面语言参数，默认 en", "en": "Interface language (default: en)" }, "type": "string", "required": false },
+                { "name": "includeLinks", "description": { "zh": "是否在结果中包含可点击的链接列表，默认为false。", "en": "Whether to include a clickable link list in results (default: false)" }, "type": "boolean", "required": false }
             ]
         }
     ]
-}
-*/
+}*/
 const googleSearch = (function () {
     const GOOGLE_SEARCH_URL = "https://www.google.com/search";
     const GOOGLE_SCHOLAR_URL = "https://scholar.google.com/scholar";
