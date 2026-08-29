@@ -2,29 +2,43 @@
 METADATA
 {
     "name": "duckduckgo",
-
     "display_name": {
-        "ro": "Căutare DuckDuckGo",
         "ro": "Căutare web și extragere de conținut folosind DuckDuckGo.",
         "zh": "DuckDuckGo 搜索",
         "en": "DuckDuckGo Search"
     },
-    "description": { "zh": "使用DuckDuckGo进行网络搜索和内容抓取。", "en": "Use DuckDuckGo for web search and content extraction." },
+    "description": {
+        "zh": "使用DuckDuckGo进行网络搜索和内容抓取。",
+        "en": "Use DuckDuckGo for web search and content extraction.",
+        "ro": "Use DuckDuckGo for web search and content extraction."
+    },
     "category": "Search",
     "tools": [
         {
             "name": "search",
-            "description": { "zh": "执行DuckDuckGo搜索并返回格式化的结果。", "en": "Run a DuckDuckGo search and return formatted results." },
+            "description": {
+                "zh": "执行DuckDuckGo搜索并返回格式化的结果。",
+                "en": "Run a DuckDuckGo search and return formatted results.",
+                "ro": "Run a DuckDuckGo search and return formatted results."
+            },
             "parameters": [
                 {
                     "name": "query",
-                    "description": { "zh": "搜索查询字符串", "en": "Search query string." },
+                    "description": {
+                        "zh": "搜索查询字符串",
+                        "en": "Search query string.",
+                        "ro": "Search query string."
+                    },
                     "type": "string",
                     "required": true
                 },
                 {
                     "name": "max_results",
-                    "description": { "zh": "返回的最大结果数 (默认: 10)", "en": "Maximum number of results to return (default: 10)." },
+                    "description": {
+                        "zh": "返回的最大结果数 (默认: 10)",
+                        "en": "Maximum number of results to return (default: 10).",
+                        "ro": "Maximum number of results to return (default: 10)."
+                    },
                     "type": "string",
                     "required": false
                 }
@@ -32,18 +46,27 @@ METADATA
         },
         {
             "name": "fetch_content",
-            "description": { "zh": "从网页URL抓取和解析内容。", "en": "Fetch and parse content from a webpage URL." },
+            "description": {
+                "zh": "从网页URL抓取和解析内容。",
+                "en": "Fetch and parse content from a webpage URL.",
+                "ro": "Fetch and parse content from a webpage URL."
+            },
             "parameters": [
                 {
                     "name": "url",
-                    "description": { "zh": "要抓取内容的网页URL", "en": "Webpage URL to fetch and parse." },
+                    "description": {
+                        "zh": "要抓取内容的网页URL",
+                        "en": "Webpage URL to fetch and parse.",
+                        "ro": "Webpage URL to fetch and parse."
+                    },
                     "type": "string",
                     "required": true
                 }
             ]
         }
     ]
-}*/
+}
+*/
 const duckduckgo = (function () {
     const client = OkHttp.newClient();
     const BASE_URL = "https://html.duckduckgo.com/html/";

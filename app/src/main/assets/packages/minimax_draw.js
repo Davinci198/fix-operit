@@ -1,75 +1,209 @@
 /* METADATA
 {
-  "name": "minimax_draw",
-  "display_name": {
-    "zh": "MiniMax 绘图",
-    "en": "MiniMax Draw"
-  },
-  "description": {
-    "zh": "使用 MiniMax 官方图像生成接口 (/v1/image_generation) 生成图片，支持文生图和带参考图的生图；结果保存到本地 /sdcard/Download/Operit/plugins/draw/minimax_draw/draws/ 目录，并返回 Markdown 图片提示。",
-    "en": "Generate images with the official MiniMax image generation API (/v1/image_generation). Supports text-to-image and reference-image generation. Saves results to /sdcard/Download/Operit/plugins/draw/minimax_draw/draws/ and returns Markdown image hints."
-  },
-  "category": "Draw",
-  "env": [
-    {
-      "name": "MINIMAX_API_KEY",
-      "description": {
-        "zh": "MiniMax API Key（必填）",
-        "en": "MiniMax API key (required)"
-      },
-      "required": true
+    "name": "minimax_draw",
+    "display_name": {
+        "zh": "MiniMax 绘图",
+        "en": "MiniMax Draw",
+        "ro": "MiniMax Draw"
     },
-    {
-      "name": "MINIMAX_API_BASE_URL",
-      "description": {
-        "zh": "MiniMax API Base URL（可选；默认 https://api.minimaxi.com，国际站可改为 https://api.minimax.io）",
-        "en": "MiniMax API base URL (optional; defaults to https://api.minimaxi.com, international users can use https://api.minimax.io)"
-      },
-      "required": false
+    "description": {
+        "zh": "使用 MiniMax 官方图像生成接口 (/v1/image_generation) 生成图片，支持文生图和带参考图的生图；结果保存到本地 /sdcard/Download/Operit/plugins/draw/minimax_draw/draws/ 目录，并返回 Markdown 图片提示。",
+        "en": "Generate images with the official MiniMax image generation API (/v1/image_generation). Supports text-to-image and reference-image generation. Saves results to /sdcard/Download/Operit/plugins/draw/minimax_draw/draws/ and returns Markdown image hints.",
+        "ro": "Generate images with the official MiniMax image generation API (/v1/image_generation). Supports text-to-image and reference-image generation. Saves results to /sdcard/Download/Operit/plugins/draw/minimax_draw/draws/ and returns Markdown image hints."
     },
-    {
-      "name": "MINIMAX_IMAGE_MODEL",
-      "description": {
-        "zh": "默认图片模型（可选；未传 model 时使用，默认 image-01）",
-        "en": "Default image model (optional; used when model is omitted, default image-01)"
-      },
-      "required": false
-    },
-    {
-      "name": "BEEIMG_API_KEY",
-      "description": {
-        "zh": "BeeIMG API Key（可选；仅当 image_paths 传本地参考图路径时需要，用于先上传到公网图床）",
-        "en": "BeeIMG API key (optional; only needed when image_paths is used so local reference images can be uploaded first)"
-      },
-      "required": false
-    }
-  ],
-  "tools": [
-    {
-      "name": "draw_image",
-      "description": {
-        "zh": "根据提示词调用 MiniMax 官方绘图接口生成图片，支持文生图和参考图生图，保存到本地并返回 Markdown 图片提示。",
-        "en": "Generate images with the official MiniMax image API using a prompt. Supports text-to-image and reference-image generation, saves locally, and returns Markdown image hints."
-      },
-      "parameters": [
-        { "name": "prompt", "description": { "zh": "绘图提示词（中文或英文）", "en": "Image prompt (Chinese or English)" }, "type": "string", "required": true },
-        { "name": "model", "description": { "zh": "模型名称（可选；不传则使用环境变量 MINIMAX_IMAGE_MODEL，否则默认 image-01）", "en": "Model name (optional; falls back to MINIMAX_IMAGE_MODEL, then image-01)" }, "type": "string", "required": false },
-        { "name": "aspect_ratio", "description": { "zh": "输出比例，可选 1:1、16:9、4:3、3:2、2:3、3:4、9:16、21:9；21:9 仅 image-01 支持", "en": "Aspect ratio. Supported: 1:1, 16:9, 4:3, 3:2, 2:3, 3:4, 9:16, 21:9. 21:9 is only supported by image-01." }, "type": "string", "required": false },
-        { "name": "width", "description": { "zh": "输出宽度（可选；仅 image-01 支持；需与 height 一起传，范围 512-2048 且为 8 的倍数）", "en": "Output width (optional; image-01 only; must be provided together with height, range 512-2048 and multiple of 8)" }, "type": "number", "required": false },
-        { "name": "height", "description": { "zh": "输出高度（可选；仅 image-01 支持；需与 width 一起传，范围 512-2048 且为 8 的倍数）", "en": "Output height (optional; image-01 only; must be provided together with width, range 512-2048 and multiple of 8)" }, "type": "number", "required": false },
-        { "name": "n", "description": { "zh": "生成图片数量，范围 1-9，默认 1", "en": "Number of images to generate, range 1-9, default 1" }, "type": "number", "required": false },
-        { "name": "response_format", "description": { "zh": "返回格式，可选 url 或 base64；默认 base64（更适合直接保存到本地）", "en": "Response format: url or base64. Defaults to base64 for direct local saving." }, "type": "string", "required": false },
-        { "name": "prompt_optimizer", "description": { "zh": "是否启用提示词优化（可选）", "en": "Enable prompt optimizer (optional)" }, "type": "boolean", "required": false },
-        { "name": "aigc_watermark", "description": { "zh": "是否添加 AIGC 水印（可选）", "en": "Add AIGC watermark (optional)" }, "type": "boolean", "required": false },
-        { "name": "seed", "description": { "zh": "随机种子（可选）", "en": "Seed (optional)" }, "type": "number", "required": false },
-        { "name": "image_urls", "description": { "zh": "参考图公网 URL 数组（可选；图生图用）。支持字符串数组、JSON 字符串或逗号分隔字符串", "en": "Reference image public URL list (optional; for reference-image generation). Accepts string array, JSON string, or comma-separated string." }, "type": "array", "required": false },
-        { "name": "image_paths", "description": { "zh": "参考图本地路径数组（可选；会先上传到图床再提交给 MiniMax）。支持字符串数组、JSON 字符串或逗号分隔字符串", "en": "Reference local image path list (optional; local images are uploaded first before calling MiniMax). Accepts string array, JSON string, or comma-separated string." }, "type": "array", "required": false },
-        { "name": "file_name", "description": { "zh": "自定义本地文件名（不含扩展名）", "en": "Custom local output file name without extension" }, "type": "string", "required": false },
-        { "name": "api_base_url", "description": { "zh": "自定义 MiniMax API Base URL（可选）", "en": "Custom MiniMax API base URL (optional)" }, "type": "string", "required": false }
-      ]
-    }
-  ]
-}*/
+    "category": "Draw",
+    "env": [
+        {
+            "name": "MINIMAX_API_KEY",
+            "description": {
+                "zh": "MiniMax API Key（必填）",
+                "en": "MiniMax API key (required)",
+                "ro": "MiniMax API key (required)"
+            },
+            "required": true
+        },
+        {
+            "name": "MINIMAX_API_BASE_URL",
+            "description": {
+                "zh": "MiniMax API Base URL（可选；默认 https://api.minimaxi.com，国际站可改为 https://api.minimax.io）",
+                "en": "MiniMax API base URL (optional; defaults to https://api.minimaxi.com, international users can use https://api.minimax.io)",
+                "ro": "MiniMax API base URL (optional; defaults to https://api.minimaxi.com, international users can use https://api.minimax.io)"
+            },
+            "required": false
+        },
+        {
+            "name": "MINIMAX_IMAGE_MODEL",
+            "description": {
+                "zh": "默认图片模型（可选；未传 model 时使用，默认 image-01）",
+                "en": "Default image model (optional; used when model is omitted, default image-01)",
+                "ro": "Default image model (optional; used when model is omitted, default image-01)"
+            },
+            "required": false
+        },
+        {
+            "name": "BEEIMG_API_KEY",
+            "description": {
+                "zh": "BeeIMG API Key（可选；仅当 image_paths 传本地参考图路径时需要，用于先上传到公网图床）",
+                "en": "BeeIMG API key (optional; only needed when image_paths is used so local reference images can be uploaded first)",
+                "ro": "BeeIMG API key (optional; only needed when image_paths is used so local reference images can be uploaded first)"
+            },
+            "required": false
+        }
+    ],
+    "tools": [
+        {
+            "name": "draw_image",
+            "description": {
+                "zh": "根据提示词调用 MiniMax 官方绘图接口生成图片，支持文生图和参考图生图，保存到本地并返回 Markdown 图片提示。",
+                "en": "Generate images with the official MiniMax image API using a prompt. Supports text-to-image and reference-image generation, saves locally, and returns Markdown image hints.",
+                "ro": "Generate images with the official MiniMax image API using a prompt. Supports text-to-image and reference-image generation, saves locally, and returns Markdown image hints."
+            },
+            "parameters": [
+                {
+                    "name": "prompt",
+                    "description": {
+                        "zh": "绘图提示词（中文或英文）",
+                        "en": "Image prompt (Chinese or English)",
+                        "ro": "Image prompt (Chinese or English)"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "model",
+                    "description": {
+                        "zh": "模型名称（可选；不传则使用环境变量 MINIMAX_IMAGE_MODEL，否则默认 image-01）",
+                        "en": "Model name (optional; falls back to MINIMAX_IMAGE_MODEL, then image-01)",
+                        "ro": "Model name (optional; falls back to MINIMAX_IMAGE_MODEL, then image-01)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "aspect_ratio",
+                    "description": {
+                        "zh": "输出比例，可选 1:1、16:9、4:3、3:2、2:3、3:4、9:16、21:9；21:9 仅 image-01 支持",
+                        "en": "Aspect ratio. Supported: 1:1, 16:9, 4:3, 3:2, 2:3, 3:4, 9:16, 21:9. 21:9 is only supported by image-01.",
+                        "ro": "Aspect ratio. Supported: 1:1, 16:9, 4:3, 3:2, 2:3, 3:4, 9:16, 21:9. 21:9 is only supported by image-01."
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "width",
+                    "description": {
+                        "zh": "输出宽度（可选；仅 image-01 支持；需与 height 一起传，范围 512-2048 且为 8 的倍数）",
+                        "en": "Output width (optional; image-01 only; must be provided together with height, range 512-2048 and multiple of 8)",
+                        "ro": "Output width (optional; image-01 only; must be provided together with height, range 512-2048 and multiple of 8)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "height",
+                    "description": {
+                        "zh": "输出高度（可选；仅 image-01 支持；需与 width 一起传，范围 512-2048 且为 8 的倍数）",
+                        "en": "Output height (optional; image-01 only; must be provided together with width, range 512-2048 and multiple of 8)",
+                        "ro": "Output height (optional; image-01 only; must be provided together with width, range 512-2048 and multiple of 8)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "n",
+                    "description": {
+                        "zh": "生成图片数量，范围 1-9，默认 1",
+                        "en": "Number of images to generate, range 1-9, default 1",
+                        "ro": "Number of images to generate, range 1-9, default 1"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "response_format",
+                    "description": {
+                        "zh": "返回格式，可选 url 或 base64；默认 base64（更适合直接保存到本地）",
+                        "en": "Response format: url or base64. Defaults to base64 for direct local saving.",
+                        "ro": "Response format: url or base64. Defaults to base64 for direct local saving."
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "prompt_optimizer",
+                    "description": {
+                        "zh": "是否启用提示词优化（可选）",
+                        "en": "Enable prompt optimizer (optional)",
+                        "ro": "Enable prompt optimizer (optional)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                },
+                {
+                    "name": "aigc_watermark",
+                    "description": {
+                        "zh": "是否添加 AIGC 水印（可选）",
+                        "en": "Add AIGC watermark (optional)",
+                        "ro": "Add AIGC watermark (optional)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                },
+                {
+                    "name": "seed",
+                    "description": {
+                        "zh": "随机种子（可选）",
+                        "en": "Seed (optional)",
+                        "ro": "Seed (optional)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "image_urls",
+                    "description": {
+                        "zh": "参考图公网 URL 数组（可选；图生图用）。支持字符串数组、JSON 字符串或逗号分隔字符串",
+                        "en": "Reference image public URL list (optional; for reference-image generation). Accepts string array, JSON string, or comma-separated string.",
+                        "ro": "Reference image public URL list (optional; for reference-image generation). Accepts string array, JSON string, or comma-separated string."
+                    },
+                    "type": "array",
+                    "required": false
+                },
+                {
+                    "name": "image_paths",
+                    "description": {
+                        "zh": "参考图本地路径数组（可选；会先上传到图床再提交给 MiniMax）。支持字符串数组、JSON 字符串或逗号分隔字符串",
+                        "en": "Reference local image path list (optional; local images are uploaded first before calling MiniMax). Accepts string array, JSON string, or comma-separated string.",
+                        "ro": "Reference local image path list (optional; local images are uploaded first before calling MiniMax). Accepts string array, JSON string, or comma-separated string."
+                    },
+                    "type": "array",
+                    "required": false
+                },
+                {
+                    "name": "file_name",
+                    "description": {
+                        "zh": "自定义本地文件名（不含扩展名）",
+                        "en": "Custom local output file name without extension",
+                        "ro": "Custom local output file name without extension"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "api_base_url",
+                    "description": {
+                        "zh": "自定义 MiniMax API Base URL（可选）",
+                        "en": "Custom MiniMax API base URL (optional)",
+                        "ro": "Custom MiniMax API base URL (optional)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
+            ]
+        }
+    ]
+}
+*/
 /// <reference path="./types/index.d.ts" />
 const minimaxDraw = (function () {
     const HTTP_TIMEOUT_MS = 600000;

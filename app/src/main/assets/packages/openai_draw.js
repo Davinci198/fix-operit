@@ -1,59 +1,110 @@
 /* METADATA
 {
-  "name": "openai_draw",
-
-  "display_name": {
-      "zh": "OpenAI 绘图",
-      "en": "OpenAI Draw"
-  },
-  "description": {
-    "zh": "使用 OpenAI 格式的图像生成 API (/v1/images/generations) 根据提示词画图，将图片保存到本地 /sdcard/Download/Operit/plugins/draw/openai_draw/draws/ 目录，并返回 Markdown 图片提示。",
-    "en": "Generate images via an OpenAI-compatible image generation API (/v1/images/generations) from a prompt, save to /sdcard/Download/Operit/plugins/draw/openai_draw/draws/, and return a Markdown image reference."
-  },
-  "category": "Draw",
-  "env": [
-    {
-      "name": "OPENAI_API_KEY",
-      "description": {
-        "zh": "OpenAI API Key（必填）",
-        "en": "OpenAI API key (required)"
-      },
-      "required": true
+    "name": "openai_draw",
+    "display_name": {
+        "zh": "OpenAI 绘图",
+        "en": "OpenAI Draw",
+        "ro": "OpenAI Draw"
     },
-    {
-      "name": "OPENAI_API_BASE_URL",
-      "description": {
-        "zh": "OpenAI API Base URL（可选，不填则默认 https://api.openai.com ）",
-        "en": "OpenAI API base URL (optional; defaults to https://api.openai.com)"
-      },
-      "required": false
+    "description": {
+        "zh": "使用 OpenAI 格式的图像生成 API (/v1/images/generations) 根据提示词画图，将图片保存到本地 /sdcard/Download/Operit/plugins/draw/openai_draw/draws/ 目录，并返回 Markdown 图片提示。",
+        "en": "Generate images via an OpenAI-compatible image generation API (/v1/images/generations) from a prompt, save to /sdcard/Download/Operit/plugins/draw/openai_draw/draws/, and return a Markdown image reference.",
+        "ro": "Generate images via an OpenAI-compatible image generation API (/v1/images/generations) from a prompt, save to /sdcard/Download/Operit/plugins/draw/openai_draw/draws/, and return a Markdown image reference."
     },
-    {
-      "name": "OPENAI_IMAGE_MODEL",
-      "description": {
-        "zh": "默认绘图模型（可选；当 draw_image 未传 model 时使用）",
-        "en": "Default image model (optional; used when draw_image doesn't pass model)"
-      },
-      "required": false
-    }
-  ],
-  "tools": [
-    {
-      "name": "draw_image",
-      "description": {
-        "zh": "根据提示词调用 OpenAI 格式图像生成接口生成图片，保存到本地并返回 Markdown 图片提示。",
-        "en": "Generate an image via an OpenAI-compatible image generation endpoint using a prompt, save it locally, and return a Markdown image reference."
-      },
-      "parameters": [
-        { "name": "prompt", "description": { "zh": "绘图提示词（英文或中文皆可）", "en": "Prompt for image generation (Chinese or English)" }, "type": "string", "required": true },
-        { "name": "model", "description": { "zh": "模型名称（可选；不传则使用环境变量 OPENAI_IMAGE_MODEL，再不行使用默认值）", "en": "Model name (optional; falls back to env OPENAI_IMAGE_MODEL, then default)" }, "type": "string", "required": false },
-        { "name": "size", "description": { "zh": "图片尺寸，例如 '1024x1024'，可选", "en": "Image size, e.g. '1024x1024' (optional)" }, "type": "string", "required": false },
-        { "name": "file_name", "description": { "zh": "自定义保存到本地的文件名（不含路径和扩展名）", "en": "Custom output file name (without path or extension)" }, "type": "string", "required": false },
-        { "name": "api_base_url", "description": { "zh": "OpenAI API Base URL（不传则取环境变量 OPENAI_API_BASE_URL 或默认 https://api.openai.com ）", "en": "OpenAI API base URL (optional; falls back to env OPENAI_API_BASE_URL or https://api.openai.com)" }, "type": "string", "required": false }
-      ]
-    }
-  ]
-}*/
+    "category": "Draw",
+    "env": [
+        {
+            "name": "OPENAI_API_KEY",
+            "description": {
+                "zh": "OpenAI API Key（必填）",
+                "en": "OpenAI API key (required)",
+                "ro": "OpenAI API key (required)"
+            },
+            "required": true
+        },
+        {
+            "name": "OPENAI_API_BASE_URL",
+            "description": {
+                "zh": "OpenAI API Base URL（可选，不填则默认 https://api.openai.com ）",
+                "en": "OpenAI API base URL (optional; defaults to https://api.openai.com)",
+                "ro": "OpenAI API base URL (optional; defaults to https://api.openai.com)"
+            },
+            "required": false
+        },
+        {
+            "name": "OPENAI_IMAGE_MODEL",
+            "description": {
+                "zh": "默认绘图模型（可选；当 draw_image 未传 model 时使用）",
+                "en": "Default image model (optional; used when draw_image doesn't pass model)",
+                "ro": "Default image model (optional; used when draw_image doesn't pass model)"
+            },
+            "required": false
+        }
+    ],
+    "tools": [
+        {
+            "name": "draw_image",
+            "description": {
+                "zh": "根据提示词调用 OpenAI 格式图像生成接口生成图片，保存到本地并返回 Markdown 图片提示。",
+                "en": "Generate an image via an OpenAI-compatible image generation endpoint using a prompt, save it locally, and return a Markdown image reference.",
+                "ro": "Generate an image via an OpenAI-compatible image generation endpoint using a prompt, save it locally, and return a Markdown image reference."
+            },
+            "parameters": [
+                {
+                    "name": "prompt",
+                    "description": {
+                        "zh": "绘图提示词（英文或中文皆可）",
+                        "en": "Prompt for image generation (Chinese or English)",
+                        "ro": "Prompt for image generation (Chinese or English)"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "model",
+                    "description": {
+                        "zh": "模型名称（可选；不传则使用环境变量 OPENAI_IMAGE_MODEL，再不行使用默认值）",
+                        "en": "Model name (optional; falls back to env OPENAI_IMAGE_MODEL, then default)",
+                        "ro": "Model name (optional; falls back to env OPENAI_IMAGE_MODEL, then default)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "size",
+                    "description": {
+                        "zh": "图片尺寸，例如 '1024x1024'，可选",
+                        "en": "Image size, e.g. '1024x1024' (optional)",
+                        "ro": "Image size, e.g. '1024x1024' (optional)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "file_name",
+                    "description": {
+                        "zh": "自定义保存到本地的文件名（不含路径和扩展名）",
+                        "en": "Custom output file name (without path or extension)",
+                        "ro": "Custom output file name (without path or extension)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "api_base_url",
+                    "description": {
+                        "zh": "OpenAI API Base URL（不传则取环境变量 OPENAI_API_BASE_URL 或默认 https://api.openai.com ）",
+                        "en": "OpenAI API base URL (optional; falls back to env OPENAI_API_BASE_URL or https://api.openai.com)",
+                        "ro": "OpenAI API base URL (optional; falls back to env OPENAI_API_BASE_URL or https://api.openai.com)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
+            ]
+        }
+    ]
+}
+*/
 /// <reference path="./types/index.d.ts" />
 const openaiDraw = (function () {
     const HTTP_TIMEOUT_MS = 600000;

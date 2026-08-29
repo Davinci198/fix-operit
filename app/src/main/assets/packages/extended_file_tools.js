@@ -1,7 +1,6 @@
 /* METADATA
 {
     "name": "extended_file_tools",
-
     "display_name": {
         "ro": "Instrumente extinse de fișiere",
         "zh": "增强文件工具",
@@ -17,78 +16,327 @@
     "tools": [
         {
             "name": "file_exists",
-            "description": { "zh": "检查文件或目录是否存在。", "en": "Check if a file or directory exists." },
+            "description": {
+                "zh": "检查文件或目录是否存在。",
+                "en": "Check if a file or directory exists.",
+                "ro": "Check if a file or directory exists."
+            },
             "parameters": [
-                { "name": "path", "description": { "zh": "目标路径", "en": "Target path" }, "type": "string", "required": true },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "path",
+                    "description": {
+                        "zh": "目标路径",
+                        "en": "Target path",
+                        "ro": "Target path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "move_file",
-            "description": { "zh": "移动或重命名文件/目录。", "en": "Move or rename a file/directory." },
+            "description": {
+                "zh": "移动或重命名文件/目录。",
+                "en": "Move or rename a file/directory.",
+                "ro": "Move or rename a file/directory."
+            },
             "parameters": [
-                { "name": "source", "description": { "zh": "源路径", "en": "Source path" }, "type": "string", "required": true },
-                { "name": "destination", "description": { "zh": "目标路径", "en": "Destination path" }, "type": "string", "required": true },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "source",
+                    "description": {
+                        "zh": "源路径",
+                        "en": "Source path",
+                        "ro": "Source path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "destination",
+                    "description": {
+                        "zh": "目标路径",
+                        "en": "Destination path",
+                        "ro": "Destination path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "copy_file",
-            "description": { "zh": "复制文件/目录（支持跨环境复制）。", "en": "Copy a file/directory (supports cross-environment copy)." },
+            "description": {
+                "zh": "复制文件/目录（支持跨环境复制）。",
+                "en": "Copy a file/directory (supports cross-environment copy).",
+                "ro": "Copy a file/directory (supports cross-environment copy)."
+            },
             "parameters": [
-                { "name": "source", "description": { "zh": "源路径", "en": "Source path" }, "type": "string", "required": true },
-                { "name": "destination", "description": { "zh": "目标路径", "en": "Destination path" }, "type": "string", "required": true },
-                { "name": "recursive", "description": { "zh": "可选：是否递归，默认 false", "en": "Optional: recursive (default: false)" }, "type": "boolean", "required": false },
-                { "name": "source_environment", "description": { "zh": "可选：源环境 android/linux", "en": "Optional: source environment android/linux" }, "type": "string", "required": false },
-                { "name": "dest_environment", "description": { "zh": "可选：目标环境 android/linux", "en": "Optional: destination environment android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "source",
+                    "description": {
+                        "zh": "源路径",
+                        "en": "Source path",
+                        "ro": "Source path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "destination",
+                    "description": {
+                        "zh": "目标路径",
+                        "en": "Destination path",
+                        "ro": "Destination path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "recursive",
+                    "description": {
+                        "zh": "可选：是否递归，默认 false",
+                        "en": "Optional: recursive (default: false)",
+                        "ro": "Optional: recursive (default: false)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                },
+                {
+                    "name": "source_environment",
+                    "description": {
+                        "zh": "可选：源环境 android/linux",
+                        "en": "Optional: source environment android/linux",
+                        "ro": "Optional: source environment android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "dest_environment",
+                    "description": {
+                        "zh": "可选：目标环境 android/linux",
+                        "en": "Optional: destination environment android/linux",
+                        "ro": "Optional: destination environment android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "file_info",
-            "description": { "zh": "获取文件/目录信息。", "en": "Get file/directory info." },
+            "description": {
+                "zh": "获取文件/目录信息。",
+                "en": "Get file/directory info.",
+                "ro": "Get file/directory info."
+            },
             "parameters": [
-                { "name": "path", "description": { "zh": "目标路径", "en": "Target path" }, "type": "string", "required": true },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "path",
+                    "description": {
+                        "zh": "目标路径",
+                        "en": "Target path",
+                        "ro": "Target path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "zip_files",
-            "description": { "zh": "压缩文件/目录。", "en": "Zip files/directories." },
+            "description": {
+                "zh": "压缩文件/目录。",
+                "en": "Zip files/directories.",
+                "ro": "Zip files/directories."
+            },
             "parameters": [
-                { "name": "source", "description": { "zh": "源路径", "en": "Source path" }, "type": "string", "required": true },
-                { "name": "destination", "description": { "zh": "输出 zip 文件路径", "en": "Destination zip path" }, "type": "string", "required": true },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false },
-                { "name": "include_root_directory", "description": { "zh": "压缩目录时是否保留源目录名作为顶层目录，默认 true", "en": "When zipping a directory, keep the source directory name as the top-level folder, default true" }, "type": "boolean", "required": false }
+                {
+                    "name": "source",
+                    "description": {
+                        "zh": "源路径",
+                        "en": "Source path",
+                        "ro": "Source path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "destination",
+                    "description": {
+                        "zh": "输出 zip 文件路径",
+                        "en": "Destination zip path",
+                        "ro": "Destination zip path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "include_root_directory",
+                    "description": {
+                        "zh": "压缩目录时是否保留源目录名作为顶层目录，默认 true",
+                        "en": "When zipping a directory, keep the source directory name as the top-level folder, default true",
+                        "ro": "When zipping a directory, keep the source directory name as the top-level folder, default true"
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "unzip_files",
-            "description": { "zh": "解压 zip 文件。", "en": "Unzip an archive." },
+            "description": {
+                "zh": "解压 zip 文件。",
+                "en": "Unzip an archive.",
+                "ro": "Unzip an archive."
+            },
             "parameters": [
-                { "name": "source", "description": { "zh": "zip 文件路径", "en": "Zip file path" }, "type": "string", "required": true },
-                { "name": "destination", "description": { "zh": "解压目录", "en": "Destination directory" }, "type": "string", "required": true },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "source",
+                    "description": {
+                        "zh": "zip 文件路径",
+                        "en": "Zip file path",
+                        "ro": "Zip file path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "destination",
+                    "description": {
+                        "zh": "解压目录",
+                        "en": "Destination directory",
+                        "ro": "Destination directory"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "open_file",
-            "description": { "zh": "用系统默认应用打开文件。", "en": "Open a file with system default app." },
+            "description": {
+                "zh": "用系统默认应用打开文件。",
+                "en": "Open a file with system default app.",
+                "ro": "Open a file with system default app."
+            },
             "parameters": [
-                { "name": "path", "description": { "zh": "文件路径", "en": "File path" }, "type": "string", "required": true },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "path",
+                    "description": {
+                        "zh": "文件路径",
+                        "en": "File path",
+                        "ro": "File path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "share_file",
-            "description": { "zh": "分享文件给其他应用。", "en": "Share a file with other apps." },
+            "description": {
+                "zh": "分享文件给其他应用。",
+                "en": "Share a file with other apps.",
+                "ro": "Share a file with other apps."
+            },
             "parameters": [
-                { "name": "path", "description": { "zh": "文件路径", "en": "File path" }, "type": "string", "required": true },
-                { "name": "title", "description": { "zh": "可选：分享标题", "en": "Optional: share title" }, "type": "string", "required": false },
-                { "name": "environment", "description": { "zh": "可选：android/linux", "en": "Optional: android/linux" }, "type": "string", "required": false }
+                {
+                    "name": "path",
+                    "description": {
+                        "zh": "文件路径",
+                        "en": "File path",
+                        "ro": "File path"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "title",
+                    "description": {
+                        "zh": "可选：分享标题",
+                        "en": "Optional: share title",
+                        "ro": "Optional: share title"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "environment",
+                    "description": {
+                        "zh": "可选：android/linux",
+                        "en": "Optional: android/linux",
+                        "ro": "Optional: android/linux"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         }
     ]
-}*/
+}
+*/
 const ExtendedFileTools = (function () {
     async function file_exists(params) {
         const result = await Tools.Files.exists(params.path, params.environment);

@@ -1,122 +1,572 @@
 /* METADATA
 {
     "name": "extended_memory_tools",
-
     "display_name": {
-        "ro": "Extensie memorie",
         "ro": "Creare, actualizare, ștergere și interogare a amintirilor și preferințelor utilizatorului.",
         "zh": "增强记忆工具",
         "en": "Extended Memory Tools"
     },
     "description": {
         "zh": "拓展记忆工具包：提供创建/更新/删除/查询/链接记忆，以及更新用户偏好的能力（默认工具中仅保留 query/get/query_links）。",
-        "en": "Extended memory tools: create/update/delete/query/link memories and update user preferences (default tools only keep query/get/query_links)."
+        "en": "Extended memory tools: create/update/delete/query/link memories and update user preferences (default tools only keep query/get/query_links).",
+        "ro": "Extended memory tools: create/update/delete/query/link memories and update user preferences (default tools only keep query/get/query_links)."
     },
     "category": "Memory",
     "enabledByDefault": true,
     "tools": [
         {
             "name": "create_memory",
-            "description": { "zh": "创建新的记忆节点。", "en": "Create a new memory node." },
+            "description": {
+                "zh": "创建新的记忆节点。",
+                "en": "Create a new memory node.",
+                "ro": "Create a new memory node."
+            },
             "parameters": [
-                { "name": "title", "description": { "zh": "记忆标题", "en": "Memory title" }, "type": "string", "required": true },
-                { "name": "content", "description": { "zh": "记忆内容", "en": "Memory content" }, "type": "string", "required": true },
-                { "name": "content_type", "description": { "zh": "可选：内容类型，默认 text/plain", "en": "Optional: content type (default: text/plain)" }, "type": "string", "required": false },
-                { "name": "source", "description": { "zh": "可选：来源，默认 ai_created", "en": "Optional: source (default: ai_created)" }, "type": "string", "required": false },
-                { "name": "folder_path", "description": { "zh": "可选：文件夹路径，默认空", "en": "Optional: folder path (default: empty)" }, "type": "string", "required": false },
-                { "name": "tags", "description": { "zh": "可选：标签（逗号分隔字符串）", "en": "Optional: tags (comma-separated string)" }, "type": "string", "required": false }
+                {
+                    "name": "title",
+                    "description": {
+                        "zh": "记忆标题",
+                        "en": "Memory title",
+                        "ro": "Memory title"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "content",
+                    "description": {
+                        "zh": "记忆内容",
+                        "en": "Memory content",
+                        "ro": "Memory content"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "content_type",
+                    "description": {
+                        "zh": "可选：内容类型，默认 text/plain",
+                        "en": "Optional: content type (default: text/plain)",
+                        "ro": "Optional: content type (default: text/plain)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "source",
+                    "description": {
+                        "zh": "可选：来源，默认 ai_created",
+                        "en": "Optional: source (default: ai_created)",
+                        "ro": "Optional: source (default: ai_created)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "folder_path",
+                    "description": {
+                        "zh": "可选：文件夹路径，默认空",
+                        "en": "Optional: folder path (default: empty)",
+                        "ro": "Optional: folder path (default: empty)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "tags",
+                    "description": {
+                        "zh": "可选：标签（逗号分隔字符串）",
+                        "en": "Optional: tags (comma-separated string)",
+                        "ro": "Optional: tags (comma-separated string)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "update_memory",
-            "description": { "zh": "按标题更新已有记忆节点。", "en": "Update an existing memory node by title." },
+            "description": {
+                "zh": "按标题更新已有记忆节点。",
+                "en": "Update an existing memory node by title.",
+                "ro": "Update an existing memory node by title."
+            },
             "parameters": [
-                { "name": "old_title", "description": { "zh": "原始标题（用于定位记忆）", "en": "Old title (to locate the memory)" }, "type": "string", "required": true },
-                { "name": "new_title", "description": { "zh": "可选：新标题（重命名）", "en": "Optional: new title (rename)" }, "type": "string", "required": false },
-                { "name": "content", "description": { "zh": "可选：新内容", "en": "Optional: new content" }, "type": "string", "required": false },
-                { "name": "content_type", "description": { "zh": "可选：内容类型", "en": "Optional: content type" }, "type": "string", "required": false },
-                { "name": "source", "description": { "zh": "可选：来源", "en": "Optional: source" }, "type": "string", "required": false },
-                { "name": "credibility", "description": { "zh": "可选：可信度 0-1", "en": "Optional: credibility 0-1" }, "type": "number", "required": false },
-                { "name": "importance", "description": { "zh": "可选：重要性 0-1", "en": "Optional: importance 0-1" }, "type": "number", "required": false },
-                { "name": "folder_path", "description": { "zh": "可选：文件夹路径", "en": "Optional: folder path" }, "type": "string", "required": false },
-                { "name": "tags", "description": { "zh": "可选：标签（逗号分隔字符串）", "en": "Optional: tags (comma-separated string)" }, "type": "string", "required": false }
+                {
+                    "name": "old_title",
+                    "description": {
+                        "zh": "原始标题（用于定位记忆）",
+                        "en": "Old title (to locate the memory)",
+                        "ro": "Old title (to locate the memory)"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "new_title",
+                    "description": {
+                        "zh": "可选：新标题（重命名）",
+                        "en": "Optional: new title (rename)",
+                        "ro": "Optional: new title (rename)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "content",
+                    "description": {
+                        "zh": "可选：新内容",
+                        "en": "Optional: new content",
+                        "ro": "Optional: new content"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "content_type",
+                    "description": {
+                        "zh": "可选：内容类型",
+                        "en": "Optional: content type",
+                        "ro": "Optional: content type"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "source",
+                    "description": {
+                        "zh": "可选：来源",
+                        "en": "Optional: source",
+                        "ro": "Optional: source"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "credibility",
+                    "description": {
+                        "zh": "可选：可信度 0-1",
+                        "en": "Optional: credibility 0-1",
+                        "ro": "Optional: credibility 0-1"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "importance",
+                    "description": {
+                        "zh": "可选：重要性 0-1",
+                        "en": "Optional: importance 0-1",
+                        "ro": "Optional: importance 0-1"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "folder_path",
+                    "description": {
+                        "zh": "可选：文件夹路径",
+                        "en": "Optional: folder path",
+                        "ro": "Optional: folder path"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "tags",
+                    "description": {
+                        "zh": "可选：标签（逗号分隔字符串）",
+                        "en": "Optional: tags (comma-separated string)",
+                        "ro": "Optional: tags (comma-separated string)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "delete_memory",
-            "description": { "zh": "按标题删除记忆节点（不可逆）。", "en": "Delete a memory node by title (irreversible)." },
+            "description": {
+                "zh": "按标题删除记忆节点（不可逆）。",
+                "en": "Delete a memory node by title (irreversible).",
+                "ro": "Delete a memory node by title (irreversible)."
+            },
             "parameters": [
-                { "name": "title", "description": { "zh": "要删除的记忆标题", "en": "Memory title to delete" }, "type": "string", "required": true }
+                {
+                    "name": "title",
+                    "description": {
+                        "zh": "要删除的记忆标题",
+                        "en": "Memory title to delete",
+                        "ro": "Memory title to delete"
+                    },
+                    "type": "string",
+                    "required": true
+                }
             ]
         },
         {
             "name": "move_memory",
-            "description": { "zh": "批量移动记忆到新文件夹。可按标题列表和/或来源文件夹筛选。", "en": "Move memories to another folder in batch. Filter by titles and/or source folder." },
+            "description": {
+                "zh": "批量移动记忆到新文件夹。可按标题列表和/或来源文件夹筛选。",
+                "en": "Move memories to another folder in batch. Filter by titles and/or source folder.",
+                "ro": "Move memories to another folder in batch. Filter by titles and/or source folder."
+            },
             "parameters": [
-                { "name": "target_folder_path", "description": { "zh": "目标文件夹路径（空字符串表示未分类）", "en": "Target folder path (empty string means uncategorized)" }, "type": "string", "required": true },
-                { "name": "titles", "description": { "zh": "可选：标题列表（逗号或换行分隔）", "en": "Optional: title list (comma/newline separated)" }, "type": "string", "required": false },
-                { "name": "source_folder_path", "description": { "zh": "可选：来源文件夹路径（空字符串表示未分类）", "en": "Optional: source folder path (empty string means uncategorized)" }, "type": "string", "required": false }
+                {
+                    "name": "target_folder_path",
+                    "description": {
+                        "zh": "目标文件夹路径（空字符串表示未分类）",
+                        "en": "Target folder path (empty string means uncategorized)",
+                        "ro": "Target folder path (empty string means uncategorized)"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "titles",
+                    "description": {
+                        "zh": "可选：标题列表（逗号或换行分隔）",
+                        "en": "Optional: title list (comma/newline separated)",
+                        "ro": "Optional: title list (comma/newline separated)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "source_folder_path",
+                    "description": {
+                        "zh": "可选：来源文件夹路径（空字符串表示未分类）",
+                        "en": "Optional: source folder path (empty string means uncategorized)",
+                        "ro": "Optional: source folder path (empty string means uncategorized)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "link_memories",
-            "description": { "zh": "创建两条记忆之间的语义链接。", "en": "Create a semantic link between two memories." },
+            "description": {
+                "zh": "创建两条记忆之间的语义链接。",
+                "en": "Create a semantic link between two memories.",
+                "ro": "Create a semantic link between two memories."
+            },
             "parameters": [
-                { "name": "source_title", "description": { "zh": "源记忆标题", "en": "Source memory title" }, "type": "string", "required": true },
-                { "name": "target_title", "description": { "zh": "目标记忆标题", "en": "Target memory title" }, "type": "string", "required": true },
-                { "name": "link_type", "description": { "zh": "可选：关系类型，默认 related", "en": "Optional: link type (default: related)" }, "type": "string", "required": false },
-                { "name": "weight", "description": { "zh": "可选：强度 0-1，默认 0.7", "en": "Optional: weight 0-1 (default: 0.7)" }, "type": "number", "required": false },
-                { "name": "description", "description": { "zh": "可选：关系描述", "en": "Optional: relationship description" }, "type": "string", "required": false }
+                {
+                    "name": "source_title",
+                    "description": {
+                        "zh": "源记忆标题",
+                        "en": "Source memory title",
+                        "ro": "Source memory title"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "target_title",
+                    "description": {
+                        "zh": "目标记忆标题",
+                        "en": "Target memory title",
+                        "ro": "Target memory title"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "link_type",
+                    "description": {
+                        "zh": "可选：关系类型，默认 related",
+                        "en": "Optional: link type (default: related)",
+                        "ro": "Optional: link type (default: related)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "weight",
+                    "description": {
+                        "zh": "可选：强度 0-1，默认 0.7",
+                        "en": "Optional: weight 0-1 (default: 0.7)",
+                        "ro": "Optional: weight 0-1 (default: 0.7)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "description",
+                    "description": {
+                        "zh": "可选：关系描述",
+                        "en": "Optional: relationship description",
+                        "ro": "Optional: relationship description"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "query_memory_links",
-            "description": { "zh": "查询记忆链接（可按 ID/源标题/目标标题/关系类型过滤）。", "en": "Query memory links (filter by id/source/target/type)." },
+            "description": {
+                "zh": "查询记忆链接（可按 ID/源标题/目标标题/关系类型过滤）。",
+                "en": "Query memory links (filter by id/source/target/type).",
+                "ro": "Query memory links (filter by id/source/target/type)."
+            },
             "parameters": [
-                { "name": "link_id", "description": { "zh": "可选：链接ID", "en": "Optional: link id" }, "type": "number", "required": false },
-                { "name": "source_title", "description": { "zh": "可选：源记忆标题", "en": "Optional: source memory title" }, "type": "string", "required": false },
-                { "name": "target_title", "description": { "zh": "可选：目标记忆标题", "en": "Optional: target memory title" }, "type": "string", "required": false },
-                { "name": "link_type", "description": { "zh": "可选：关系类型", "en": "Optional: link type" }, "type": "string", "required": false },
-                { "name": "limit", "description": { "zh": "可选：返回上限 1-200，默认20", "en": "Optional: limit 1-200, default 20" }, "type": "number", "required": false }
+                {
+                    "name": "link_id",
+                    "description": {
+                        "zh": "可选：链接ID",
+                        "en": "Optional: link id",
+                        "ro": "Optional: link id"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "source_title",
+                    "description": {
+                        "zh": "可选：源记忆标题",
+                        "en": "Optional: source memory title",
+                        "ro": "Optional: source memory title"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "target_title",
+                    "description": {
+                        "zh": "可选：目标记忆标题",
+                        "en": "Optional: target memory title",
+                        "ro": "Optional: target memory title"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "link_type",
+                    "description": {
+                        "zh": "可选：关系类型",
+                        "en": "Optional: link type",
+                        "ro": "Optional: link type"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "limit",
+                    "description": {
+                        "zh": "可选：返回上限 1-200，默认20",
+                        "en": "Optional: limit 1-200, default 20",
+                        "ro": "Optional: limit 1-200, default 20"
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "update_memory_link",
-            "description": { "zh": "更新记忆链接（按 link_id 或 source/target/link_type 定位）。", "en": "Update a memory link (by link_id or source/target/link_type)." },
+            "description": {
+                "zh": "更新记忆链接（按 link_id 或 source/target/link_type 定位）。",
+                "en": "Update a memory link (by link_id or source/target/link_type).",
+                "ro": "Update a memory link (by link_id or source/target/link_type)."
+            },
             "parameters": [
-                { "name": "link_id", "description": { "zh": "可选：链接ID（优先使用）", "en": "Optional: link ID (preferred)" }, "type": "number", "required": false },
-                { "name": "source_title", "description": { "zh": "可选：源记忆标题（未提供 link_id 时使用）", "en": "Optional: source title (used when link_id is not provided)" }, "type": "string", "required": false },
-                { "name": "target_title", "description": { "zh": "可选：目标记忆标题（未提供 link_id 时使用）", "en": "Optional: target title (used when link_id is not provided)" }, "type": "string", "required": false },
-                { "name": "link_type", "description": { "zh": "可选：当前关系类型（用于唯一定位）", "en": "Optional: current relation type (for unique resolution)" }, "type": "string", "required": false },
-                { "name": "new_link_type", "description": { "zh": "可选：新的关系类型", "en": "Optional: new relation type" }, "type": "string", "required": false },
-                { "name": "weight", "description": { "zh": "可选：新的强度 0-1", "en": "Optional: new weight 0-1" }, "type": "number", "required": false },
-                { "name": "description", "description": { "zh": "可选：新的关系描述", "en": "Optional: new relationship description" }, "type": "string", "required": false }
+                {
+                    "name": "link_id",
+                    "description": {
+                        "zh": "可选：链接ID（优先使用）",
+                        "en": "Optional: link ID (preferred)",
+                        "ro": "Optional: link ID (preferred)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "source_title",
+                    "description": {
+                        "zh": "可选：源记忆标题（未提供 link_id 时使用）",
+                        "en": "Optional: source title (used when link_id is not provided)",
+                        "ro": "Optional: source title (used when link_id is not provided)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "target_title",
+                    "description": {
+                        "zh": "可选：目标记忆标题（未提供 link_id 时使用）",
+                        "en": "Optional: target title (used when link_id is not provided)",
+                        "ro": "Optional: target title (used when link_id is not provided)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "link_type",
+                    "description": {
+                        "zh": "可选：当前关系类型（用于唯一定位）",
+                        "en": "Optional: current relation type (for unique resolution)",
+                        "ro": "Optional: current relation type (for unique resolution)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "new_link_type",
+                    "description": {
+                        "zh": "可选：新的关系类型",
+                        "en": "Optional: new relation type",
+                        "ro": "Optional: new relation type"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "weight",
+                    "description": {
+                        "zh": "可选：新的强度 0-1",
+                        "en": "Optional: new weight 0-1",
+                        "ro": "Optional: new weight 0-1"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "description",
+                    "description": {
+                        "zh": "可选：新的关系描述",
+                        "en": "Optional: new relationship description",
+                        "ro": "Optional: new relationship description"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "delete_memory_link",
-            "description": { "zh": "删除记忆链接（按 link_id 或 source/target/link_type 定位）。", "en": "Delete a memory link (by link_id or source/target/link_type)." },
+            "description": {
+                "zh": "删除记忆链接（按 link_id 或 source/target/link_type 定位）。",
+                "en": "Delete a memory link (by link_id or source/target/link_type).",
+                "ro": "Delete a memory link (by link_id or source/target/link_type)."
+            },
             "parameters": [
-                { "name": "link_id", "description": { "zh": "可选：链接ID（优先使用）", "en": "Optional: link ID (preferred)" }, "type": "number", "required": false },
-                { "name": "source_title", "description": { "zh": "可选：源记忆标题（未提供 link_id 时使用）", "en": "Optional: source title (used when link_id is not provided)" }, "type": "string", "required": false },
-                { "name": "target_title", "description": { "zh": "可选：目标记忆标题（未提供 link_id 时使用）", "en": "Optional: target title (used when link_id is not provided)" }, "type": "string", "required": false },
-                { "name": "link_type", "description": { "zh": "可选：关系类型（用于唯一定位）", "en": "Optional: relation type (for unique resolution)" }, "type": "string", "required": false }
+                {
+                    "name": "link_id",
+                    "description": {
+                        "zh": "可选：链接ID（优先使用）",
+                        "en": "Optional: link ID (preferred)",
+                        "ro": "Optional: link ID (preferred)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "source_title",
+                    "description": {
+                        "zh": "可选：源记忆标题（未提供 link_id 时使用）",
+                        "en": "Optional: source title (used when link_id is not provided)",
+                        "ro": "Optional: source title (used when link_id is not provided)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "target_title",
+                    "description": {
+                        "zh": "可选：目标记忆标题（未提供 link_id 时使用）",
+                        "en": "Optional: target title (used when link_id is not provided)",
+                        "ro": "Optional: target title (used when link_id is not provided)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "link_type",
+                    "description": {
+                        "zh": "可选：关系类型（用于唯一定位）",
+                        "en": "Optional: relation type (for unique resolution)",
+                        "ro": "Optional: relation type (for unique resolution)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "update_user_preferences",
-            "description": { "zh": "更新用户偏好信息（至少提供一个字段）。", "en": "Update user preferences (provide at least one field)." },
+            "description": {
+                "zh": "更新用户偏好信息（至少提供一个字段）。",
+                "en": "Update user preferences (provide at least one field).",
+                "ro": "Update user preferences (provide at least one field)."
+            },
             "parameters": [
-                { "name": "birth_date", "description": { "zh": "可选：出生日期（Unix 毫秒时间戳）", "en": "Optional: birth date (Unix ms timestamp)" }, "type": "number", "required": false },
-                { "name": "gender", "description": { "zh": "可选：性别", "en": "Optional: gender" }, "type": "string", "required": false },
-                { "name": "personality", "description": { "zh": "可选：性格特征", "en": "Optional: personality" }, "type": "string", "required": false },
-                { "name": "identity", "description": { "zh": "可选：身份/角色", "en": "Optional: identity/role" }, "type": "string", "required": false },
-                { "name": "occupation", "description": { "zh": "可选：职业", "en": "Optional: occupation" }, "type": "string", "required": false },
-                { "name": "ai_style", "description": { "zh": "可选：偏好 AI 交互风格", "en": "Optional: preferred AI interaction style" }, "type": "string", "required": false }
+                {
+                    "name": "birth_date",
+                    "description": {
+                        "zh": "可选：出生日期（Unix 毫秒时间戳）",
+                        "en": "Optional: birth date (Unix ms timestamp)",
+                        "ro": "Optional: birth date (Unix ms timestamp)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "gender",
+                    "description": {
+                        "zh": "可选：性别",
+                        "en": "Optional: gender",
+                        "ro": "Optional: gender"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "personality",
+                    "description": {
+                        "zh": "可选：性格特征",
+                        "en": "Optional: personality",
+                        "ro": "Optional: personality"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "identity",
+                    "description": {
+                        "zh": "可选：身份/角色",
+                        "en": "Optional: identity/role",
+                        "ro": "Optional: identity/role"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "occupation",
+                    "description": {
+                        "zh": "可选：职业",
+                        "en": "Optional: occupation",
+                        "ro": "Optional: occupation"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "ai_style",
+                    "description": {
+                        "zh": "可选：偏好 AI 交互风格",
+                        "en": "Optional: preferred AI interaction style",
+                        "ro": "Optional: preferred AI interaction style"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         }
     ]
-}*/
+}
+*/
 const ExtendedMemoryTools = (function () {
     function resolveCallerCardId() {
         if (typeof getCallerCardId !== 'function') {

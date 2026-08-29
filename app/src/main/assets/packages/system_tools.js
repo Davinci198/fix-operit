@@ -1,7 +1,6 @@
 /* METADATA
 {
     "name": "system_tools",
-
     "display_name": {
         "ro": "Instrumente de sistem",
         "zh": "系统工具",
@@ -17,272 +16,1112 @@
     "tools": [
         {
             "name": "get_system_setting",
-            "description": { "zh": "获取系统设置的值。需要用户授权。", "en": "Get the value of a system setting. Requires user authorization." },
+            "description": {
+                "zh": "获取系统设置的值。需要用户授权。",
+                "en": "Get the value of a system setting. Requires user authorization.",
+                "ro": "Get the value of a system setting. Requires user authorization."
+            },
             "parameters": [
-                { "name": "setting", "description": { "zh": "设置名称", "en": "Setting key/name" }, "type": "string", "required": true },
-                { "name": "namespace", "description": { "zh": "命名空间：system/secure/global，默认system", "en": "Namespace: system/secure/global (default: system)" }, "type": "string", "required": false }
+                {
+                    "name": "setting",
+                    "description": {
+                        "zh": "设置名称",
+                        "en": "Setting key/name",
+                        "ro": "Setting key/name"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "namespace",
+                    "description": {
+                        "zh": "命名空间：system/secure/global，默认system",
+                        "en": "Namespace: system/secure/global (default: system)",
+                        "ro": "Namespace: system/secure/global (default: system)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "modify_system_setting",
-            "description": { "zh": "修改系统设置的值。需要用户授权。", "en": "Modify the value of a system setting. Requires user authorization." },
+            "description": {
+                "zh": "修改系统设置的值。需要用户授权。",
+                "en": "Modify the value of a system setting. Requires user authorization.",
+                "ro": "Modify the value of a system setting. Requires user authorization."
+            },
             "parameters": [
-                { "name": "setting", "description": { "zh": "设置名称", "en": "Setting key/name" }, "type": "string", "required": true },
-                { "name": "value", "description": { "zh": "设置值", "en": "Setting value" }, "type": "string", "required": true },
-                { "name": "namespace", "description": { "zh": "命名空间：system/secure/global，默认system", "en": "Namespace: system/secure/global (default: system)" }, "type": "string", "required": false }
+                {
+                    "name": "setting",
+                    "description": {
+                        "zh": "设置名称",
+                        "en": "Setting key/name",
+                        "ro": "Setting key/name"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "value",
+                    "description": {
+                        "zh": "设置值",
+                        "en": "Setting value",
+                        "ro": "Setting value"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "namespace",
+                    "description": {
+                        "zh": "命名空间：system/secure/global，默认system",
+                        "en": "Namespace: system/secure/global (default: system)",
+                        "ro": "Namespace: system/secure/global (default: system)"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "install_app",
-            "description": { "zh": "安装应用程序。需要用户授权。", "en": "Install an app. Requires user authorization." },
+            "description": {
+                "zh": "安装应用程序。需要用户授权。",
+                "en": "Install an app. Requires user authorization.",
+                "ro": "Install an app. Requires user authorization."
+            },
             "parameters": [
-                { "name": "path", "description": { "zh": "APK文件路径", "en": "APK file path" }, "type": "string", "required": true }
+                {
+                    "name": "path",
+                    "description": {
+                        "zh": "APK文件路径",
+                        "en": "APK file path",
+                        "ro": "APK file path"
+                    },
+                    "type": "string",
+                    "required": true
+                }
             ]
         },
         {
             "name": "uninstall_app",
-            "description": { "zh": "卸载应用程序。需要用户授权。", "en": "Uninstall an app. Requires user authorization." },
+            "description": {
+                "zh": "卸载应用程序。需要用户授权。",
+                "en": "Uninstall an app. Requires user authorization.",
+                "ro": "Uninstall an app. Requires user authorization."
+            },
             "parameters": [
-                { "name": "package_name", "description": { "zh": "应用包名", "en": "App package name" }, "type": "string", "required": true },
-                { "name": "keep_data", "description": { "zh": "是否保留数据，默认false", "en": "Whether to keep app data (default: false)" }, "type": "boolean", "required": false }
+                {
+                    "name": "package_name",
+                    "description": {
+                        "zh": "应用包名",
+                        "en": "App package name",
+                        "ro": "App package name"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "keep_data",
+                    "description": {
+                        "zh": "是否保留数据，默认false",
+                        "en": "Whether to keep app data (default: false)",
+                        "ro": "Whether to keep app data (default: false)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "list_installed_apps",
-            "description": { "zh": "获取已安装应用程序列表。需要用户授权。", "en": "List installed apps. Requires user authorization." },
+            "description": {
+                "zh": "获取已安装应用程序列表。需要用户授权。",
+                "en": "List installed apps. Requires user authorization.",
+                "ro": "List installed apps. Requires user authorization."
+            },
             "parameters": [
-                { "name": "include_system_apps", "description": { "zh": "是否包含系统应用，默认false", "en": "Whether to include system apps (default: false)" }, "type": "boolean", "required": false }
+                {
+                    "name": "include_system_apps",
+                    "description": {
+                        "zh": "是否包含系统应用，默认false",
+                        "en": "Whether to include system apps (default: false)",
+                        "ro": "Whether to include system apps (default: false)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "start_app",
-            "description": { "zh": "启动应用程序。需要用户授权。", "en": "Launch an app. Requires user authorization." },
+            "description": {
+                "zh": "启动应用程序。需要用户授权。",
+                "en": "Launch an app. Requires user authorization.",
+                "ro": "Launch an app. Requires user authorization."
+            },
             "parameters": [
-                { "name": "package_name", "description": { "zh": "应用包名", "en": "App package name" }, "type": "string", "required": true },
-                { "name": "activity", "description": { "zh": "可选活动名称", "en": "Optional activity name" }, "type": "string", "required": false }
+                {
+                    "name": "package_name",
+                    "description": {
+                        "zh": "应用包名",
+                        "en": "App package name",
+                        "ro": "App package name"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "activity",
+                    "description": {
+                        "zh": "可选活动名称",
+                        "en": "Optional activity name",
+                        "ro": "Optional activity name"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "stop_app",
-            "description": { "zh": "停止正在运行的应用程序。需要用户授权。", "en": "Force stop a running app. Requires user authorization." },
+            "description": {
+                "zh": "停止正在运行的应用程序。需要用户授权。",
+                "en": "Force stop a running app. Requires user authorization.",
+                "ro": "Force stop a running app. Requires user authorization."
+            },
             "parameters": [
-                { "name": "package_name", "description": { "zh": "应用包名", "en": "App package name" }, "type": "string", "required": true }
+                {
+                    "name": "package_name",
+                    "description": {
+                        "zh": "应用包名",
+                        "en": "App package name",
+                        "ro": "App package name"
+                    },
+                    "type": "string",
+                    "required": true
+                }
             ]
         },
         {
             "name": "send_broadcast",
-            "description": { "zh": "发送广播（Broadcast Intent）。需要用户授权。", "en": "Send a broadcast (Broadcast Intent). Requires user authorization." },
+            "description": {
+                "zh": "发送广播（Broadcast Intent）。需要用户授权。",
+                "en": "Send a broadcast (Broadcast Intent). Requires user authorization.",
+                "ro": "Send a broadcast (Broadcast Intent). Requires user authorization."
+            },
             "parameters": [
-                { "name": "action", "description": { "zh": "Intent action，例如 android.intent.action.VIEW", "en": "Intent action, e.g. android.intent.action.VIEW" }, "type": "string", "required": true },
-                { "name": "package_name", "description": { "zh": "可选：限制广播目标包名", "en": "Optional: restrict target package" }, "type": "string", "required": false },
-                { "name": "component", "description": { "zh": "可选：组件名 package/class，优先于package_name", "en": "Optional: component package/class, takes priority over package_name" }, "type": "string", "required": false },
-                { "name": "uri", "description": { "zh": "可选：data uri", "en": "Optional: data uri" }, "type": "string", "required": false },
-                { "name": "extras", "description": { "zh": "可选：extras（对象，可用于传参）", "en": "Optional: extras (object for parameters)" }, "type": "object", "required": false }
+                {
+                    "name": "action",
+                    "description": {
+                        "zh": "Intent action，例如 android.intent.action.VIEW",
+                        "en": "Intent action, e.g. android.intent.action.VIEW",
+                        "ro": "Intent action, e.g. android.intent.action.VIEW"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "package_name",
+                    "description": {
+                        "zh": "可选：限制广播目标包名",
+                        "en": "Optional: restrict target package",
+                        "ro": "Optional: restrict target package"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "component",
+                    "description": {
+                        "zh": "可选：组件名 package/class，优先于package_name",
+                        "en": "Optional: component package/class, takes priority over package_name",
+                        "ro": "Optional: component package/class, takes priority over package_name"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "uri",
+                    "description": {
+                        "zh": "可选：data uri",
+                        "en": "Optional: data uri",
+                        "ro": "Optional: data uri"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "extras",
+                    "description": {
+                        "zh": "可选：extras（对象，可用于传参）",
+                        "en": "Optional: extras (object for parameters)",
+                        "ro": "Optional: extras (object for parameters)"
+                    },
+                    "type": "object",
+                    "required": false
+                }
             ]
         },
         {
             "name": "execute_intent",
-            "description": { "zh": "执行 Intent（Activity/Service/Broadcast），支持 extras 传参。需要用户授权。", "en": "Execute an Intent (Activity/Service/Broadcast) with extras parameters. Requires user authorization." },
+            "description": {
+                "zh": "执行 Intent（Activity/Service/Broadcast），支持 extras 传参。需要用户授权。",
+                "en": "Execute an Intent (Activity/Service/Broadcast) with extras parameters. Requires user authorization.",
+                "ro": "Execute an Intent (Activity/Service/Broadcast) with extras parameters. Requires user authorization."
+            },
             "parameters": [
-                { "name": "type", "description": { "zh": "类型：activity/broadcast/service，默认activity", "en": "Type: activity/broadcast/service (default: activity)" }, "type": "string", "required": false },
-                { "name": "action", "description": { "zh": "Intent action（action 或 component 至少一个必填）", "en": "Intent action (either action or component is required)" }, "type": "string", "required": false },
-                { "name": "package_name", "description": { "zh": "可选：包名", "en": "Optional: package name" }, "type": "string", "required": false },
-                { "name": "component", "description": { "zh": "可选：组件名 package/class", "en": "Optional: component package/class" }, "type": "string", "required": false },
-                { "name": "uri", "description": { "zh": "可选：data uri", "en": "Optional: data uri" }, "type": "string", "required": false },
-                { "name": "flags", "description": { "zh": "可选：flags（整数或JSON数组字符串）", "en": "Optional: flags (integer or JSON array string)" }, "type": "string", "required": false },
-                { "name": "extras", "description": { "zh": "可选：extras（对象，可用于传参）", "en": "Optional: extras (object for parameters)" }, "type": "object", "required": false }
+                {
+                    "name": "type",
+                    "description": {
+                        "zh": "类型：activity/broadcast/service，默认activity",
+                        "en": "Type: activity/broadcast/service (default: activity)",
+                        "ro": "Type: activity/broadcast/service (default: activity)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "action",
+                    "description": {
+                        "zh": "Intent action（action 或 component 至少一个必填）",
+                        "en": "Intent action (either action or component is required)",
+                        "ro": "Intent action (either action or component is required)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "package_name",
+                    "description": {
+                        "zh": "可选：包名",
+                        "en": "Optional: package name",
+                        "ro": "Optional: package name"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "component",
+                    "description": {
+                        "zh": "可选：组件名 package/class",
+                        "en": "Optional: component package/class",
+                        "ro": "Optional: component package/class"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "uri",
+                    "description": {
+                        "zh": "可选：data uri",
+                        "en": "Optional: data uri",
+                        "ro": "Optional: data uri"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "flags",
+                    "description": {
+                        "zh": "可选：flags（整数或JSON数组字符串）",
+                        "en": "Optional: flags (integer or JSON array string)",
+                        "ro": "Optional: flags (integer or JSON array string)"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "extras",
+                    "description": {
+                        "zh": "可选：extras（对象，可用于传参）",
+                        "en": "Optional: extras (object for parameters)",
+                        "ro": "Optional: extras (object for parameters)"
+                    },
+                    "type": "object",
+                    "required": false
+                }
             ]
         },
         {
             "name": "get_notifications",
-            "description": { "zh": "获取设备通知内容。", "en": "Retrieve device notifications." },
+            "description": {
+                "zh": "获取设备通知内容。",
+                "en": "Retrieve device notifications.",
+                "ro": "Retrieve device notifications."
+            },
             "parameters": [
-                { "name": "limit", "description": { "zh": "最大返回条数，默认10", "en": "Max number of entries to return (default: 10)" }, "type": "number", "required": false },
-                { "name": "include_ongoing", "description": { "zh": "是否包含常驻通知，默认false", "en": "Whether to include ongoing notifications (default: false)" }, "type": "boolean", "required": false }
+                {
+                    "name": "limit",
+                    "description": {
+                        "zh": "最大返回条数，默认10",
+                        "en": "Max number of entries to return (default: 10)",
+                        "ro": "Max number of entries to return (default: 10)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "include_ongoing",
+                    "description": {
+                        "zh": "是否包含常驻通知，默认false",
+                        "en": "Whether to include ongoing notifications (default: false)",
+                        "ro": "Whether to include ongoing notifications (default: false)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "get_app_usage_time",
-            "description": { "zh": "获取应用前台使用时长。需要授予“使用情况访问权限”。", "en": "Get app foreground usage time. Requires Usage Access permission." },
+            "description": {
+                "zh": "获取应用前台使用时长。需要授予“使用情况访问权限”。",
+                "en": "Get app foreground usage time. Requires Usage Access permission.",
+                "ro": "Get app foreground usage time. Requires Usage Access permission."
+            },
             "parameters": [
-                { "name": "package_name", "description": { "zh": "可选：精确应用包名", "en": "Optional exact package name" }, "type": "string", "required": false },
-                { "name": "since_hours", "description": { "zh": "向前统计多少小时，默认24", "en": "How many hours to look back (default: 24)" }, "type": "number", "required": false },
-                { "name": "limit", "description": { "zh": "不传包名时最多返回多少个应用，默认10", "en": "Max apps to return when package_name is omitted (default: 10)" }, "type": "number", "required": false },
-                { "name": "include_system_apps", "description": { "zh": "不传包名时是否包含系统应用，默认false", "en": "Whether to include system apps when package_name is omitted (default: false)" }, "type": "boolean", "required": false }
+                {
+                    "name": "package_name",
+                    "description": {
+                        "zh": "可选：精确应用包名",
+                        "en": "Optional exact package name",
+                        "ro": "Optional exact package name"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "since_hours",
+                    "description": {
+                        "zh": "向前统计多少小时，默认24",
+                        "en": "How many hours to look back (default: 24)",
+                        "ro": "How many hours to look back (default: 24)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "limit",
+                    "description": {
+                        "zh": "不传包名时最多返回多少个应用，默认10",
+                        "en": "Max apps to return when package_name is omitted (default: 10)",
+                        "ro": "Max apps to return when package_name is omitted (default: 10)"
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "include_system_apps",
+                    "description": {
+                        "zh": "不传包名时是否包含系统应用，默认false",
+                        "en": "Whether to include system apps when package_name is omitted (default: false)",
+                        "ro": "Whether to include system apps when package_name is omitted (default: false)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "get_device_location",
-            "description": { "zh": "获取设备当前位置信息。", "en": "Get current device location." },
+            "description": {
+                "zh": "获取设备当前位置信息。",
+                "en": "Get current device location.",
+                "ro": "Get current device location."
+            },
             "parameters": [
-                { "name": "high_accuracy", "description": { "zh": "是否使用高精度模式，默认false", "en": "Use high accuracy mode (default: false)" }, "type": "boolean", "required": false },
-                { "name": "timeout", "description": { "zh": "超时时间（秒），默认10", "en": "Timeout in seconds (default: 10)" }, "type": "number", "required": false }
+                {
+                    "name": "high_accuracy",
+                    "description": {
+                        "zh": "是否使用高精度模式，默认false",
+                        "en": "Use high accuracy mode (default: false)",
+                        "ro": "Use high accuracy mode (default: false)"
+                    },
+                    "type": "boolean",
+                    "required": false
+                },
+                {
+                    "name": "timeout",
+                    "description": {
+                        "zh": "超时时间（秒），默认10",
+                        "en": "Timeout in seconds (default: 10)",
+                        "ro": "Timeout in seconds (default: 10)"
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "request_bluetooth_permission",
-            "description": { "zh": "请求蓝牙附近设备权限。", "en": "Request Bluetooth nearby devices permission." },
+            "description": {
+                "zh": "请求蓝牙附近设备权限。",
+                "en": "Request Bluetooth nearby devices permission.",
+                "ro": "Request Bluetooth nearby devices permission."
+            },
             "parameters": []
         },
         {
             "name": "get_bluetooth_state",
-            "description": { "zh": "获取蓝牙适配器状态。", "en": "Get Bluetooth adapter state." },
+            "description": {
+                "zh": "获取蓝牙适配器状态。",
+                "en": "Get Bluetooth adapter state.",
+                "ro": "Get Bluetooth adapter state."
+            },
             "parameters": []
         },
         {
             "name": "request_enable_bluetooth",
-            "description": { "zh": "打开系统蓝牙开启对话框。", "en": "Open the system dialog to enable Bluetooth." },
+            "description": {
+                "zh": "打开系统蓝牙开启对话框。",
+                "en": "Open the system dialog to enable Bluetooth.",
+                "ro": "Open the system dialog to enable Bluetooth."
+            },
             "parameters": []
         },
         {
             "name": "list_bluetooth_bonded_devices",
-            "description": { "zh": "列出已配对蓝牙设备。", "en": "List bonded Bluetooth devices." },
+            "description": {
+                "zh": "列出已配对蓝牙设备。",
+                "en": "List bonded Bluetooth devices.",
+                "ro": "List bonded Bluetooth devices."
+            },
             "parameters": []
         },
         {
             "name": "scan_bluetooth_devices",
-            "description": { "zh": "扫描附近蓝牙 Classic 与 BLE 设备。", "en": "Scan nearby Bluetooth classic and BLE devices." },
+            "description": {
+                "zh": "扫描附近蓝牙 Classic 与 BLE 设备。",
+                "en": "Scan nearby Bluetooth classic and BLE devices.",
+                "ro": "Scan nearby Bluetooth classic and BLE devices."
+            },
             "parameters": [
-                { "name": "duration_ms", "description": { "zh": "扫描时长毫秒。", "en": "Scan duration in milliseconds." }, "type": "number", "required": false },
-                { "name": "include_ble", "description": { "zh": "是否包含 BLE 扫描。", "en": "Whether to include BLE scanning." }, "type": "boolean", "required": false }
+                {
+                    "name": "duration_ms",
+                    "description": {
+                        "zh": "扫描时长毫秒。",
+                        "en": "Scan duration in milliseconds.",
+                        "ro": "Scan duration in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "include_ble",
+                    "description": {
+                        "zh": "是否包含 BLE 扫描。",
+                        "en": "Whether to include BLE scanning.",
+                        "ro": "Whether to include BLE scanning."
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_connect",
-            "description": { "zh": "连接蓝牙 Classic 设备。", "en": "Connect to a Bluetooth classic device." },
+            "description": {
+                "zh": "连接蓝牙 Classic 设备。",
+                "en": "Connect to a Bluetooth classic device.",
+                "ro": "Connect to a Bluetooth classic device."
+            },
             "parameters": [
-                { "name": "address", "description": { "zh": "蓝牙 MAC 地址", "en": "Bluetooth MAC address" }, "type": "string", "required": true },
-                { "name": "uuid", "description": { "zh": "RFCOMM UUID。", "en": "RFCOMM UUID." }, "type": "string", "required": false }
+                {
+                    "name": "address",
+                    "description": {
+                        "zh": "蓝牙 MAC 地址",
+                        "en": "Bluetooth MAC address",
+                        "ro": "Bluetooth MAC address"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "uuid",
+                    "description": {
+                        "zh": "RFCOMM UUID。",
+                        "en": "RFCOMM UUID.",
+                        "ro": "RFCOMM UUID."
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_listen",
-            "description": { "zh": "监听别人连接本机的蓝牙 Classic 通道。", "en": "Listen for another device connecting to this phone over Bluetooth classic." },
+            "description": {
+                "zh": "监听别人连接本机的蓝牙 Classic 通道。",
+                "en": "Listen for another device connecting to this phone over Bluetooth classic.",
+                "ro": "Listen for another device connecting to this phone over Bluetooth classic."
+            },
             "parameters": [
-                { "name": "name", "description": { "zh": "服务名。", "en": "Service name." }, "type": "string", "required": false },
-                { "name": "uuid", "description": { "zh": "RFCOMM UUID。", "en": "RFCOMM UUID." }, "type": "string", "required": false }
+                {
+                    "name": "name",
+                    "description": {
+                        "zh": "服务名。",
+                        "en": "Service name.",
+                        "ro": "Service name."
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "uuid",
+                    "description": {
+                        "zh": "RFCOMM UUID。",
+                        "en": "RFCOMM UUID.",
+                        "ro": "RFCOMM UUID."
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_accept",
-            "description": { "zh": "接受蓝牙 Classic 监听会话中的一个传入连接。", "en": "Accept one incoming connection from a Bluetooth classic listener." },
+            "description": {
+                "zh": "接受蓝牙 Classic 监听会话中的一个传入连接。",
+                "en": "Accept one incoming connection from a Bluetooth classic listener.",
+                "ro": "Accept one incoming connection from a Bluetooth classic listener."
+            },
             "parameters": [
-                { "name": "listener_session_id", "description": { "zh": "监听会话 ID", "en": "Listener session ID" }, "type": "string", "required": true },
-                { "name": "timeout_ms", "description": { "zh": "等待毫秒数。", "en": "Wait time in milliseconds." }, "type": "number", "required": false }
+                {
+                    "name": "listener_session_id",
+                    "description": {
+                        "zh": "监听会话 ID",
+                        "en": "Listener session ID",
+                        "ro": "Listener session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "timeout_ms",
+                    "description": {
+                        "zh": "等待毫秒数。",
+                        "en": "Wait time in milliseconds.",
+                        "ro": "Wait time in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_send",
-            "description": { "zh": "向蓝牙 Classic 会话发送文本或 base64 字节。", "en": "Send text or base64 bytes to a Bluetooth classic session." },
+            "description": {
+                "zh": "向蓝牙 Classic 会话发送文本或 base64 字节。",
+                "en": "Send text or base64 bytes to a Bluetooth classic session.",
+                "ro": "Send text or base64 bytes to a Bluetooth classic session."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "会话 ID", "en": "Session ID" }, "type": "string", "required": true },
-                { "name": "text", "description": { "zh": "UTF-8 文本", "en": "UTF-8 text" }, "type": "string", "required": false },
-                { "name": "data_base64", "description": { "zh": "base64 字节", "en": "Base64 bytes" }, "type": "string", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "会话 ID",
+                        "en": "Session ID",
+                        "ro": "Session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "text",
+                    "description": {
+                        "zh": "UTF-8 文本",
+                        "en": "UTF-8 text",
+                        "ro": "UTF-8 text"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "data_base64",
+                    "description": {
+                        "zh": "base64 字节",
+                        "en": "Base64 bytes",
+                        "ro": "Base64 bytes"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_read",
-            "description": { "zh": "从蓝牙 Classic 会话读取文本或字节。", "en": "Read text or bytes from a Bluetooth classic session." },
+            "description": {
+                "zh": "从蓝牙 Classic 会话读取文本或字节。",
+                "en": "Read text or bytes from a Bluetooth classic session.",
+                "ro": "Read text or bytes from a Bluetooth classic session."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "会话 ID", "en": "Session ID" }, "type": "string", "required": true },
-                { "name": "max_bytes", "description": { "zh": "最大读取字节数。", "en": "Maximum bytes to read." }, "type": "number", "required": false },
-                { "name": "timeout_ms", "description": { "zh": "等待毫秒数。", "en": "Wait time in milliseconds." }, "type": "number", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "会话 ID",
+                        "en": "Session ID",
+                        "ro": "Session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "max_bytes",
+                    "description": {
+                        "zh": "最大读取字节数。",
+                        "en": "Maximum bytes to read.",
+                        "ro": "Maximum bytes to read."
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "timeout_ms",
+                    "description": {
+                        "zh": "等待毫秒数。",
+                        "en": "Wait time in milliseconds.",
+                        "ro": "Wait time in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_send_and_read",
-            "description": { "zh": "向蓝牙 Classic 会话发送后读取响应。", "en": "Send to a Bluetooth classic session and read the response." },
+            "description": {
+                "zh": "向蓝牙 Classic 会话发送后读取响应。",
+                "en": "Send to a Bluetooth classic session and read the response.",
+                "ro": "Send to a Bluetooth classic session and read the response."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "会话 ID", "en": "Session ID" }, "type": "string", "required": true },
-                { "name": "text", "description": { "zh": "UTF-8 文本", "en": "UTF-8 text" }, "type": "string", "required": false },
-                { "name": "data_base64", "description": { "zh": "base64 字节", "en": "Base64 bytes" }, "type": "string", "required": false },
-                { "name": "max_bytes", "description": { "zh": "最大读取字节数。", "en": "Maximum bytes to read." }, "type": "number", "required": false },
-                { "name": "timeout_ms", "description": { "zh": "等待毫秒数。", "en": "Wait time in milliseconds." }, "type": "number", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "会话 ID",
+                        "en": "Session ID",
+                        "ro": "Session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "text",
+                    "description": {
+                        "zh": "UTF-8 文本",
+                        "en": "UTF-8 text",
+                        "ro": "UTF-8 text"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "data_base64",
+                    "description": {
+                        "zh": "base64 字节",
+                        "en": "Base64 bytes",
+                        "ro": "Base64 bytes"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "max_bytes",
+                    "description": {
+                        "zh": "最大读取字节数。",
+                        "en": "Maximum bytes to read.",
+                        "ro": "Maximum bytes to read."
+                    },
+                    "type": "number",
+                    "required": false
+                },
+                {
+                    "name": "timeout_ms",
+                    "description": {
+                        "zh": "等待毫秒数。",
+                        "en": "Wait time in milliseconds.",
+                        "ro": "Wait time in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_close",
-            "description": { "zh": "关闭蓝牙 Classic、监听或 BLE 会话。", "en": "Close a Bluetooth classic, listener, or BLE session." },
+            "description": {
+                "zh": "关闭蓝牙 Classic、监听或 BLE 会话。",
+                "en": "Close a Bluetooth classic, listener, or BLE session.",
+                "ro": "Close a Bluetooth classic, listener, or BLE session."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "会话 ID", "en": "Session ID" }, "type": "string", "required": true }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "会话 ID",
+                        "en": "Session ID",
+                        "ro": "Session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                }
             ]
         },
         {
             "name": "bluetooth_ble_connect",
-            "description": { "zh": "连接 BLE 设备。", "en": "Connect to a BLE device." },
+            "description": {
+                "zh": "连接 BLE 设备。",
+                "en": "Connect to a BLE device.",
+                "ro": "Connect to a BLE device."
+            },
             "parameters": [
-                { "name": "address", "description": { "zh": "蓝牙 MAC 地址", "en": "Bluetooth MAC address" }, "type": "string", "required": true },
-                { "name": "auto_connect", "description": { "zh": "是否自动连接。", "en": "Whether to use auto connect." }, "type": "boolean", "required": false }
+                {
+                    "name": "address",
+                    "description": {
+                        "zh": "蓝牙 MAC 地址",
+                        "en": "Bluetooth MAC address",
+                        "ro": "Bluetooth MAC address"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "auto_connect",
+                    "description": {
+                        "zh": "是否自动连接。",
+                        "en": "Whether to use auto connect.",
+                        "ro": "Whether to use auto connect."
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_ble_discover_services",
-            "description": { "zh": "发现 BLE 服务和 characteristic。", "en": "Discover BLE services and characteristics." },
+            "description": {
+                "zh": "发现 BLE 服务和 characteristic。",
+                "en": "Discover BLE services and characteristics.",
+                "ro": "Discover BLE services and characteristics."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "BLE 会话 ID", "en": "BLE session ID" }, "type": "string", "required": true },
-                { "name": "timeout_ms", "description": { "zh": "等待毫秒数。", "en": "Wait time in milliseconds." }, "type": "number", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "BLE 会话 ID",
+                        "en": "BLE session ID",
+                        "ro": "BLE session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "timeout_ms",
+                    "description": {
+                        "zh": "等待毫秒数。",
+                        "en": "Wait time in milliseconds.",
+                        "ro": "Wait time in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_ble_read_characteristic",
-            "description": { "zh": "读取 BLE characteristic。", "en": "Read a BLE characteristic." },
+            "description": {
+                "zh": "读取 BLE characteristic。",
+                "en": "Read a BLE characteristic.",
+                "ro": "Read a BLE characteristic."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "BLE 会话 ID", "en": "BLE session ID" }, "type": "string", "required": true },
-                { "name": "service_uuid", "description": { "zh": "Service UUID", "en": "Service UUID" }, "type": "string", "required": true },
-                { "name": "characteristic_uuid", "description": { "zh": "Characteristic UUID", "en": "Characteristic UUID" }, "type": "string", "required": true },
-                { "name": "timeout_ms", "description": { "zh": "等待毫秒数。", "en": "Wait time in milliseconds." }, "type": "number", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "BLE 会话 ID",
+                        "en": "BLE session ID",
+                        "ro": "BLE session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "service_uuid",
+                    "description": {
+                        "zh": "Service UUID",
+                        "en": "Service UUID",
+                        "ro": "Service UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "characteristic_uuid",
+                    "description": {
+                        "zh": "Characteristic UUID",
+                        "en": "Characteristic UUID",
+                        "ro": "Characteristic UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "timeout_ms",
+                    "description": {
+                        "zh": "等待毫秒数。",
+                        "en": "Wait time in milliseconds.",
+                        "ro": "Wait time in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_ble_write_characteristic",
-            "description": { "zh": "写入 BLE characteristic。", "en": "Write a BLE characteristic." },
+            "description": {
+                "zh": "写入 BLE characteristic。",
+                "en": "Write a BLE characteristic.",
+                "ro": "Write a BLE characteristic."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "BLE 会话 ID", "en": "BLE session ID" }, "type": "string", "required": true },
-                { "name": "service_uuid", "description": { "zh": "Service UUID", "en": "Service UUID" }, "type": "string", "required": true },
-                { "name": "characteristic_uuid", "description": { "zh": "Characteristic UUID", "en": "Characteristic UUID" }, "type": "string", "required": true },
-                { "name": "text", "description": { "zh": "UTF-8 文本", "en": "UTF-8 text" }, "type": "string", "required": false },
-                { "name": "data_base64", "description": { "zh": "base64 字节", "en": "Base64 bytes" }, "type": "string", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "BLE 会话 ID",
+                        "en": "BLE session ID",
+                        "ro": "BLE session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "service_uuid",
+                    "description": {
+                        "zh": "Service UUID",
+                        "en": "Service UUID",
+                        "ro": "Service UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "characteristic_uuid",
+                    "description": {
+                        "zh": "Characteristic UUID",
+                        "en": "Characteristic UUID",
+                        "ro": "Characteristic UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "text",
+                    "description": {
+                        "zh": "UTF-8 文本",
+                        "en": "UTF-8 text",
+                        "ro": "UTF-8 text"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "data_base64",
+                    "description": {
+                        "zh": "base64 字节",
+                        "en": "Base64 bytes",
+                        "ro": "Base64 bytes"
+                    },
+                    "type": "string",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_ble_write_and_read_characteristic",
-            "description": { "zh": "写入 BLE characteristic 后读取另一个 characteristic 响应。", "en": "Write a BLE characteristic and read another characteristic response." },
+            "description": {
+                "zh": "写入 BLE characteristic 后读取另一个 characteristic 响应。",
+                "en": "Write a BLE characteristic and read another characteristic response.",
+                "ro": "Write a BLE characteristic and read another characteristic response."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "BLE 会话 ID", "en": "BLE session ID" }, "type": "string", "required": true },
-                { "name": "write_service_uuid", "description": { "zh": "写入 Service UUID", "en": "Write service UUID" }, "type": "string", "required": true },
-                { "name": "write_characteristic_uuid", "description": { "zh": "写入 Characteristic UUID", "en": "Write characteristic UUID" }, "type": "string", "required": true },
-                { "name": "read_service_uuid", "description": { "zh": "读取 Service UUID", "en": "Read service UUID" }, "type": "string", "required": true },
-                { "name": "read_characteristic_uuid", "description": { "zh": "读取 Characteristic UUID", "en": "Read characteristic UUID" }, "type": "string", "required": true },
-                { "name": "text", "description": { "zh": "UTF-8 文本", "en": "UTF-8 text" }, "type": "string", "required": false },
-                { "name": "data_base64", "description": { "zh": "base64 字节", "en": "Base64 bytes" }, "type": "string", "required": false },
-                { "name": "timeout_ms", "description": { "zh": "等待毫秒数。", "en": "Wait time in milliseconds." }, "type": "number", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "BLE 会话 ID",
+                        "en": "BLE session ID",
+                        "ro": "BLE session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "write_service_uuid",
+                    "description": {
+                        "zh": "写入 Service UUID",
+                        "en": "Write service UUID",
+                        "ro": "Write service UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "write_characteristic_uuid",
+                    "description": {
+                        "zh": "写入 Characteristic UUID",
+                        "en": "Write characteristic UUID",
+                        "ro": "Write characteristic UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "read_service_uuid",
+                    "description": {
+                        "zh": "读取 Service UUID",
+                        "en": "Read service UUID",
+                        "ro": "Read service UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "read_characteristic_uuid",
+                    "description": {
+                        "zh": "读取 Characteristic UUID",
+                        "en": "Read characteristic UUID",
+                        "ro": "Read characteristic UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "text",
+                    "description": {
+                        "zh": "UTF-8 文本",
+                        "en": "UTF-8 text",
+                        "ro": "UTF-8 text"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "data_base64",
+                    "description": {
+                        "zh": "base64 字节",
+                        "en": "Base64 bytes",
+                        "ro": "Base64 bytes"
+                    },
+                    "type": "string",
+                    "required": false
+                },
+                {
+                    "name": "timeout_ms",
+                    "description": {
+                        "zh": "等待毫秒数。",
+                        "en": "Wait time in milliseconds.",
+                        "ro": "Wait time in milliseconds."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_ble_subscribe_characteristic",
-            "description": { "zh": "订阅或取消订阅 BLE characteristic 通知。", "en": "Subscribe or unsubscribe BLE characteristic notifications." },
+            "description": {
+                "zh": "订阅或取消订阅 BLE characteristic 通知。",
+                "en": "Subscribe or unsubscribe BLE characteristic notifications.",
+                "ro": "Subscribe or unsubscribe BLE characteristic notifications."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "BLE 会话 ID", "en": "BLE session ID" }, "type": "string", "required": true },
-                { "name": "service_uuid", "description": { "zh": "Service UUID", "en": "Service UUID" }, "type": "string", "required": true },
-                { "name": "characteristic_uuid", "description": { "zh": "Characteristic UUID", "en": "Characteristic UUID" }, "type": "string", "required": true },
-                { "name": "enable", "description": { "zh": "是否订阅。", "en": "Whether to subscribe." }, "type": "boolean", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "BLE 会话 ID",
+                        "en": "BLE session ID",
+                        "ro": "BLE session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "service_uuid",
+                    "description": {
+                        "zh": "Service UUID",
+                        "en": "Service UUID",
+                        "ro": "Service UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "characteristic_uuid",
+                    "description": {
+                        "zh": "Characteristic UUID",
+                        "en": "Characteristic UUID",
+                        "ro": "Characteristic UUID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "enable",
+                    "description": {
+                        "zh": "是否订阅。",
+                        "en": "Whether to subscribe.",
+                        "ro": "Whether to subscribe."
+                    },
+                    "type": "boolean",
+                    "required": false
+                }
             ]
         },
         {
             "name": "bluetooth_ble_read_notifications",
-            "description": { "zh": "读取已收到的 BLE 通知。", "en": "Read received BLE notifications." },
+            "description": {
+                "zh": "读取已收到的 BLE 通知。",
+                "en": "Read received BLE notifications.",
+                "ro": "Read received BLE notifications."
+            },
             "parameters": [
-                { "name": "session_id", "description": { "zh": "BLE 会话 ID", "en": "BLE session ID" }, "type": "string", "required": true },
-                { "name": "limit", "description": { "zh": "读取条数。", "en": "Number of notifications to read." }, "type": "number", "required": false }
+                {
+                    "name": "session_id",
+                    "description": {
+                        "zh": "BLE 会话 ID",
+                        "en": "BLE session ID",
+                        "ro": "BLE session ID"
+                    },
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "name": "limit",
+                    "description": {
+                        "zh": "读取条数。",
+                        "en": "Number of notifications to read.",
+                        "ro": "Number of notifications to read."
+                    },
+                    "type": "number",
+                    "required": false
+                }
             ]
         },
         {
             "name": "get_device_info",
-            "description": { "zh": "获取详细的设备信息，包括型号、操作系统版本、内存、存储、网络状态等。", "en": "Get detailed device information, including model, OS version, memory, storage, network status, etc." },
+            "description": {
+                "zh": "获取详细的设备信息，包括型号、操作系统版本、内存、存储、网络状态等。",
+                "en": "Get detailed device information, including model, OS version, memory, storage, network status, etc.",
+                "ro": "Get detailed device information, including model, OS version, memory, storage, network status, etc."
+            },
             "parameters": []
         }
     ]
-}*/
+}
+*/
 const SystemTools = (function () {
     async function get_system_setting(params) {
         const result = await Tools.System.getSetting(params.setting, params.namespace || 'system');
