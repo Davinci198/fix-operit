@@ -136,6 +136,8 @@ import com.ai.assistance.operit.ui.common.animations.SimpleAnimatedVisibility
 import com.ai.assistance.operit.ui.features.chat.components.AttachmentChip
 import com.ai.assistance.operit.ui.features.chat.components.AttachmentSelectorPopupPanel
 import com.ai.assistance.operit.ui.features.chat.components.FullscreenInputDialog
+import com.ai.assistance.operit.ui.features.chat.components.style.common.ContextUsageBar
+import com.ai.assistance.operit.ui.features.chat.components.style.common.model.ModelContextRegistry
 import com.ai.assistance.operit.ui.features.chat.components.style.input.common.CharacterCardMemoryBindingSwitchConfirmDialog
 import com.ai.assistance.operit.ui.features.chat.components.style.input.common.CharacterCardModelBindingSwitchConfirmDialog
 import com.ai.assistance.operit.ui.features.chat.components.style.input.common.InputMenuToggleHookParams
@@ -356,7 +358,8 @@ fun AgentChatInputSection(
     val typography = MaterialTheme.typography
 
     val toolProgressEvent by ToolProgressBus.progress.collectAsState()
-    val currentModelName by actualViewModel.modelName.collectAsState()
+        val currentModelName by actualViewModel.modelName.collectAsState()
+    val contextTotal = ModelContextRegistry.getContextWindow(currentModelName).toInt()
     val configMappingWithIndex by
         functionalConfigManager.functionConfigMappingWithIndexFlow.collectAsState(initial = emptyMap())
     var configSummaries by remember { mutableStateOf<List<ModelConfigSummary>>(emptyList()) }
@@ -659,6 +662,12 @@ fun AgentChatInputSection(
 
     Surface(color = Color.Transparent, modifier = floatingContainerModifier) {
         Column {
+                        // Cline-style context usage bar; total dinamic per model (ModelContextRegistry)
+            ContextUsageBar(
+                used = projectedTokens.toInt(),
+                total = contextTotal,
+            )
+
             replyToMessage?.let { message ->
                 Surface(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),

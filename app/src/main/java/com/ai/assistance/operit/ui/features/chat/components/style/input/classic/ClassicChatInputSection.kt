@@ -42,6 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ai.assistance.operit.R
+import com.ai.assistance.operit.ui.features.chat.components.style.common.ContextUsageBar
+import com.ai.assistance.operit.ui.features.chat.components.style.common.model.ModelContextRegistry
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -165,10 +167,12 @@ fun ClassicChatInputSection(
 
     val toolProgressEvent by ToolProgressBus.progress.collectAsState()
 
-    // Token limit calculation
+            // Token limit calculation
     val currentWindowSize by actualViewModel.currentWindowSize.collectAsState()
     val maxWindowSizeInK by actualViewModel.maxWindowSizeInK.collectAsState()
+    val modelId by actualViewModel.modelName.collectAsState()
     val maxTokens = (maxWindowSizeInK * 1024).toLong().coerceAtLeast(0L)
+    val contextTotal = ModelContextRegistry.getContextWindow(modelId).toInt()
     val userMessageTokens = remember(userMessage.text) { ChatUtils.estimateTokenCount(userMessage.text) }
     val projectedTokens = userMessageTokens.toLong() + currentWindowSize
 
@@ -300,6 +304,12 @@ fun ClassicChatInputSection(
                 ),
     ) {
         Column {
+                        // Cline-style context usage bar; total dinamic per model (ModelContextRegistry)
+            ContextUsageBar(
+                used = projectedTokens.toInt(),
+                total = contextTotal,
+            )
+
             // Reply preview section
             replyToMessage?.let { message ->
                 Surface(
