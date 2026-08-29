@@ -667,7 +667,6 @@ fun AgentChatInputSection(
                 used = projectedTokens.toInt(),
                 total = contextTotal,
             )
-            )
 
             replyToMessage?.let { message ->
                 Surface(
