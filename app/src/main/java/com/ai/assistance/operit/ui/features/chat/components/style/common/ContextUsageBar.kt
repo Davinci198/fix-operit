@@ -2,18 +2,25 @@ package com.ai.assistance.operit.ui.features.chat.components.style.common
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,26 +30,30 @@ import androidx.compose.ui.unit.sp
 import java.util.Locale
 
 /**
- * Cline 风格的上下文用量条：`47.4k ▓▓▓░░░░░░░ 1.3m`
+ * Bară de context stil Cline: `4.9k ▓▓░░░░░░░ 128k`.
  *
- * 修改意图：在输入卡片顶部提供一眼可读的上下文占用可视化，
- * 与 ChatScreenHeader 中已有的圆形进度指示器共用同一套颜色阈值
- * （>75% tertiary，>90% error），保证全局视觉语义一致。
- *
- * @param currentTokens 当前上下文 token 数（调用方传入 projectedTokens =
- *   当前窗口 + 输入草稿预估，草稿为空时即等于当前窗口大小）
- * @param maxTokens 模型上下文上限（maxWindowSizeInK * 1024）
+ * - `total` este calculat în call-site (via ModelContextRegistry pe baza modelId),
+ *   deci aici doar randăm: Used / bară / Total și un tooltip la long-press.
+ * - Tooltip (long-press) — exact ca în Cline screenshot 3:
+ *   Context Window X%
+ *   Used: Yk
+ *   Total: Zm
+ *   Remaining: Wm
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContextUsageBar(
-    currentTokens: Long,
-    maxTokens: Long,
+    used: Int,
+    total: Int,
     modifier: Modifier = Modifier,
 ) {
-    // 尚未配置上下文长度（maxTokens == 0）时不渲染：无数据可展示，并非降级逻辑
-    if (maxTokens <= 0L) return
+    val totalLong = total.toLong().coerceAtLeast(0L)
+    if (totalLong <= 0L) return
 
-    val usageFraction = (currentTokens.toFloat() / maxTokens.toFloat()).coerceIn(0f, 1f)
+    val usedLong = used.coerceAtLeast(0).toLong()
+    val remaining = (totalLong - usedLong).coerceAtLeast(0L)
+    val usageFraction = (usedLong.toFloat() / totalLong.toFloat()).coerceIn(0f, 1f)
+    val percent = usageFraction * 100f
     val animatedProgress by animateFloatAsState(
         targetValue = usageFraction,
         animationSpec = tween(durationMillis = 300),
@@ -54,53 +65,95 @@ fun ContextUsageBar(
         else -> MaterialTheme.colorScheme.primary
     }
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+    var showTooltip by remember { mutableStateOf(false) }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = formatTokenCountCompact(currentTokens),
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            color = labelColor,
-        )
-
-        Box(
+    Box(modifier = modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 2.dp)
+                .combinedClickable(
+                    onClick = { showTooltip = !showTooltip },
+                    onLongClick = { showTooltip = !showTooltip },
+                )
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            Text(
+                text = formatTokenCountCompact(usedLong),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = labelColor,
+            )
+
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(animatedProgress)
+                    .weight(1f)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(barColor),
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(animatedProgress)
+                        .height(4.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(barColor),
+                )
+            }
+
+            Text(
+                text = formatTokenCountCompact(totalLong),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = labelColor,
             )
         }
 
-        Text(
-            text = formatTokenCountCompact(maxTokens),
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            color = labelColor,
-        )
+        if (showTooltip) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(end = 16.dp, top = 6.dp),
+                shape = RoundedCornerShape(8.dp),
+                color = MaterialTheme.colorScheme.inverseSurface,
+                shadowElevation = 4.dp,
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    TooltipText(text = "Context Window  ${"%.1f%%".format(Locale.US, percent)}", bold = true)
+                    TooltipText(text = "Used: ${formatTokenCountCompact(usedLong)}")
+                    TooltipText(text = "Total: ${formatTokenCountCompact(totalLong)}")
+                    TooltipText(text = "Remaining: ${formatTokenCountCompact(remaining)}")
+                }
+            }
+        }
     }
 }
 
+@Composable
+private fun TooltipText(text: String, bold: Boolean = false) {
+    Text(
+        text = text,
+        style = if (bold) {
+            MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold)
+        } else {
+            MaterialTheme.typography.labelSmall
+        },
+        color = MaterialTheme.colorScheme.inverseOnSurface,
+    )
+}
+
 /**
- * Cline 风格的紧凑 token 格式化：
- * <1 000 → 原样（如 "842"）；<1M → 一位小数 "k"（如 "47.4k"）；≥1M → "1.3m"
+ * Formatare compacta stil Cline a token-urilor:
+ * <1k → exact (ex. "842"); <1M → o zecimală "k" (ex. "47.4k"); ≥1M → "1.3m".
  */
 internal fun formatTokenCountCompact(tokens: Long): String {
     return when {

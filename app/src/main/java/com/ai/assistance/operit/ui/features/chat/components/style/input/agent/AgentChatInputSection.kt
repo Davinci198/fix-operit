@@ -137,6 +137,7 @@ import com.ai.assistance.operit.ui.features.chat.components.AttachmentChip
 import com.ai.assistance.operit.ui.features.chat.components.AttachmentSelectorPopupPanel
 import com.ai.assistance.operit.ui.features.chat.components.FullscreenInputDialog
 import com.ai.assistance.operit.ui.features.chat.components.style.common.ContextUsageBar
+import com.ai.assistance.operit.ui.features.chat.components.style.common.model.ModelContextRegistry
 import com.ai.assistance.operit.ui.features.chat.components.style.input.common.CharacterCardMemoryBindingSwitchConfirmDialog
 import com.ai.assistance.operit.ui.features.chat.components.style.input.common.CharacterCardModelBindingSwitchConfirmDialog
 import com.ai.assistance.operit.ui.features.chat.components.style.input.common.InputMenuToggleHookParams
@@ -357,7 +358,8 @@ fun AgentChatInputSection(
     val typography = MaterialTheme.typography
 
     val toolProgressEvent by ToolProgressBus.progress.collectAsState()
-    val currentModelName by actualViewModel.modelName.collectAsState()
+        val currentModelName by actualViewModel.modelName.collectAsState()
+    val contextTotal = ModelContextRegistry.getContextWindow(currentModelName).toInt()
     val configMappingWithIndex by
         functionalConfigManager.functionConfigMappingWithIndexFlow.collectAsState(initial = emptyMap())
     var configSummaries by remember { mutableStateOf<List<ModelConfigSummary>>(emptyList()) }
@@ -660,10 +662,10 @@ fun AgentChatInputSection(
 
     Surface(color = Color.Transparent, modifier = floatingContainerModifier) {
         Column {
-            // Cline 风格上下文用量条：projectedTokens = 当前窗口 + 草稿预估，置顶于输入卡片
+            // Cline-style context usage bar; total dinamic per model (ModelContextRegistry)
             ContextUsageBar(
-                currentTokens = projectedTokens,
-                maxTokens = maxTokens,
+                used = projectedTokens.toInt(),
+                total = contextTotal,
             )
 
             replyToMessage?.let { message ->
