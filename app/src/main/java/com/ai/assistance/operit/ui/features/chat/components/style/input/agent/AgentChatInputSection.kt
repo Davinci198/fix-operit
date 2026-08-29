@@ -662,10 +662,11 @@ fun AgentChatInputSection(
 
     Surface(color = Color.Transparent, modifier = floatingContainerModifier) {
         Column {
-                        // Cline-style context usage bar; total dinamic per model (ModelContextRegistry)
+            // Cline-style context usage bar; total dinamic per model (ModelContextRegistry)
             ContextUsageBar(
                 used = projectedTokens.toInt(),
                 total = contextTotal,
+            )
             )
 
             replyToMessage?.let { message ->

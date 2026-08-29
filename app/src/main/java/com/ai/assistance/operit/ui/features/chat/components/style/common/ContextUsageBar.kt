@@ -27,13 +27,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ai.assistance.operit.ui.features.chat.components.style.common.model.ModelContextRegistry
 import java.util.Locale
 
 /**
  * Bară de context stil Cline: `4.9k ▓▓░░░░░░░ 128k`.
  *
- * - `total` este calculat în call-site (via [ModelContextRegistry] pe baza modelId),
+ * - `total` este calculat în call-site (via ModelContextRegistry pe baza modelId),
  *   deci aici doar randăm: Used / bară / Total și un tooltip la long-press.
  * - Tooltip (long-press) — exact ca în Cline screenshot 3:
  *   Context Window X%
@@ -74,9 +73,10 @@ fun ContextUsageBar(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 2.dp)
                 .combinedClickable(
-                    onClick = { showTooltip = false },
-                    onLongClick = { showTooltip = true },
-                ),
+                    onClick = { showTooltip = !showTooltip },
+                    onLongClick = { showTooltip = !showTooltip },
+                )
+                .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

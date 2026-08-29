@@ -304,7 +304,7 @@ fun ClassicChatInputSection(
                 ),
     ) {
         Column {
-                        // Cline-style context usage bar; total dinamic per model (ModelContextRegistry)
+            // Cline 风格上下文用量条：projectedTokens = 当前窗口 + 草稿预估，置顶于输入卡片
             ContextUsageBar(
                 used = projectedTokens.toInt(),
                 total = contextTotal,
