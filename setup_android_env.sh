@@ -48,9 +48,17 @@ ping_host() {
     log "ping not found; skipping mirror checks"
     return 2
   fi
-  if $ping_cmd -c 1 -W 2 "$host" >/dev/null 2>&1; then
-    log "Ping OK: $host"
-    return 0
+  # -W este iputils; busybox ping folosește -w (diferență de sintaxă)
+  if [[ "$ping_cmd" == "busybox ping" ]]; then
+    if $ping_cmd -c 1 -w 2 "$host" >/dev/null 2>&1; then
+      log "Ping OK: $host"
+      return 0
+    fi
+  else
+    if $ping_cmd -c 1 -W 2 "$host" >/dev/null 2>&1; then
+      log "Ping OK: $host"
+      return 0
+    fi
   fi
   log "Ping fail: $host"
   return 1
@@ -156,12 +164,15 @@ measure_download_speed() {
 download_file() {
   local url="$1"
   local dest="$2"
+  # Timeout opțional per-apel (secunde); fișierele mari (zip-uri Gradle/SDK)
+  # au nevoie de mai mult decât default-ul de 120s pe conexiuni mobile lente.
+  local max_time="${3:-120}"
   local max_retries=3
   local retry_count=0
 
   while [[ $retry_count -lt $max_retries ]]; do
     if command_exists curl; then
-      if curl -L --connect-timeout 30 --max-time 120 --retry 2 --retry-delay 3 "$url" -o "$dest"; then
+      if curl -L --connect-timeout 30 --max-time "$max_time" --retry 2 --retry-delay 3 "$url" -o "$dest"; then
         return 0
       fi
     elif command_exists wget; then
@@ -260,10 +271,8 @@ ensure_android_tools() {
       "Android command line tools" \
       "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" \
       "dl.google.com" \
-      "mirrors.tuna.tsinghua.edu.cn" "https://mirrors.tuna.tsinghua.edu.cn/android/repository/commandlinetools-linux-11076708_latest.zip" \
-      "mirrors.bfsu.edu.cn" "https://mirrors.bfsu.edu.cn/android/repository/commandlinetools-linux-11076708_latest.zip" \
-      "mirrors.aliyun.com" "https://mirrors.aliyun.com/android/repository/commandlinetools-linux-11076708_latest.zip")
-    download_file "$cmdline_url" "$zip_path"
+      "mirrors.cloud.tencent.com" "https://mirrors.cloud.tencent.com/AndroidSDK/commandlinetools-linux-11076708_latest.zip")
+    download_file "$cmdline_url" "$zip_path" 900
     unzip -q "$zip_path" -d "$ANDROID_HOME/cmdline-tools"
     mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
     rm -rf "$tmp_dir"
@@ -295,9 +304,8 @@ ensure_gradle() {
       "Gradle distribution" \
       "https://services.gradle.org/distributions/${GRADLE_DIST}-bin.zip" \
       "services.gradle.org" \
-      "mirrors.cloud.tencent.com" "https://mirrors.cloud.tencent.com/gradle/${GRADLE_DIST}-bin.zip" \
-      "mirrors.aliyun.com" "https://mirrors.aliyun.com/gradle/${GRADLE_DIST}-bin.zip")
-    download_file "$gradle_url" "$GRADLE_ZIP"
+      "mirrors.cloud.tencent.com" "https://mirrors.cloud.tencent.com/gradle/${GRADLE_DIST}-bin.zip")
+    download_file "$gradle_url" "$GRADLE_ZIP" 900
   else
     log "Gradle zip already present: $GRADLE_ZIP"
   fi
@@ -335,6 +343,20 @@ update_gradle_wrapper_properties() {
     echo "distributionUrl=$file_url" >> "$wrapper_file"
   fi
   log "Wrapper distributionUrl set to local file: $gradle_zip_abs"
+
+  # Protecție anti-commit accidental: distributionUrl=file:// este valabil DOAR
+  # local (pe telefon). Marcam fișierul skip-worktree dacă suntem într-un repo git,
+  # altfel modificarea locală ar ajunge în repo și ar rupe CI / alte mașini.
+  if [[ ! -f "$wrapper_file.setup-orig" ]]; then
+    cp "$wrapper_file" "$wrapper_file.setup-orig"
+    log "Backup original wrapper properties: $wrapper_file.setup-orig"
+  fi
+  if [[ -d .git ]] && command_exists git; then
+    if git ls-files --error-unmatch "$wrapper_file" >/dev/null 2>&1; then
+      git update-index --skip-worktree "$wrapper_file" 2>/dev/null \
+        && log "git skip-worktree activ pentru $wrapper_file (nu se comite accidental)"
+    fi
+  fi
 }
 
 warmup_gradle_wrapper_cache() {
@@ -354,7 +376,29 @@ warmup_gradle_wrapper_cache() {
 }
 
 restore_gradle_properties() {
-  cat > gradle.properties <<'EOF'
+  # MERGE, nu overwrite: păstrăm setările existente (ex. android.aapt2FromMavenOverride,
+  # jvmargs personalizate anti-OOM) și adăugăm DOAR cheile lipsă din template.
+  # Scriem template-ul integral doar dacă fișierul nu există deloc.
+  local props="gradle.properties"
+  # Perechi complete cheie=valoare: dacă lipsesc, se adaugă cu valoarea recomandată.
+  # Dacă cheia există deja (chiar cu altă valoare, ex. jvmargs anti-OOM), NU se atinge.
+  local -a required_keys=(
+    "org.gradle.jvmargs=-Xmx6144m -Dfile.encoding=UTF-8 -XX:MaxMetaspaceSize=1536m"
+    "kotlin.daemon.jvmargs=-Xmx3072m -Dfile.encoding=UTF-8"
+    "org.gradle.parallel=true"
+    "org.gradle.workers.max=4"
+    "org.gradle.caching=true"
+    "org.gradle.configureondemand=true"
+    "android.useAndroidX=true"
+    "kotlin.code.style=official"
+    "android.nonTransitiveRClass=true"
+    "android.builder.cmake.inCMakeCacheDir=false"
+    "android.aapt2.process.daemon=false"
+  )
+
+  if [[ ! -f "$props" ]]; then
+    log "gradle.properties lipsă - scriu template-ul complet"
+    cat > "$props" <<'EOF'
 # Project-wide Gradle settings.
 # IDE (e.g. Android Studio) users:
 # Gradle settings configured through the IDE *will override*
@@ -410,6 +454,21 @@ android.builder.cmake.inCMakeCacheDir=false
 # Disable AAPT2 daemon mode to prevent "Daemon startup failed" errors in proot environment
 android.aapt2.process.daemon=false
 EOF
+    log "gradle.properties creat (template complet)"
+    return 0
+  fi
+
+  local appended=0
+  local entry key
+  for entry in "${required_keys[@]}"; do
+    key="${entry%%=*}"
+    if ! grep -q "^${key}=" "$props"; then
+      echo "$entry" >> "$props"
+      appended=$((appended + 1))
+    fi
+  done
+
+  log "gradle.properties existent păstrat; $appended chei lipsă adăugate"
 }
 
 restore_gradlew_bat() {
@@ -550,7 +609,9 @@ warmup_gradle_cache_for_aapt2() {
     return 1
   fi
   log "Running warm-up Gradle task to resolve and execute AAPT2"
-  if ! "$gradle_cmd" --no-daemon --rerun-tasks :app:processDebugResources; then
+  # --rerun (per-task, Gradle 7.6+) în loc de --rerun-tasks (global) — evită
+  # re-executarea tuturor task-urilor; doar processDebugResources e rulat din nou.
+  if ! "$gradle_cmd" --no-daemon :app:processDebugResources --rerun; then
     log "AAPT2 pre-replace warm-up failed; continuing to patch aapt2"
     return 1
   fi
@@ -563,7 +624,7 @@ warmup_gradle_cache_after_aapt2_replace() {
     return 1
   fi
   log "Running post-replace warm-up to ensure patched AAPT2 is used"
-  if ! "$gradle_cmd" --no-daemon --rerun-tasks :app:processDebugResources; then
+  if ! "$gradle_cmd" --no-daemon :app:processDebugResources --rerun; then
     log "AAPT2 post-replace warm-up failed; setup will still continue"
     return 1
   fi
@@ -589,10 +650,15 @@ replace_aapt2() {
   cp "$bundled_aapt2" "$aapt2_path"
   chmod +x "$aapt2_path"
 
-  if [[ -d "$ANDROID_HOME/build-tools/35.0.0" ]]; then
-    cp "$aapt2_path" "$ANDROID_HOME/build-tools/35.0.0/aapt2"
-    log "Replaced SDK build-tools aapt2"
-  fi
+  # Patch-uim aapt2 în TOATE versiunile de build-tools prezente (nu doar 35.0.0 —
+  # sdkmanager poate instala 36.0.0, iar AGP folosește aapt2 din cache/transforms oricum)
+  local bt_dir_aapt2
+  for bt_dir_aapt2 in "$ANDROID_HOME"/build-tools/*/; do
+    if [[ -d "$bt_dir_aapt2" ]]; then
+      cp "$aapt2_path" "$bt_dir_aapt2/aapt2"
+      log "Replaced SDK build-tools aapt2: $bt_dir_aapt2"
+    fi
+  done
 
   local gradle_cache_root="$GRADLE_USER_HOME/caches"
   local gradle_aapt_dir="$gradle_cache_root/modules-2/files-2.1/com.android.tools.build/aapt2"
