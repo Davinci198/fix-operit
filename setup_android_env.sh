@@ -914,6 +914,14 @@ main() {
     log "Ignoring wrapper warm-up error and continuing"
   fi
   restore_gradle_properties
+  # Adaugă override-ul aapt2 ARM64 în gradle.properties DOAR dacă wrapper-ul local există.
+  # Nu e în gradle.properties urmărit (strică CI: runnerul nu are binarul). CI rămâne curat.
+  if [[ -f /opt/aapt2-custom/aapt2 ]]; then
+    if ! grep -q '^android.aapt2FromMavenOverride=' gradle.properties 2>/dev/null; then
+      printf '\n# ARM64 aapt2 override — doar local (generat de setup)\nandroid.aapt2FromMavenOverride=/opt/aapt2-custom/aapt2\n' >> gradle.properties
+      log "Injected android.aapt2FromMavenOverride into gradle.properties (local ARM64 aapt2)"
+    fi
+  fi
   restore_gradlew_bat
   update_local_properties
   ensure_native_libs
