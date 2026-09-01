@@ -1,7 +1,4 @@
-[submodule "tools/hotbuild/OperitNightlyRelease"]
-	path = tools/hotbuild/OperitNightlyRelease
-	url = git@github.com:AAswordman/OperitNightlyRelease.git
 [submodule "terminal"]
 	path = terminal
 	url = https://github.com/Davinci198/OperitTerminalCore.git
-	branch = fix-esc-b
+	branch = main
