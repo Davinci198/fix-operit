@@ -2,22 +2,24 @@ package com.ai.assistance.operit.data.agent
 
 import android.content.Context
 import android.webkit.WebView
-import com.ai.assistance.operit.core.tools.AITool
 import com.ai.assistance.operit.core.tools.ToolExecutor
-import com.ai.assistance.operit.core.tools.ToolResult
 import com.ai.assistance.operit.core.tools.StringResultData
-import com.ai.assistance.operit.core.tools.ToolValidationResult
 import com.ai.assistance.operit.core.tools.system.AndroidShellExecutor
 import com.ai.assistance.operit.core.tools.system.shell.ShellProcess
+import com.ai.assistance.operit.data.model.AITool
+import com.ai.assistance.operit.data.model.ToolResult
+import com.ai.assistance.operit.data.model.ToolValidationResult
 import com.ai.assistance.operit.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * DshBrain - Minimal wrapper to run DeepSeek Harness (dsh) in ro-operit's Ubuntu environment.
- *
+ * 
  * Uses AndroidShellExecutor which handles all permission levels (ROOT, ADMIN, DEBUGGER, ACCESSIBILITY, STANDARD)
  * via ShellExecutorFactory. Runs `dsh web --host 0.0.0.0 --port 3082` inside the existing proot-distro Ubuntu
  * environment that ro-operit already provides, and exposes it via:
@@ -90,7 +92,7 @@ class DshBrain private constructor(private val context: Context) {
             startProcessMonitor()
 
             // Give it a moment to start
-            kotlinx.coroutines.delay(2000)
+            delay(2000)
 
             // Verify it's responding
             val healthCheck = checkHealth(port)
@@ -238,7 +240,7 @@ class DshRunToolExecutor(private val context: Context) : ToolExecutor {
     private val TAG = "DshRunToolExecutor"
 
     override fun invoke(tool: AITool): ToolResult {
-        return kotlinx.coroutines.runBlocking {
+        return runBlocking {
             val command = tool.parameters.find { it.name == "command" }?.value ?: ""
             if (command.isBlank()) {
                 ToolResult(
@@ -296,7 +298,7 @@ class DshStartToolExecutor(private val context: Context) : ToolExecutor {
     private val TAG = "DshStartToolExecutor"
 
     override fun invoke(tool: AITool): ToolResult {
-        return kotlinx.coroutines.runBlocking {
+        return runBlocking {
             val port = tool.parameters.find { it.name == "port" }?.value?.toIntOrNull() ?: 3082
             val host = tool.parameters.find { it.name == "host" }?.value ?: "0.0.0.0"
 
@@ -315,7 +317,7 @@ class DshStartToolExecutor(private val context: Context) : ToolExecutor {
                     toolName = tool.name,
                     success = false,
                     result = StringResultData(""),
-                    error = "Failed to start DshBrain. Check logs for details."
+                    error = "Failed to start DshBrain. Check if dsh is installed in Ubuntu."
                 )
             }
         }
@@ -333,7 +335,7 @@ class DshStopToolExecutor(private val context: Context) : ToolExecutor {
     private val TAG = "DshStopToolExecutor"
 
     override fun invoke(tool: AITool): ToolResult {
-        return kotlinx.coroutines.runBlocking {
+        return runBlocking {
             val brain = DshBrain.getInstance(context)
             val success = brain.stop()
 
@@ -356,7 +358,7 @@ class DshStopToolExecutor(private val context: Context) : ToolExecutor {
  */
 class DshStatusToolExecutor(private val context: Context) : ToolExecutor {
     override fun invoke(tool: AITool): ToolResult {
-        return kotlinx.coroutines.runBlocking {
+        return runBlocking {
             val brain = DshBrain.getInstance(context)
             val running = brain.isRunning()
             val url = if (running) brain.getWebUrl() else "not running"
