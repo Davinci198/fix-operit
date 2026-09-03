@@ -173,7 +173,7 @@ class DshBrain private constructor(private val context: Context) {
         val fullCommand = "proot-distro login ubuntu -- bash -c ${escapeForShell(command)}"
         val result = AndroidShellExecutor.executeShellCommand(fullCommand)
 
-        if (result.success) {
+        return if (result.success) {
             result.stdout
         } else {
             "Error (exit ${result.exitCode}): ${result.stderr.ifEmpty { result.stdout }}"
@@ -376,4 +376,3 @@ class DshStatusToolExecutor(private val context: Context) : ToolExecutor {
         return ToolValidationResult(valid = true)
     }
 }
-// trigger
