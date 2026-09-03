@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 
 /**
  * DshBrain - Minimal wrapper to run DeepSeek Harness (dsh) in ro-operit's Ubuntu environment.
- * 
+ *
  * Uses AndroidShellExecutor which handles all permission levels (ROOT, ADMIN, DEBUGGER, ACCESSIBILITY, STANDARD)
  * via ShellExecutorFactory. Runs `dsh web --host 0.0.0.0 --port 3082` inside the existing proot-distro Ubuntu
  * environment that ro-operit already provides, and exposes it via:
