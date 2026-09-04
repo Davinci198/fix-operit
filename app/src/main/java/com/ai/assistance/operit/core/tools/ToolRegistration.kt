@@ -864,7 +864,7 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
                 problemLibraryTool.invoke(tool)
             }
     )
-    
+
     // 注册根据标题获取单个记忆工具
     handler.registerTool(
             name = "get_memory_by_title",
@@ -1506,7 +1506,7 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
                 deviceInfoTool.invoke(tool)
             }
     )
-    
+
     // Tasker事件触发工具
     handler.registerTool(
             name = "trigger_tasker_event",
@@ -1556,7 +1556,7 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
             }
     )
 
-    
+
     // 工作流工具
     val workflowTools = ToolGetter.getWorkflowTools(context)
 

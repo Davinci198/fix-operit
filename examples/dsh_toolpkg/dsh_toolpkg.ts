@@ -245,7 +245,7 @@ export async function dsh_install() {
 export async function dsh_sync(params: { action: string; message?: string }) {
   const { action, message } = params;
   const validActions = ['status', 'push_test', 'poll_now'];
-  
+
   if (!validActions.includes(action)) {
     complete({
       success: false,
@@ -257,7 +257,7 @@ export async function dsh_sync(params: { action: string; message?: string }) {
 
   const toolParams: Record<string, any> = { action };
   if (message) toolParams.message = message;
-  
+
   const result = await toolCall('dsh_sync', toolParams);
 
   if (result?.success) {
