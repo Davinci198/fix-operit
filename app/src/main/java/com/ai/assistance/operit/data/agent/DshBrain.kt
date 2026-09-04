@@ -62,12 +62,7 @@ class DshBrain private constructor(private val context: Context) {
             }
         }
 
-        private fun getDshHome(): String {
-            return AndroidShellExecutor.executeShellCommand(
-                "proot-distro login ubuntu -- bash -c 'echo \$DSH_HOME'"
-            ).stdout.trim().takeIf { it.isNotBlank() } ?: "/root/.config/dsh"
         }
-    }
 
     // State
     private val isRunning = AtomicBoolean(false)
