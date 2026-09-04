@@ -12,6 +12,7 @@ import com.ai.assistance.operit.data.agent.DshStatusToolExecutor
 import com.ai.assistance.operit.data.agent.DshRunToolExecutor
 import com.ai.assistance.operit.data.agent.DshSyncToolExecutor
 import com.ai.assistance.operit.core.tools.defaultTool.ToolGetter
+import com.ai.assistance.operit.core.tools.system.AndroidShellExecutor
 import com.ai.assistance.operit.data.model.AITool
 import com.ai.assistance.operit.data.model.ToolParameter
 import com.ai.assistance.operit.data.model.ToolResult
@@ -448,18 +449,22 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
             executor = DshSyncToolExecutor(context)
     )
 
+
+
     handler.registerTool(
             name = "dsh_install",
             descriptionGenerator = { _ -> "Install/update DSH CLI in Ubuntu (npm i -g @deepseek-ai/dsh)" },
             executor = { tool ->
-                val brain = DshBrain.getInstance(context)
                 runBlocking(Dispatchers.IO) {
-                    val output = brain.executeInSession("npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh")
+                    // Execute directly in Ubuntu without requiring DshBrain to be running
+                    val output = AndroidShellExecutor.executeShellCommand(
+                        "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh\""
+                    )
                     ToolResult(
                         toolName = tool.name,
-                        success = true,
-                        result = StringResultData(output),
-                        error = null
+                        success = output.success,
+                        result = StringResultData(if (output.success) output.stdout else output.stderr),
+                        error = if (output.success) null else "Install failed: ${output.stderr}"
                     )
                 }
             }

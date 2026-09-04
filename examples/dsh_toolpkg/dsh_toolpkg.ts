@@ -108,7 +108,7 @@
 /// <reference path="../types/index.d.ts" />
 
 const DSH_DEFAULT_PORT = 3082;
-const DSH_DEFAULT_HOST = '0.0.0.0';
+const DSH_DEFAULT_HOST = '127.0.0.1';
 
 // ==================== TOOL IMPLEMENTATIONS ====================
 
