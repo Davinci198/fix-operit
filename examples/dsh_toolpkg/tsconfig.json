@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "CommonJS",
+    "lib": ["ES2017"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "declaration": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "../types/*": ["../types/*"]
+    }
+  },
+  "include": ["dsh_toolpkg.ts"],
+  "exclude": ["node_modules"]
+}

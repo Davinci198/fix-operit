@@ -40,3 +40,4 @@ worldbook
 qqbot
 thinking_guidance
 plan_mode
+dsh_toolpkg.js
