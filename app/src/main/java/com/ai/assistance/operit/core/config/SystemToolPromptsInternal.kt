@@ -631,20 +631,20 @@ object SystemToolPromptsInternal {
                         ),
                         ToolPrompt(
                             name = "dsh_start",
-                            description = "Start DshBrain (DeepSeek Harness) web server in Ubuntu environment. Exposes WebView at http://127.0.0.1:3082 and AI tools for session control.",
+                            description = "Start DshBrain (DeepSeek Harness) web server in Ubuntu environment with --host 127.0.0.1 --port 3082 --no-open. Auto-parses WebView URL from stdout. Enables bidirectional chat sync with DSH Web UI via shared sync file.",
                             parametersStructured = listOf(
                                 ToolParameterSchema(name = "port", type = "integer", description = "port to run dsh web on (default 3082)", required = false, default = "3082"),
-                                ToolParameterSchema(name = "host", type = "string", description = "host to bind to (default 0.0.0.0)", required = false, default = "0.0.0.0")
+                                ToolParameterSchema(name = "host", type = "string", description = "host to bind to (default 127.0.0.1)", required = false, default = "127.0.0.1")
                             )
                         ),
                         ToolPrompt(
                             name = "dsh_stop",
-                            description = "Stop DshBrain (DeepSeek Harness) web server.",
+                            description = "Stop DshBrain (DeepSeek Harness) web server and sync observer.",
                             parametersStructured = listOf()
                         ),
                         ToolPrompt(
                             name = "dsh_status",
-                            description = "Check DshBrain (DeepSeek Harness) running status and WebView URL.",
+                            description = "Check DshBrain (DeepSeek Harness) running status, WebView URL (with token if available), and bidirectional sync status.",
                             parametersStructured = listOf()
                         ),
                         ToolPrompt(
@@ -652,6 +652,14 @@ object SystemToolPromptsInternal {
                             description = "Run a command in the DshBrain Ubuntu session (proot-distro). Requires DshBrain to be running.",
                             parametersStructured = listOf(
                                 ToolParameterSchema(name = "command", type = "string", description = "shell command to execute in Ubuntu", required = true)
+                            )
+                        ),
+                        ToolPrompt(
+                            name = "dsh_sync",
+                            description = "Control DshBrain bidirectional chat sync between Operit Dev Chat and DSH Web UI. Actions: status (show sync state), push_test (send test message to DSH), poll_now (trigger immediate poll of DSH session file).",
+                            parametersStructured = listOf(
+                                ToolParameterSchema(name = "action", type = "string", description = "sync action: status, push_test, poll_now", required = true),
+                                ToolParameterSchema(name = "message", type = "string", description = "test message content (for push_test)", required = false)
                             )
                         )
                     )
@@ -3648,20 +3656,20 @@ object SystemToolPromptsInternal {
                         ),
                         ToolPrompt(
                             name = "dsh_start",
-                            description = "启动 DshBrain (DeepSeek Harness) Web 服务器在 Ubuntu 环境中。在 http://127.0.0.1:3082 暴露 WebView 并提供 AI 工具控制会话。",
+                            description = "在 Ubuntu 环境中启动 DshBrain (DeepSeek Harness) Web 服务器，使用 --host 127.0.0.1 --port 3082 --no-open。自动从 stdout 解析 WebView URL。通过共享同步文件启用与 DSH Web UI 的双向聊天同步。",
                             parametersStructured = listOf(
                                 ToolParameterSchema(name = "port", type = "integer", description = "运行 dsh web 的端口（默认 3082）", required = false, default = "3082"),
-                                ToolParameterSchema(name = "host", type = "string", description = "绑定的主机（默认 0.0.0.0）", required = false, default = "0.0.0.0")
+                                ToolParameterSchema(name = "host", type = "string", description = "绑定的主机（默认 127.0.0.1）", required = false, default = "127.0.0.1")
                             )
                         ),
                         ToolPrompt(
                             name = "dsh_stop",
-                            description = "停止 DshBrain (DeepSeek Harness) Web 服务器。",
+                            description = "停止 DshBrain (DeepSeek Harness) Web 服务器和同步观察器。",
                             parametersStructured = listOf()
                         ),
                         ToolPrompt(
                             name = "dsh_status",
-                            description = "检查 DshBrain (DeepSeek Harness) 运行状态和 WebView URL。",
+                            description = "检查 DshBrain (DeepSeek Harness) 运行状态、WebView URL（含 token（如有））和双向同步状态。",
                             parametersStructured = listOf()
                         ),
                         ToolPrompt(
@@ -3669,6 +3677,14 @@ object SystemToolPromptsInternal {
                             description = "在 DshBrain Ubuntu 会话中运行命令 (proot-distro)。需要 DshBrain 正在运行。",
                             parametersStructured = listOf(
                                 ToolParameterSchema(name = "command", type = "string", description = "在 Ubuntu 中执行的 Shell 命令", required = true)
+                            )
+                        ),
+                        ToolPrompt(
+                            name = "dsh_sync",
+                            description = "控制 DshBrain Operit 开发聊天与 DSH Web UI 之间的双向聊天同步。动作：status（显示同步状态）、push_test（向 DSH 发送测试消息）、poll_now（立即轮询 DSH 会话文件）。",
+                            parametersStructured = listOf(
+                                ToolParameterSchema(name = "action", type = "string", description = "同步动作: status, push_test, poll_now", required = true),
+                                ToolParameterSchema(name = "message", type = "string", description = "测试消息内容（用于 push_test）", required = false)
                             )
                         )
                     )

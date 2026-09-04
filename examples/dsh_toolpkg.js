@@ -79,6 +79,27 @@
         "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh)."
       },
       "parameters": []
+    },
+    {
+      "name": "dsh_sync",
+      "description": {
+        "zh": "控制 DSH 与 Operit 聊天的双向同步：status/push_test/poll_now。",
+        "en": "Control bidirectional chat sync between DSH and Operit chat: status/push_test/poll_now."
+      },
+      "parameters": [
+        {
+          "name": "action",
+          "description": { "zh": "同步动作: status, push_test, poll_now", "en": "Sync action: status, push_test, poll_now" },
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "message",
+          "description": { "zh": "测试消息内容（用于 push_test）", "en": "Test message content (for push_test)" },
+          "type": "string",
+          "required": false
+        }
+      ]
     }
   ]
 }
@@ -88,7 +109,21 @@
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -111,6 +146,7 @@ __export(dsh_toolpkg_exports, {
   dsh_start: () => dsh_start,
   dsh_status: () => dsh_status,
   dsh_stop: () => dsh_stop,
+  dsh_sync: () => dsh_sync,
   dsh_webview_url: () => dsh_webview_url,
   main: () => main
 });
@@ -239,12 +275,43 @@ async function dsh_install() {
     return { success: false, error };
   }
 }
+async function dsh_sync(params) {
+  const { action, message } = params;
+  const validActions = ["status", "push_test", "poll_now"];
+  if (!validActions.includes(action)) {
+    complete({
+      success: false,
+      message: `\u274C \u65E0\u6548\u52A8\u4F5C: ${action}. \u652F\u6301: ${validActions.join(", ")}`,
+      data: { error: `Invalid action: ${action}` }
+    });
+    return { success: false, error: `Invalid action: ${action}` };
+  }
+  const toolParams = { action };
+  if (message) toolParams.message = message;
+  const result = await toolCall("dsh_sync", toolParams);
+  if (result == null ? void 0 : result.success) {
+    complete({
+      success: true,
+      message: `\u2705 \u540C\u6B65 ${action}: ${result.result}`,
+      data: result
+    });
+    return __spreadValues({ success: true }, result);
+  } else {
+    const error = (result == null ? void 0 : result.error) || "Unknown error";
+    complete({
+      success: false,
+      message: `\u274C \u540C\u6B65 ${action} \u5931\u8D25: ${error}`,
+      data: { error }
+    });
+    return { success: false, error };
+  }
+}
 async function main(params) {
   if (!(params == null ? void 0 : params.test)) {
     complete({
       success: true,
       message: "DSH ToolPkg loaded. Use dsh_start/stop/status/run tools.",
-      data: { tools: ["dsh_start", "dsh_stop", "dsh_status", "dsh_run", "dsh_webview_url", "dsh_install"] }
+      data: { tools: ["dsh_start", "dsh_stop", "dsh_status", "dsh_run", "dsh_webview_url", "dsh_install", "dsh_sync"] }
     });
     return;
   }
@@ -277,4 +344,5 @@ exports.dsh_status = dsh_status;
 exports.dsh_run = dsh_run;
 exports.dsh_webview_url = dsh_webview_url;
 exports.dsh_install = dsh_install;
+exports.dsh_sync = dsh_sync;
 exports.main = main;
