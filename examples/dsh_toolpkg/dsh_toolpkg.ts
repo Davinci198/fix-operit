@@ -73,6 +73,14 @@
       "parameters": []
     },
     {
+      "name": "dsh_install",
+      "description": {
+        "zh": "在 Ubuntu 容器中安装/更新 DSH CLI（npm i -g @deepseek-ai/dsh）。",
+        "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh)."
+      },
+      "parameters": []
+    },
+    {
       "name": "dsh_sync",
       "description": {
         "zh": "控制 DSH 与 Operit 聊天的双向同步：status/push_test/poll_now。",
@@ -288,7 +296,7 @@ export async function main(params?: {
     complete({
       success: true,
       message: 'DSH ToolPkg loaded. Use dsh_start/stop/status/run tools.',
-      data: { tools: ['dsh_start', 'dsh_stop', 'dsh_status', 'dsh_run', 'dsh_webview_url', 'dsh_install'] }
+      data: { tools: ['dsh_start', 'dsh_stop', 'dsh_status', 'dsh_run', 'dsh_webview_url', 'dsh_install', 'dsh_sync'] }
     });
     return;
   }

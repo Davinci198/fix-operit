@@ -47,11 +47,6 @@ class DshBrain private constructor(private val context: Context) {
         private const val DEFAULT_HOST = "127.0.0.1"
         private const val SESSION_ID = "super_admin_default_session"
         private const val SYNC_FILE_NAME = "dsh_operit_sync.json"
-        private const val DSH_PROFILES_DIR = "/root/.config/dsh/profiles/web/sessions"
-        private const val DSH_SESSION_FILE = "$DSH_PROFILES_DIR/$SESSION_ID.json"
-        private const val OPERIT_SYNC_DIR = "/data/data/com.ai.assistance.operit/files"
-        private const val OPERIT_SYNC_FILE = "$OPERIT_SYNC_DIR/$SYNC_FILE_NAME"
-        private const val PROOT_SYNC_FILE = "/root/dsh_operit_sync.json"
         private const val SYNC_ORIGIN_DSH = "dsh_webui"
         private const val SYNC_ORIGIN_OPERIT = "operit_dev_chat"
         private const val SYNC_CHANNEL_BUFFER = 100
@@ -62,7 +57,24 @@ class DshBrain private constructor(private val context: Context) {
             }
         }
 
+        /**
+         * Get DSH home directory from Ubuntu environment
+         */
+        suspend fun getDshHome(): String {
+            val result = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c 'echo \$DSH_HOME'")
+            return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/root/.dsh"
         }
+
+        /**
+         * Get sync file paths dynamically
+         */
+        suspend fun getSyncPaths(context: Context): Pair<String, String> {
+            val dshHome = await getDshHome()
+            val dshSessionFile = "$dshHome/profiles/web/sessions/$SESSION_ID.json"
+            val operitSyncFile = "${context.filesDir.absolutePath}/$SYNC_FILE_NAME"
+            return Pair(operitSyncFile, dshSessionFile)
+        }
+    }
 
     // State
     private val isRunning = AtomicBoolean(false)
@@ -76,6 +88,8 @@ class DshBrain private constructor(private val context: Context) {
     private val syncChannel = Channel<SyncMessage>(SYNC_CHANNEL_BUFFER)
     private val processedMessageIds = ConcurrentHashMap<String, Long>()
     private val originId = UUID.randomUUID().toString()
+    private var operitSyncFilePath: String = ""
+    private var dshSessionFilePath: String = ""
 
     data class SyncMessage(
         val id: String,
@@ -100,6 +114,11 @@ class DshBrain private constructor(private val context: Context) {
 
         this.port.set(port)
         this.host.set(host)
+
+        // Initialize sync paths
+        val paths = DshBrain.getSyncPaths(context)
+        operitSyncFilePath = paths.first
+        dshSessionFilePath = paths.second
 
         try {
             // Check if dsh is available in Ubuntu (using proot-distro login)
@@ -201,8 +220,8 @@ class DshBrain private constructor(private val context: Context) {
      * Get sync status
      */
     fun getSyncStatus(): String {
-        val syncFile = File(OPERIT_SYNC_FILE)
-        val dshSessionFile = File(DSH_SESSION_FILE)
+        val syncFile = File(operitSyncFilePath)
+        val dshSessionFile = File(dshSessionFilePath)
         return "Sync: operit=${syncFile.exists()} dsh=${dshSessionFile.exists()} origin=$originId processed=${processedMessageIds.size}"
     }
 
@@ -311,10 +330,11 @@ class DshBrain private constructor(private val context: Context) {
     /** Setup sync files and directories */
     private suspend fun setupSyncFiles() {
         // Create operit sync directory
-        File(OPERIT_SYNC_DIR).mkdirs()
+        File(operitSyncFilePath).parentFile?.mkdirs()
 
         // Create proot sync directory and bind mount via symlink
-        val createDirsCmd = "mkdir -p $DSH_PROFILES_DIR && mkdir -p /root && ln -sf $OPERIT_SYNC_FILE $PROOT_SYNC_FILE"
+        val dshProfilesDir = dshSessionFilePath.substringBeforeLast("/")
+        val createDirsCmd = "mkdir -p $dshProfilesDir && mkdir -p /root && ln -sf $operitSyncFilePath /root/dsh_operit_sync.json"
         AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(createDirsCmd)}")
 
         // Initialize sync file if not exists
@@ -325,7 +345,7 @@ class DshBrain private constructor(private val context: Context) {
               "version": 1
             }
         """.trimIndent()
-        File(OPERIT_SYNC_FILE).writeText(initSync)
+        File(operitSyncFilePath).writeText(initSync)
     }
 
     /** Start monitoring dsh process stdout for URL */
@@ -335,13 +355,13 @@ class DshBrain private constructor(private val context: Context) {
                 try {
                     process.stdout.collect { line ->
                         AppLogger.d(TAG, "DSH stdout: $line")
-                        // Parse URL from stdout (dsh web prints: "dsh web: http://127.0.0.1:PORT")
-                        val urlRegex = "dsh web: (http://127\\.0\\.0\\.1:\\d+)"
+                        // Parse URL from stdout (dsh web prints: "dsh web: http://127.0.0.1:PORT/?token=XXX")
+                        val urlRegex = "dsh web: (http://127\\.0\\.0\\.1:\\d+/\\?token=\\S+)"
                         val match = urlRegex.toRegex().find(line)
                         match?.let {
                             val url = it.groupValues[1]
                             webUrl.set(url)
-                            AppLogger.i(TAG, "Parsed DSH Web URL: $url")
+                            AppLogger.i(TAG, "Parsed DSH Web URL with token: $url")
                         }
                     }
                 } catch (e: Exception) {
@@ -356,7 +376,7 @@ class DshBrain private constructor(private val context: Context) {
         syncObserverJob = scope.launch {
             try {
                 // First, ensure the session file exists
-                val checkCmd = "test -f $DSH_SESSION_FILE && echo EXISTS || echo MISSING"
+                val checkCmd = "test -f $dshSessionFilePath && echo EXISTS || echo MISSING"
                 val checkResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(checkCmd)}")
                 if (checkResult.stdout.trim() == "MISSING") {
                     // Create empty session file
@@ -368,7 +388,7 @@ class DshBrain private constructor(private val context: Context) {
                           "updated_at": ${System.currentTimeMillis()}
                         }
                     """.trimIndent()
-                    val writeCmd = "cat > $DSH_SESSION_FILE << 'EOF'\n$initSession\nEOF"
+                    val writeCmd = "cat > $dshSessionFilePath << 'EOF'\n$initSession\nEOF"
                     AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(writeCmd)}")
                 }
 
@@ -386,7 +406,7 @@ class DshBrain private constructor(private val context: Context) {
     /** Poll DSH session file for new messages from DSH Web UI */
     private suspend fun pollDshSessionForNewMessages() {
         try {
-            val readCmd = "cat $DSH_SESSION_FILE"
+            val readCmd = "cat $dshSessionFilePath"
             val result = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(readCmd)}")
             if (result.success && result.stdout.isNotBlank()) {
                 val sessionJson = JSONObject(result.stdout)
@@ -423,7 +443,7 @@ class DshBrain private constructor(private val context: Context) {
     /** Write sync message to shared sync file */
     private suspend fun writeSyncMessage(syncMessage: SyncMessage): Boolean {
         try {
-            val syncFile = File(OPERIT_SYNC_FILE)
+            val syncFile = File(operitSyncFilePath)
             val json = if (syncFile.exists()) {
                 JSONObject(syncFile.readText())
             } else {
@@ -447,7 +467,7 @@ class DshBrain private constructor(private val context: Context) {
             FileWriter(syncFile).use { it.write(json.toString(2)) }
 
             // Also write to proot sync file (symlinked)
-            val writeProotCmd = "cat > $PROOT_SYNC_FILE << 'EOF'\n${json.toString(2)}\nEOF"
+            val writeProotCmd = "cat > /root/dsh_operit_sync.json << 'EOF'\n${json.toString(2)}\nEOF"
             AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(writeProotCmd)}")
 
             return true
@@ -460,7 +480,7 @@ class DshBrain private constructor(private val context: Context) {
     /** Append message to DSH session file */
     private suspend fun appendToDshSession(syncMessage: SyncMessage): Boolean {
         try {
-            val readCmd = "cat $DSH_SESSION_FILE"
+            val readCmd = "cat $dshSessionFilePath"
             val readResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(readCmd)}")
             val sessionJson = if (readResult.success && readResult.stdout.isNotBlank()) {
                 JSONObject(readResult.stdout)
@@ -481,7 +501,7 @@ class DshBrain private constructor(private val context: Context) {
             sessionJson.put("messages", messages)
             sessionJson.put("updated_at", System.currentTimeMillis())
 
-            val writeCmd = "cat > $DSH_SESSION_FILE << 'EOF'\n${sessionJson.toString(2)}\nEOF"
+            val writeCmd = "cat > $dshSessionFilePath << 'EOF'\n${sessionJson.toString(2)}\nEOF"
             val writeResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(writeCmd)}")
             return writeResult.success
         } catch (e: Exception) {
