@@ -73,12 +73,25 @@
       "parameters": []
     },
     {
-      "name": "dsh_install",
+      "name": "dsh_sync",
       "description": {
-        "zh": "在 Ubuntu 容器中安装/更新 DSH CLI（npm i -g @deepseek-ai/dsh）。",
-        "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh)."
+        "zh": "控制 DSH 与 Operit 聊天的双向同步：status/push_test/poll_now。",
+        "en": "Control bidirectional chat sync between DSH and Operit chat: status/push_test/poll_now."
       },
-      "parameters": []
+      "parameters": [
+        {
+          "name": "action",
+          "description": { "zh": "同步动作: status, push_test, poll_now", "en": "Sync action: status, push_test, poll_now" },
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "message",
+          "description": { "zh": "测试消息内容（用于 push_test）", "en": "Test message content (for push_test)" },
+          "type": "string",
+          "required": false
+        }
+      ]
     }
   ]
 }
@@ -229,6 +242,42 @@ export async function dsh_install() {
   }
 }
 
+export async function dsh_sync(params: { action: string; message?: string }) {
+  const { action, message } = params;
+  const validActions = ['status', 'push_test', 'poll_now'];
+  
+  if (!validActions.includes(action)) {
+    complete({
+      success: false,
+      message: `❌ 无效动作: ${action}. 支持: ${validActions.join(', ')}`,
+      data: { error: `Invalid action: ${action}` }
+    });
+    return { success: false, error: `Invalid action: ${action}` };
+  }
+
+  const toolParams: Record<string, any> = { action };
+  if (message) toolParams.message = message;
+  
+  const result = await toolCall('dsh_sync', toolParams);
+
+  if (result?.success) {
+    complete({
+      success: true,
+      message: `✅ 同步 ${action}: ${result.result}`,
+      data: result
+    });
+    return { success: true, ...result };
+  } else {
+    const error = result?.error || 'Unknown error';
+    complete({
+      success: false,
+      message: `❌ 同步 ${action} 失败: ${error}`,
+      data: { error }
+    });
+    return { success: false, error };
+  }
+}
+
 // ==================== MAIN (Self-test) ====================
 
 export async function main(params?: {
@@ -287,5 +336,6 @@ exports.dsh_status = dsh_status;
 exports.dsh_run = dsh_run;
 exports.dsh_webview_url = dsh_webview_url;
 exports.dsh_install = dsh_install;
+exports.dsh_sync = dsh_sync;
 exports.main = main;
 // force rebuild Fri Sep  4 12:26:58 UTC 2026

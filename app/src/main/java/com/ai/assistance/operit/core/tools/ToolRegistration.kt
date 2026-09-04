@@ -6,6 +6,11 @@ import com.ai.assistance.operit.api.chat.enhance.ToolExecutionManager
 import com.ai.assistance.operit.core.tools.climode.CliToolModeSupport
 import com.ai.assistance.operit.core.tools.climode.ToolExposureMode
 import com.ai.assistance.operit.data.agent.DshBrain
+import com.ai.assistance.operit.data.agent.DshStartToolExecutor
+import com.ai.assistance.operit.data.agent.DshStopToolExecutor
+import com.ai.assistance.operit.data.agent.DshStatusToolExecutor
+import com.ai.assistance.operit.data.agent.DshRunToolExecutor
+import com.ai.assistance.operit.data.agent.DshSyncToolExecutor
 import com.ai.assistance.operit.core.tools.defaultTool.ToolGetter
 import com.ai.assistance.operit.data.model.AITool
 import com.ai.assistance.operit.data.model.ToolParameter
@@ -407,113 +412,40 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
             name = "dsh_start",
             descriptionGenerator = { tool ->
                 val port = tool.parameters.find { it.name == "port" }?.value?.toIntOrNull() ?: 3082
-                val host = tool.parameters.find { it.name == "host" }?.value ?: "0.0.0.0"
-                "Start DshBrain (DeepSeek Harness) web server on $host:$port"
+                val host = tool.parameters.find { it.name == "host" }?.value ?: "127.0.0.1"
+                "Start DshBrain (DeepSeek Harness) web server on $host:$port with auto token parsing and bidirectional chat sync"
             },
-            executor = { tool ->
-                val brain = DshBrain.getInstance(context)
-                runBlocking(Dispatchers.IO) {
-                    val port = tool.parameters.find { it.name == "port" }?.value?.toIntOrNull() ?: 3082
-                    val host = tool.parameters.find { it.name == "host" }?.value ?: "0.0.0.0"
-                    val success = brain.start(port, host)
-                    if (success) {
-                        ToolResult(
-                                toolName = tool.name,
-                                success = true,
-                                result = StringResultData("DshBrain started on http://$host:$port"),
-                                error = null
-                        )
-                    } else {
-                        ToolResult(
-                                toolName = tool.name,
-                                success = false,
-                                result = StringResultData(""),
-                                error = "Failed to start DshBrain. Check if dsh is installed in Ubuntu."
-                        )
-                    }
-                }
-            }
+            executor = DshStartToolExecutor(context)
     )
 
     handler.registerTool(
             name = "dsh_stop",
-            descriptionGenerator = { _ -> "Stop DshBrain (DeepSeek Harness) web server" },
-            executor = { tool ->
-                val brain = DshBrain.getInstance(context)
-                runBlocking(Dispatchers.IO) {
-                    val success = brain.stop()
-                    ToolResult(
-                            toolName = tool.name,
-                            success = success,
-                            result = StringResultData(if (success) "DshBrain stopped" else "DshBrain was not running"),
-                            error = null
-                    )
-                }
-            }
+            descriptionGenerator = { _ -> "Stop DshBrain (DeepSeek Harness) web server and sync observer" },
+            executor = DshStopToolExecutor(context)
     )
 
     handler.registerTool(
             name = "dsh_status",
-            descriptionGenerator = { _ -> "Check DshBrain (DeepSeek Harness) running status" },
-            executor = { tool ->
-                val brain = DshBrain.getInstance(context)
-                runBlocking(Dispatchers.IO) {
-                    val running = brain.isRunning()
-                    val url = if (running) brain.getWebUrl() else "not running"
-                    ToolResult(
-                            toolName = tool.name,
-                            success = true,
-                            result = StringResultData("DshBrain status: ${if (running) "running" else "stopped"} at $url"),
-                            error = null
-                    )
-                }
-            }
+            descriptionGenerator = { _ -> "Check DshBrain (DeepSeek Harness) running status, WebView URL, and sync status" },
+            executor = DshStatusToolExecutor(context)
     )
 
     handler.registerTool(
             name = "dsh_run",
             descriptionGenerator = { tool ->
                 val command = tool.parameters.find { it.name == "command" }?.value ?: ""
-                "Run command in DshBrain Ubuntu session: $command"
+                "Run command in DshBrain Ubuntu session (proot-distro). Requires DshBrain to be running."
             },
-            executor = { tool ->
-                val brain = DshBrain.getInstance(context)
-                runBlocking(Dispatchers.IO) {
-                    val command = tool.parameters.find { it.name == "command" }?.value ?: ""
-                    if (command.isBlank()) {
-                        ToolResult(
-                                toolName = tool.name,
-                                success = false,
-                                result = StringResultData(""),
-                                error = "Command parameter is required"
-                        )
-                    } else if (!brain.isRunning()) {
-                        ToolResult(
-                                toolName = tool.name,
-                                success = false,
-                                result = StringResultData(""),
-                                error = "DshBrain not running. Use dsh_start tool first."
-                        )
-                    } else {
-                        try {
-                            val output = brain.executeInSession(command)
-                            ToolResult(
-                                    toolName = tool.name,
-                                    success = true,
-                                    result = StringResultData(output),
-                                    error = null
-                            )
-                        } catch (e: Exception) {
-                            ToolResult(
-                                    toolName = tool.name,
-                                    success = false,
-                                    result = StringResultData(""),
-                                    error = "Execution failed: ${e.message}"
-                            )
-                        }
-                    }
-                }
-            }
+            executor = DshRunToolExecutor(context)
+    )
+
+    handler.registerTool(
+            name = "dsh_sync",
+            descriptionGenerator = { tool ->
+                val action = tool.parameters.find { it.name == "action" }?.value ?: "status"
+                "Control DshBrain bidirectional chat sync: $action (status/push_test/poll_now)"
+            },
+            executor = DshSyncToolExecutor(context)
     )
 
 
