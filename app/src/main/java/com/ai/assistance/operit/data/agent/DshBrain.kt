@@ -69,7 +69,7 @@ class DshBrain private constructor(private val context: Context) {
          * Get sync file paths dynamically
          */
         suspend fun getSyncPaths(context: Context): Pair<String, String> {
-            val dshHome = await getDshHome()
+            val dshHome = getDshHome()
             val dshSessionFile = "$dshHome/profiles/web/sessions/$SESSION_ID.json"
             val operitSyncFile = "${context.filesDir.absolutePath}/$SYNC_FILE_NAME"
             return Pair(operitSyncFile, dshSessionFile)
