@@ -628,6 +628,31 @@ object SystemToolPromptsInternal {
                             name = "device_info",
                             description = "Get device information.",
                             parametersStructured = listOf()
+                        ),
+                        ToolPrompt(
+                            name = "dsh_start",
+                            description = "Start DshBrain (DeepSeek Harness) web server in Ubuntu environment. Exposes WebView at http://127.0.0.1:3082 and AI tools for session control.",
+                            parametersStructured = listOf(
+                                ToolParameterSchema(name = "port", type = "integer", description = "port to run dsh web on (default 3082)", required = false, default = "3082"),
+                                ToolParameterSchema(name = "host", type = "string", description = "host to bind to (default 0.0.0.0)", required = false, default = "0.0.0.0")
+                            )
+                        ),
+                        ToolPrompt(
+                            name = "dsh_stop",
+                            description = "Stop DshBrain (DeepSeek Harness) web server.",
+                            parametersStructured = listOf()
+                        ),
+                        ToolPrompt(
+                            name = "dsh_status",
+                            description = "Check DshBrain (DeepSeek Harness) running status and WebView URL.",
+                            parametersStructured = listOf()
+                        ),
+                        ToolPrompt(
+                            name = "dsh_run",
+                            description = "Run a command in the DshBrain Ubuntu session (proot-distro). Requires DshBrain to be running.",
+                            parametersStructured = listOf(
+                                ToolParameterSchema(name = "command", type = "string", description = "shell command to execute in Ubuntu", required = true)
+                            )
                         )
                     )
             ),
@@ -3620,6 +3645,31 @@ object SystemToolPromptsInternal {
                             name = "device_info",
                             description = "获取设备信息。",
                             parametersStructured = listOf()
+                        ),
+                        ToolPrompt(
+                            name = "dsh_start",
+                            description = "启动 DshBrain (DeepSeek Harness) Web 服务器在 Ubuntu 环境中。在 http://127.0.0.1:3082 暴露 WebView 并提供 AI 工具控制会话。",
+                            parametersStructured = listOf(
+                                ToolParameterSchema(name = "port", type = "integer", description = "运行 dsh web 的端口（默认 3082）", required = false, default = "3082"),
+                                ToolParameterSchema(name = "host", type = "string", description = "绑定的主机（默认 0.0.0.0）", required = false, default = "0.0.0.0")
+                            )
+                        ),
+                        ToolPrompt(
+                            name = "dsh_stop",
+                            description = "停止 DshBrain (DeepSeek Harness) Web 服务器。",
+                            parametersStructured = listOf()
+                        ),
+                        ToolPrompt(
+                            name = "dsh_status",
+                            description = "检查 DshBrain (DeepSeek Harness) 运行状态和 WebView URL。",
+                            parametersStructured = listOf()
+                        ),
+                        ToolPrompt(
+                            name = "dsh_run",
+                            description = "在 DshBrain Ubuntu 会话中运行命令 (proot-distro)。需要 DshBrain 正在运行。",
+                            parametersStructured = listOf(
+                                ToolParameterSchema(name = "command", type = "string", description = "在 Ubuntu 中执行的 Shell 命令", required = true)
+                            )
                         )
                     )
             ),
