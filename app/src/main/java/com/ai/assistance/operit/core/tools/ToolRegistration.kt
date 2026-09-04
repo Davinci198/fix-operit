@@ -448,6 +448,23 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
             executor = DshSyncToolExecutor(context)
     )
 
+    handler.registerTool(
+            name = "dsh_install",
+            descriptionGenerator = { _ -> "Install/update DSH CLI in Ubuntu (npm i -g @deepseek-ai/dsh)" },
+            executor = { tool ->
+                val brain = DshBrain.getInstance(context)
+                runBlocking(Dispatchers.IO) {
+                    val output = brain.executeInSession("npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh")
+                    ToolResult(
+                        toolName = tool.name,
+                        success = true,
+                        result = StringResultData(output),
+                        error = null
+                    )
+                }
+            }
+    )
+
 
     // 音乐播放工具
     val musicPlaybackTools = ToolGetter.getMusicPlaybackTools(context)
