@@ -288,3 +288,4 @@ exports.dsh_run = dsh_run;
 exports.dsh_webview_url = dsh_webview_url;
 exports.dsh_install = dsh_install;
 exports.main = main;
+// force rebuild Fri Sep  4 12:26:58 UTC 2026
