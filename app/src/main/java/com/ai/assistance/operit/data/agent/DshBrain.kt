@@ -111,18 +111,10 @@ class DshBrain private constructor(private val context: Context) {
         val paths = listOf(
             File(root, "root/.npm-global/bin/dsh"),
             File(root, "root/.nvm/versions/node/v22.22.2/bin/dsh"),
-            File(root, "usr/local/bin/dsh"),
-            File(root, "root/.config/nvm/versions/node/v22.22.2/bin/dsh")
+            File(root, "root/.config/nvm/versions/node/v22.22.2/bin/dsh"),
+            File(root, "usr/local/bin/dsh")
         )
-        if (paths.any { it.exists() }) return true
-
-        // Fallback: shell check in ubuntu session
-        return try {
-            val r = AndroidShellExecutor.executeShellCommand("ls ${root.absolutePath}/root/.npm-global/bin/dsh 2>/dev/null && echo found")
-            r.stdout.contains("found")
-        } catch (e: Exception) {
-            false
-        }
+        return paths.any { it.exists() }
     }
 
     data class SyncMessage(
