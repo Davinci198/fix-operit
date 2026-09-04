@@ -143,7 +143,7 @@ export async function dsh_status() {
   if (result?.success) {
     const running = result?.result?.includes?.('running') ?? false;
     const url = running ? `http://127.0.0.1:${DSH_DEFAULT_PORT}` : 'not running';
-    
+
     complete({
       success: true,
       message: running ? `✅ DSH 运行中: ${url}` : '⏹️ DSH 未运行',
@@ -196,7 +196,7 @@ export async function dsh_run(params: { command: string }) {
 
 export async function dsh_webview_url() {
   const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
-  
+
   complete({
     success: true,
     message: `🌐 DSH WebView URL: ${url}`,
