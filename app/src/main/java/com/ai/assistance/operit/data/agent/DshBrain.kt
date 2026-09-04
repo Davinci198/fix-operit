@@ -314,7 +314,7 @@ class DshBrain private constructor(private val context: Context) {
     // Private helpers
 
     /** Setup sync files and directories */
-    private fun setupSyncFiles() {
+    private suspend fun setupSyncFiles() {
         // Create operit sync directory
         File(OPERIT_SYNC_DIR).mkdirs()
 
@@ -338,17 +338,15 @@ class DshBrain private constructor(private val context: Context) {
         shellProcess?.let { process ->
             monitorJob = scope.launch {
                 try {
-                    process.inputStream?.bufferedReader()?.use { reader ->
-                        reader.forEachLine { line ->
-                            AppLogger.d(TAG, "DSH stdout: $line")
-                            // Parse URL from stdout (dsh web prints: "dsh web: http://127.0.0.1:PORT")
-                            val urlRegex = "dsh web: (http://127\\.0\\.0\\.1:\\d+)"
-                            val match = urlRegex.toRegex().find(line)
-                            match?.let {
-                                val url = it.groupValues[1]
-                                webUrl.set(url)
-                                AppLogger.i(TAG, "Parsed DSH Web URL: $url")
-                            }
+                    process.stdout.collect { line ->
+                        AppLogger.d(TAG, "DSH stdout: $line")
+                        // Parse URL from stdout (dsh web prints: "dsh web: http://127.0.0.1:PORT")
+                        val urlRegex = "dsh web: (http://127\\.0\\.0\\.1:\\d+)"
+                        val match = urlRegex.toRegex().find(line)
+                        match?.let {
+                            val url = it.groupValues[1]
+                            webUrl.set(url)
+                            AppLogger.i(TAG, "Parsed DSH Web URL: $url")
                         }
                     }
                 } catch (e: Exception) {
@@ -391,7 +389,7 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /** Poll DSH session file for new messages from DSH Web UI */
-    private fun pollDshSessionForNewMessages() {
+    private suspend fun pollDshSessionForNewMessages() {
         try {
             val readCmd = "cat $DSH_SESSION_FILE"
             val result = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(readCmd)}")
@@ -428,7 +426,7 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /** Write sync message to shared sync file */
-    private fun writeSyncMessage(syncMessage: SyncMessage): Boolean {
+    private suspend fun writeSyncMessage(syncMessage: SyncMessage): Boolean {
         try {
             val syncFile = File(OPERIT_SYNC_FILE)
             val json = if (syncFile.exists()) {
@@ -465,7 +463,7 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /** Append message to DSH session file */
-    private fun appendToDshSession(syncMessage: SyncMessage): Boolean {
+    private suspend fun appendToDshSession(syncMessage: SyncMessage): Boolean {
         try {
             val readCmd = "cat $DSH_SESSION_FILE"
             val readResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(readCmd)}")
