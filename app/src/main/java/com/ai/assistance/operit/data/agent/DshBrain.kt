@@ -30,11 +30,10 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * DshBrain - Minimal wrapper to run DeepSeek Harness (dsh) in ro-operit's Ubuntu environment.
  *
- * Uses AndroidShellExecutor which handles all permission levels (ROOT, ADMIN, DEBUGGER, ACCESSIBILITY, STANDARD)
- * via ShellExecutorFactory. Runs `dsh web --host 127.0.0.1 --port 3082 --no-open` inside the existing proot-distro Ubuntu
- * environment that ro-operit already provides, and exposes it via:
+ * Runs `dsh web --host 127.0.0.1 --port 3082 --no-open` directly in the existing Ubuntu
+ * environment (Termux/proot-distro) that ro-operit provides, and exposes it via:
  * - WebView at http://127.0.0.1:3082
- * - Tools: dsh_start, dsh_stop, dsh_run, dsh_status for AI to control the dsh session
+ * - Tools: dsh_start, dsh_stop, dsh_run, dsh_status, dsh_sync for AI to control the dsh session
  * - Bidirectional chat sync between Operit Dev Chat and DSH Web UI via shared sync file
  */
 class DshBrain private constructor(private val context: Context) {
@@ -58,10 +57,10 @@ class DshBrain private constructor(private val context: Context) {
         }
 
         /**
-         * Get DSH home directory from Ubuntu environment
+         * Get DSH home directory from environment
          */
         suspend fun getDshHome(): String {
-            val result = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c 'echo \$DSH_HOME'")
+            val result = AndroidShellExecutor.executeShellCommand("bash -c 'echo \$DSH_HOME'")
             return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/root/.dsh"
         }
 
@@ -121,12 +120,12 @@ class DshBrain private constructor(private val context: Context) {
         dshSessionFilePath = paths.second
 
         try {
-            // Check if dsh is available in Ubuntu (using proot-distro login)
-            val checkResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- which dsh")
+            // Check if dsh is available
+            val checkResult = AndroidShellExecutor.executeShellCommand("bash -c 'which dsh'")
             if (!checkResult.success || checkResult.stdout.trim().isEmpty()) {
-                AppLogger.d(TAG, "dsh not found in Ubuntu, installing...")
+                AppLogger.d(TAG, "dsh not found, installing...")
                 val installResult = AndroidShellExecutor.executeShellCommand(
-                    "proot-distro login ubuntu -- bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh\""
+                    "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh\""
                 )
                 if (!installResult.success) {
                     AppLogger.e(TAG, "Failed to install dsh: ${installResult.stderr}")
@@ -137,13 +136,14 @@ class DshBrain private constructor(private val context: Context) {
             // Ensure sync directories exist
             setupSyncFiles()
 
-            // Build command to start dsh web in Ubuntu with --no-open
-            val command = "dsh web --host $host --port $port --no-open"
-            val fullCommand = "proot-distro login ubuntu -- bash -c ${escapeForShell(command)}"
+            // Build command to start dsh web with --no-open
+            // DSH doesn't support --host 0.0.0.0 for safety, use 127.0.0.1 with --trusted-host
+            val command = "dsh web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
+            val fullCommand = "bash -c ${escapeForShell(command)}"
 
             AppLogger.d(TAG, "Starting dsh web: $fullCommand")
 
-            // Start process in Ubuntu using ShellExecutor with output capture
+            // Start process directly in Ubuntu (no proot-distro wrapper needed)
             shellProcess = AndroidShellExecutor.startShellProcess(fullCommand)
 
             // Monitor process output for URL with token
@@ -152,8 +152,8 @@ class DshBrain private constructor(private val context: Context) {
             // Start sync observer for DSH session file changes
             startSyncObserver()
 
-            // Give it a moment to start
-            delay(3000)
+            // Give it a moment to start (5s for dsh to fully initialize)
+            delay(5000)
 
             // Verify it's responding and extract URL
             val healthCheck = checkHealth(port)
@@ -246,8 +246,8 @@ class DshBrain private constructor(private val context: Context) {
             return "DshBrain not running. Call start() first."
         }
 
-        // Execute command in Ubuntu via proot-distro
-        val fullCommand = "proot-distro login ubuntu -- bash -c ${escapeForShell(command)}"
+        // Execute command directly in Ubuntu
+        val fullCommand = "bash -c ${escapeForShell(command)}"
         val result = AndroidShellExecutor.executeShellCommand(fullCommand)
 
         return if (result.success) {
@@ -332,10 +332,10 @@ class DshBrain private constructor(private val context: Context) {
         // Create operit sync directory
         File(operitSyncFilePath).parentFile?.mkdirs()
 
-        // Create proot sync directory and bind mount via symlink
+        // Create dsh profiles directory and bind mount via symlink
         val dshProfilesDir = dshSessionFilePath.substringBeforeLast("/")
-        val createDirsCmd = "mkdir -p $dshProfilesDir && mkdir -p /root && ln -sf $operitSyncFilePath /root/dsh_operit_sync.json"
-        AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(createDirsCmd)}")
+        val createDirsCmd = "bash -c ${escapeForShell("mkdir -p $dshProfilesDir && mkdir -p /root && ln -sf $operitSyncFilePath /root/dsh_operit_sync.json")}"
+        AndroidShellExecutor.executeShellCommand(createDirsCmd)
 
         // Initialize sync file if not exists
         val initSync = """
@@ -376,8 +376,8 @@ class DshBrain private constructor(private val context: Context) {
         syncObserverJob = scope.launch {
             try {
                 // First, ensure the session file exists
-                val checkCmd = "test -f $dshSessionFilePath && echo EXISTS || echo MISSING"
-                val checkResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(checkCmd)}")
+                val checkCmd = "bash -c ${escapeForShell("test -f $dshSessionFilePath && echo EXISTS || echo MISSING")}"
+                val checkResult = AndroidShellExecutor.executeShellCommand(checkCmd)
                 if (checkResult.stdout.trim() == "MISSING") {
                     // Create empty session file
                     val initSession = """
@@ -388,8 +388,8 @@ class DshBrain private constructor(private val context: Context) {
                           "updated_at": ${System.currentTimeMillis()}
                         }
                     """.trimIndent()
-                    val writeCmd = "cat > $dshSessionFilePath << 'EOF'\n$initSession\nEOF"
-                    AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(writeCmd)}")
+                    val writeCmd = "bash -c ${escapeForShell("cat > $dshSessionFilePath << 'EOF'\n$initSession\nEOF")}"
+                    AndroidShellExecutor.executeShellCommand(writeCmd)
                 }
 
                 // Use a polling approach since FileObserver doesn't work across proot
@@ -406,8 +406,8 @@ class DshBrain private constructor(private val context: Context) {
     /** Poll DSH session file for new messages from DSH Web UI */
     private suspend fun pollDshSessionForNewMessages() {
         try {
-            val readCmd = "cat $dshSessionFilePath"
-            val result = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(readCmd)}")
+            val readCmd = "bash -c ${escapeForShell("cat $dshSessionFilePath")}"
+            val result = AndroidShellExecutor.executeShellCommand(readCmd)
             if (result.success && result.stdout.isNotBlank()) {
                 val sessionJson = JSONObject(result.stdout)
                 val messages = sessionJson.optJSONArray("messages")
@@ -467,8 +467,8 @@ class DshBrain private constructor(private val context: Context) {
             FileWriter(syncFile).use { it.write(json.toString(2)) }
 
             // Also write to proot sync file (symlinked)
-            val writeProotCmd = "cat > /root/dsh_operit_sync.json << 'EOF'\n${json.toString(2)}\nEOF"
-            AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(writeProotCmd)}")
+            val writeProotCmd = "bash -c ${escapeForShell("cat > /root/dsh_operit_sync.json << 'EOF'\n${json.toString(2)}\nEOF")}"
+            AndroidShellExecutor.executeShellCommand(writeProotCmd)
 
             return true
         } catch (e: Exception) {
@@ -480,8 +480,8 @@ class DshBrain private constructor(private val context: Context) {
     /** Append message to DSH session file */
     private suspend fun appendToDshSession(syncMessage: SyncMessage): Boolean {
         try {
-            val readCmd = "cat $dshSessionFilePath"
-            val readResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(readCmd)}")
+            val readCmd = "bash -c ${escapeForShell("cat $dshSessionFilePath")}"
+            val readResult = AndroidShellExecutor.executeShellCommand(readCmd)
             val sessionJson = if (readResult.success && readResult.stdout.isNotBlank()) {
                 JSONObject(readResult.stdout)
             } else {
@@ -501,8 +501,8 @@ class DshBrain private constructor(private val context: Context) {
             sessionJson.put("messages", messages)
             sessionJson.put("updated_at", System.currentTimeMillis())
 
-            val writeCmd = "cat > $dshSessionFilePath << 'EOF'\n${sessionJson.toString(2)}\nEOF"
-            val writeResult = AndroidShellExecutor.executeShellCommand("proot-distro login ubuntu -- bash -c ${escapeForShell(writeCmd)}")
+            val writeCmd = "bash -c ${escapeForShell("cat > $dshSessionFilePath << 'EOF'\n${sessionJson.toString(2)}\nEOF")}"
+            val writeResult = AndroidShellExecutor.executeShellCommand(writeCmd)
             return writeResult.success
         } catch (e: Exception) {
             AppLogger.e(TAG, "Failed to append to DSH session", e)

@@ -27,7 +27,7 @@
         },
         {
           "name": "host",
-          "description": { "zh": "绑定主机（默认 0.0.0.0）", "en": "Bind host (default 0.0.0.0)" },
+          "description": { "zh": "绑定主机（默认 127.0.0.1）", "en": "Bind host (default 127.0.0.1)" },
           "type": "string",
           "required": false
         }
