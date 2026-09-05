@@ -33,12 +33,12 @@ jobs:
 
     steps:
       - name: Checkout merge candidate
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
-          submodules: false
+          submodules: recursive
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -412,6 +412,20 @@ jobs:
           # Explicit heap override: gradle.properties is tuned for ARM64 phone (4g);
           # CI runners need more heap for the full Kotlin compile (OOM fix, PR #9).
           ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC"
+
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-logs-pr44-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            app/build/
+            **/*.log
+            app/build/reports/
+          retention-days: 7
+
 
       - name: Run full Android checks
         if: steps.plan.outputs.android_full == 'true'
