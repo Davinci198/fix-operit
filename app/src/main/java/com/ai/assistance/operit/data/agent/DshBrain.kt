@@ -248,14 +248,12 @@ class DshBrain private constructor(private val context: Context) {
         // Fallback check via pgrep and curl
         return try {
             val portNum = port.get()
-            val pgrepResult = AndroidShellExecutor.executeShellCommand(
-                "bash -c "pgrep -f 'dsh.*web'""
-            )
+            val pgrepCmd = """bash -c 'pgrep -f "dsh.*web"'"""
+            val pgrepResult = AndroidShellExecutor.executeShellCommand(pgrepCmd)
             val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
             if (!processRunning) return false
-            val curlResult = AndroidShellExecutor.executeShellCommand(
-                "bash -c "curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$portNum/""
-            )
+            val curlCmd = """bash -c 'curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${portNum}/'"""
+            val curlResult = AndroidShellExecutor.executeShellCommand(curlCmd)
             val code = curlResult.stdout.trim()
             code in listOf("200", "401", "303")
         } catch (e: Exception) {
@@ -601,9 +599,8 @@ class DshBrain private constructor(private val context: Context) {
             // If /api/health doesn't exist, try root with pgrep and curl fallback
             try {
                 // Check process via pgrep
-                val pgrepResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c "pgrep -f 'dsh.*web'""
-                )
+                val pgrepCmd = """bash -c 'pgrep -f "dsh.*web"'"""
+                val pgrepResult = AndroidShellExecutor.executeShellCommand(pgrepCmd)
                 val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
                 if (processRunning) return true
 
