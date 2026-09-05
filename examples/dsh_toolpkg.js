@@ -152,7 +152,7 @@ __export(dsh_toolpkg_exports, {
 });
 module.exports = __toCommonJS(dsh_toolpkg_exports);
 var DSH_DEFAULT_PORT = 3082;
-var DSH_DEFAULT_HOST = "0.0.0.0";
+var DSH_DEFAULT_HOST = "127.0.0.1";
 async function dsh_start(params = {}) {
   const port = params.port || DSH_DEFAULT_PORT;
   const host = params.host || DSH_DEFAULT_HOST;
@@ -247,12 +247,14 @@ async function dsh_run(params) {
 }
 async function dsh_webview_url() {
   const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
+  const token = process.env.DSH_TOKEN || "";
+  const finalUrl = token ? `http://127.0.0.1:${DSH_DEFAULT_PORT}/?token=${token}` : url;
   complete({
     success: true,
-    message: `\u{1F310} DSH WebView URL: ${url}`,
-    data: { url }
+    message: `DSH URL: ${finalUrl}`,
+    data: { url: finalUrl }
   });
-  return { success: true, url };
+  return { success: true, data: { url: finalUrl }, message: `DSH URL: ${finalUrl}` };
 }
 async function dsh_install() {
   const result = await toolCall("dsh_run", {
