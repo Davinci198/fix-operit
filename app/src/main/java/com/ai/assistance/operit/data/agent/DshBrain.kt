@@ -608,9 +608,8 @@ class DshBrain private constructor(private val context: Context) {
                 if (processRunning) return true
 
                 // Try curl for HTTP code
-                val curlResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c "curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$port/""
-                )
+                val cmd = """bash -c 'curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${port}/'"""
+                val curlResult = AndroidShellExecutor.executeShellCommand(cmd)
                 val code = curlResult.stdout.trim()
                 if (code in listOf("200", "401", "303")) return true
 
