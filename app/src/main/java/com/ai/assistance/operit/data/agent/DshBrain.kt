@@ -50,6 +50,8 @@ class DshBrain private constructor(private val context: Context) {
         private const val SYNC_ORIGIN_OPERIT = "operit_dev_chat"
         private const val SYNC_CHANNEL_BUFFER = 100
 
+        private const val DSH_ABS = "/root/.npm-global/bin/dsh"
+
         fun getInstance(context: Context): DshBrain {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: DshBrain(context.applicationContext).also { INSTANCE = it }
@@ -107,14 +109,7 @@ class DshBrain private constructor(private val context: Context) {
      * Checks filesystem paths in the Ubuntu root
      */
     fun isDshInstalled(): Boolean {
-        val root = getUbuntuRoot()
-        val paths = listOf(
-            File(root, "root/.npm-global/bin/dsh"),
-            File(root, "root/.nvm/versions/node/v22.22.2/bin/dsh"),
-            File(root, "root/.config/nvm/versions/node/v22.22.2/bin/dsh"),
-            File(root, "usr/local/bin/dsh")
-        )
-        return paths.any { it.exists() }
+        return File(DSH_ABS).exists() || File("/usr/local/bin/dsh").exists()
     }
 
     data class SyncMessage(
@@ -176,8 +171,8 @@ class DshBrain private constructor(private val context: Context) {
 
             // Build command to start dsh web with --no-open
             // DSH doesn't support --host 0.0.0.0 for safety, use 127.0.0.1 with --trusted-host
-            val command = "dsh web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
-            val fullCommand = "bash -c ${escapeForShell(command)}"
+            val command = "${DSH_ABS} web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
+            val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
 
             AppLogger.d(TAG, "Starting dsh web: $fullCommand")
 
@@ -321,7 +316,7 @@ class DshBrain private constructor(private val context: Context) {
         }
 
         // Execute command directly in Ubuntu
-        val fullCommand = "bash -c ${escapeForShell(command)}"
+        val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
         val result = AndroidShellExecutor.executeShellCommand(fullCommand)
 
         return if (result.success) {
