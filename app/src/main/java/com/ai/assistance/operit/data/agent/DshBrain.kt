@@ -606,14 +606,14 @@ class DshBrain private constructor(private val context: Context) {
                 )
                 val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
                 if (processRunning) return true
-                
+
                 // Try curl for HTTP code
                 val curlResult = AndroidShellExecutor.executeShellCommand(
                     "bash -c "curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$port/""
                 )
                 val code = curlResult.stdout.trim()
                 if (code in listOf("200", "401", "303")) return true
-                
+
                 val url = java.net.URL("http://127.0.0.1:$port/")
                 val connection = url.openConnection() as java.net.HttpURLConnection
                 connection.connectTimeout = 3000
