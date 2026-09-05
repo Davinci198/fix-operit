@@ -461,12 +461,12 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
 
     handler.registerTool(
             name = "dsh_install",
-            descriptionGenerator = { _ -> "Install/update DSH CLI in Ubuntu (npm i -g @deepseek-ai/dsh)" },
+            descriptionGenerator = { _ -> "Install/update DSH CLI in Ubuntu (npm i -g @deepseek-ai/dsh@latest)" },
             executor = { tool ->
                 runBlocking(Dispatchers.IO) {
                     // Execute directly in Ubuntu without requiring DshBrain to be running
                     val output = AndroidShellExecutor.executeShellCommand(
-                        "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh\""
+                        "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh@latest\""
                     )
                     ToolResult(
                         toolName = tool.name,

@@ -75,8 +75,8 @@
     {
       "name": "dsh_install",
       "description": {
-        "zh": "在 Ubuntu 容器中安装/更新 DSH CLI（npm i -g @deepseek-ai/dsh）。",
-        "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh)."
+        "zh": "在 Ubuntu 容器中安装/更新 DSH CLI（npm i -g @deepseek-ai/dsh@latest）。",
+        "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh@latest)."
       },
       "parameters": []
     },
@@ -241,7 +241,7 @@ export async function dsh_webview_url() {
 export async function dsh_install() {
   // Execute npm install in Ubuntu via shell
   const result = await toolCall('dsh_run', {
-    command: 'npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh'
+    command: 'npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh@latest'
   });
 
   if (result?.success) {

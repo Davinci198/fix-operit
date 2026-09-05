@@ -158,7 +158,7 @@ class DshBrain private constructor(private val context: Context) {
             if (!isInstalled) {
                 AppLogger.d(TAG, "dsh not found, installing...")
                 val installResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh\""
+                    "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh@latest\""
                 )
                 if (!installResult.success) {
                     AppLogger.e(TAG, "Failed to install dsh: ${installResult.stderr}")
