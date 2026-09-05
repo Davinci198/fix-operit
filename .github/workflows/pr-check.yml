@@ -419,11 +419,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: failure-logs-pr44-${{ github.run_id }}
+          if-no-files-found: warn
           path: |
+            app/build/
+            **/*.log
             app/build/reports/
-            app/build/**/*.log
-            **/build.log
           retention-days: 7
+
+
       - name: Run full Android checks
         if: steps.plan.outputs.android_full == 'true'
         env:
