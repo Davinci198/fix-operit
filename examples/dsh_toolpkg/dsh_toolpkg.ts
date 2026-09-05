@@ -75,8 +75,8 @@
     {
       "name": "dsh_install",
       "description": {
-        "zh": "在 Ubuntu 容器中安装/更新 DSH CLI（npm i -g @deepseek-ai/dsh）。",
-        "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh)."
+        "zh": "在 Ubuntu 容器中安装/更新 DSH CLI（npm i -g @deepseek-ai/dsh@latest）。",
+        "en": "Install/update DSH CLI in Ubuntu container (npm i -g @deepseek-ai/dsh@latest)."
       },
       "parameters": []
     },
@@ -216,23 +216,32 @@ export async function dsh_run(params: { command: string }) {
 }
 
 export async function dsh_webview_url() {
-  const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
-  // Try to get token from environment or log - basic implementation for now
-  const token = process.env.DSH_TOKEN || '';
-  const finalUrl = token ? `http://127.0.0.1:${DSH_DEFAULT_PORT}/?token=${token}` : url;
+  // Call Kotlin dsh_webview_url tool to get URL with token
+  const result = await toolCall('dsh_webview_url', {});
 
-  complete({
-    success: true,
-    message: `DSH URL: ${finalUrl}`,
-    data: { url: finalUrl }
-  });
-  return { success: true, data: { url: finalUrl }, message: `DSH URL: ${finalUrl}` };
+  if (result?.success) {
+    const url = result.result || `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
+    complete({
+      success: true,
+      message: `DSH WebView URL: ${url}`,
+      data: { url }
+    });
+    return { success: true, data: { url }, message: `DSH WebView URL: ${url}` };
+  } else {
+    const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
+    complete({
+      success: false,
+      message: `DSH not running: ${result?.error || 'Unknown error'}`,
+      data: { url }
+    });
+    return { success: false, data: { url }, error: result?.error };
+  }
 }
 
 export async function dsh_install() {
   // Execute npm install in Ubuntu via shell
   const result = await toolCall('dsh_run', {
-    command: 'npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh'
+    command: 'npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh@latest'
   });
 
   if (result?.success) {
