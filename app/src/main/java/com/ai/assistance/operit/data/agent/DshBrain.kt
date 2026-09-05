@@ -246,7 +246,7 @@ class DshBrain private constructor(private val context: Context) {
     fun isRunning(): Boolean = runBlocking {
         if (isRunning.get()) return@runBlocking true
         // Fallback check via pgrep and curl
-        return try {
+        return@runBlocking try {
             val portNum = port.get()
             val pgrepCmd = """bash -c 'pgrep -f "dsh.*web"'"""
             val pgrepResult = AndroidShellExecutor.executeShellCommand(pgrepCmd)
@@ -257,7 +257,7 @@ class DshBrain private constructor(private val context: Context) {
             val code = curlResult.stdout.trim()
             code in listOf("200", "401", "303")
         } catch (e: Exception) {
-            return@runBlocking false
+            false
         }
     }
 
