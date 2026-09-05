@@ -244,52 +244,14 @@ class DshBrain private constructor(private val context: Context) {
      * Check if dsh web server is running
      */
     fun isRunning(): Boolean {
-        if (isRunning.get()) return true
-        // Fallback check via pgrep and curl
-        return try {
-            val portNum = port.get()
-            val pgrepResult = AndroidShellExecutor.executeShellCommand(
-                "bash -c "pgrep -f 'dsh.*web'""
-            )
-            val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
-            if (!processRunning) return false
-            val curlResult = AndroidShellExecutor.executeShellCommand(
-                "bash -c "curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$portNum/""
-            )
-            val code = curlResult.stdout.trim()
-            code in listOf("200", "401", "303")
-        } catch (e: Exception) {
-            false
-        }
+        return isRunning.get()
     }
 
     /**
      * Get the URL for the WebView (with token if available)
      */
     fun getWebUrl(): String {
-        val baseUrl = webUrl.get().takeIf { it.isNotBlank() } ?: "http://127.0.0.1:${port.get()}"
-        // Try to extract token from /tmp/dsh.log
-        return try {
-            val logFile = File("/tmp/dsh.log")
-            if (logFile.exists()) {
-                val logContent = logFile.readText()
-                val tokenRegex = Regex("token=([A-Za-z0-9]+)")
-                val match = tokenRegex.find(logContent)
-                if (match != null) {
-                    val token = match.groupValues[1]
-                    val portNum = port.get()
-                    "http://127.0.0.1:$portNum/?token=$token"
-                } else {
-                    AppLogger.w(TAG, "Token not found in /tmp/dsh.log, using base URL")
-                    baseUrl
-                }
-            } else {
-                baseUrl
-            }
-        } catch (e: Exception) {
-            AppLogger.w(TAG, "Failed to extract token from log: ${e.message}")
-            baseUrl
-        }
+        return webUrl.get().takeIf { it.isNotBlank() } ?: "http://127.0.0.1:${port.get()}"
     }
 
     /**
@@ -596,24 +558,10 @@ class DshBrain private constructor(private val context: Context) {
             connection.requestMethod = "GET"
             val responseCode = connection.responseCode
             connection.disconnect()
-            responseCode == 200 || responseCode == 401 || responseCode == 303
+            responseCode == 200
         } catch (e: Exception) {
-            // If /api/health doesn't exist, try root with pgrep and curl fallback
+            // If /api/health doesn't exist, try root
             try {
-                // Check process via pgrep
-                val pgrepResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c "pgrep -f 'dsh.*web'""
-                )
-                val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
-                if (processRunning) return true
-                
-                // Try curl for HTTP code
-                val curlResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c "curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$port/""
-                )
-                val code = curlResult.stdout.trim()
-                if (code in listOf("200", "401", "303")) return true
-                
                 val url = java.net.URL("http://127.0.0.1:$port/")
                 val connection = url.openConnection() as java.net.HttpURLConnection
                 connection.connectTimeout = 3000
@@ -621,7 +569,7 @@ class DshBrain private constructor(private val context: Context) {
                 connection.requestMethod = "GET"
                 val responseCode = connection.responseCode
                 connection.disconnect()
-                responseCode == 200 || responseCode == 401 || responseCode == 303
+                responseCode == 200
             } catch (e2: Exception) {
                 false
             }
@@ -774,29 +722,18 @@ class DshStatusToolExecutor(private val context: Context) : ToolExecutor {
             val brain = DshBrain.getInstance(context)
             val internalRunning = brain.isRunning()
 
-            // Check if dsh web process is running via pgrep
+            // Also check if dsh web is actually responding on the port
             val port = brain.getWebUrl().substringAfterLast(":").toIntOrNull() ?: 3082
-            val processRunning = try {
-                val pgrepResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c \"pgrep -f \"dsh.*web\" \""
+            val actuallyRunning = try {
+                val result = AndroidShellExecutor.executeShellCommand(
+                    "bash -c \"curl -s -m 3 http://127.0.0.1:$port/ | head -c 100\""
                 )
-                pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
+                result.success && result.stdout.isNotBlank()
             } catch (e: Exception) {
                 false
             }
 
-            // Check HTTP response code via curl
-            val httpCodeRunning = try {
-                val curlResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c \"curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:$port/\""
-                )
-                val code = curlResult.stdout.trim()
-                code in listOf("200", "401", "303")
-            } catch (e: Exception) {
-                false
-            }
-
-            val running = internalRunning || processRunning || httpCodeRunning
+            val running = internalRunning || actuallyRunning
             val url = if (running) brain.getWebUrl() else "not running"
             val syncStatus = if (running) brain.getSyncStatus() else "sync: stopped"
 

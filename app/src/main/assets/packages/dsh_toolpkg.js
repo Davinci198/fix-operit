@@ -247,14 +247,12 @@ async function dsh_run(params) {
 }
 async function dsh_webview_url() {
   const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
-  const token = process.env.DSH_TOKEN || "";
-  const finalUrl = token ? `http://127.0.0.1:${DSH_DEFAULT_PORT}/?token=${token}` : url;
   complete({
     success: true,
-    message: `DSH URL: ${finalUrl}`,
-    data: { url: finalUrl }
+    message: `\u{1F310} DSH WebView URL: ${url}`,
+    data: { url }
   });
-  return { success: true, data: { url: finalUrl }, message: `DSH URL: ${finalUrl}` };
+  return { success: true, url };
 }
 async function dsh_install() {
   const result = await toolCall("dsh_run", {

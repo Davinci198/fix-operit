@@ -217,16 +217,13 @@ export async function dsh_run(params: { command: string }) {
 
 export async function dsh_webview_url() {
   const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
-  // Try to get token from environment or log - basic implementation for now
-  const token = process.env.DSH_TOKEN || '';
-  const finalUrl = token ? `http://127.0.0.1:${DSH_DEFAULT_PORT}/?token=${token}` : url;
 
   complete({
     success: true,
-    message: `DSH URL: ${finalUrl}`,
-    data: { url: finalUrl }
+    message: `🌐 DSH WebView URL: ${url}`,
+    data: { url }
   });
-  return { success: true, data: { url: finalUrl }, message: `DSH URL: ${finalUrl}` };
+  return { success: true, url };
 }
 
 export async function dsh_install() {
