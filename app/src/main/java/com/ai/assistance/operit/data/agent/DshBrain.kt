@@ -878,3 +878,25 @@ class DshSyncToolExecutor(private val context: Context) : ToolExecutor {
         }
     }
 }
+
+/**
+ * Tool executor for dsh_webview_url - gets the DSH WebView URL with token
+ */
+class DshWebviewUrlToolExecutor(private val context: Context) : ToolExecutor {
+    override fun invoke(tool: AITool): ToolResult {
+        return runBlocking {
+            val brain = DshBrain.getInstance(context)
+            val url = brain.getWebUrl()
+            ToolResult(
+                toolName = tool.name,
+                success = true,
+                result = StringResultData(url),
+                error = if (url == "not running" || url.isBlank()) "DSH not running" else null
+            )
+        }
+    }
+
+    override fun validateParameters(tool: AITool): ToolValidationResult {
+        return ToolValidationResult(valid = true)
+    }
+}

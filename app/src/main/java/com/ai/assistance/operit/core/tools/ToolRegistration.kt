@@ -11,6 +11,7 @@ import com.ai.assistance.operit.data.agent.DshStopToolExecutor
 import com.ai.assistance.operit.data.agent.DshStatusToolExecutor
 import com.ai.assistance.operit.data.agent.DshRunToolExecutor
 import com.ai.assistance.operit.data.agent.DshSyncToolExecutor
+import com.ai.assistance.operit.data.agent.DshWebviewUrlToolExecutor
 import com.ai.assistance.operit.core.tools.defaultTool.ToolGetter
 import com.ai.assistance.operit.core.tools.system.AndroidShellExecutor
 import com.ai.assistance.operit.data.model.AITool
@@ -449,6 +450,13 @@ fun registerAllTools(handler: AIToolHandler, context: Context) {
             executor = DshSyncToolExecutor(context)
     )
 
+
+
+    handler.registerTool(
+            name = "dsh_webview_url",
+            descriptionGenerator = { _ -> "Get the DSH WebView URL (with token if available)" },
+            executor = DshWebviewUrlToolExecutor(context)
+    )
 
 
     handler.registerTool(
