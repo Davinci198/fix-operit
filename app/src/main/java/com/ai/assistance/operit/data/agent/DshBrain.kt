@@ -90,6 +90,33 @@ class DshBrain private constructor(private val context: Context) {
     private var operitSyncFilePath: String = ""
     private var dshSessionFilePath: String = ""
 
+    /**
+     * Get Ubuntu root filesystem path dynamically
+     */
+    private fun getUbuntuRoot(): File {
+        val candidates = listOf(
+            File(context.filesDir, "usr/var/lib/proot-distro/installed-rootfs/ubuntu"),
+            File("/data/user/0/com.ai.assistance.operit.clone/files/usr/var/lib/proot-distro/installed-rootfs/ubuntu"),
+            File("/data/data/com.ai.assistance.operit/files/usr/var/lib/proot-distro/installed-rootfs/ubuntu")
+        )
+        return candidates.firstOrNull { it.exists() } ?: candidates[0]
+    }
+
+    /**
+     * Check if dsh is installed in Ubuntu environment
+     * Checks filesystem paths in the Ubuntu root
+     */
+    fun isDshInstalled(): Boolean {
+        val root = getUbuntuRoot()
+        val paths = listOf(
+            File(root, "root/.npm-global/bin/dsh"),
+            File(root, "root/.nvm/versions/node/v22.22.2/bin/dsh"),
+            File(root, "root/.config/nvm/versions/node/v22.22.2/bin/dsh"),
+            File(root, "usr/local/bin/dsh")
+        )
+        return paths.any { it.exists() }
+    }
+
     data class SyncMessage(
         val id: String,
         val originId: String,
@@ -120,9 +147,20 @@ class DshBrain private constructor(private val context: Context) {
         dshSessionFilePath = paths.second
 
         try {
-            // Check if dsh is available
-            val checkResult = AndroidShellExecutor.executeShellCommand("bash -c 'which dsh'")
-            if (!checkResult.success || checkResult.stdout.trim().isEmpty()) {
+            // Check if dsh is installed
+            val isInstalled = isDshInstalled()
+            val ubuntuRoot = getUbuntuRoot()
+            val binaryPaths = listOf(
+                File(ubuntuRoot, "root/.npm-global/bin/dsh"),
+                File(ubuntuRoot, "root/.nvm/versions/node/v22.22.2/bin/dsh"),
+                File(ubuntuRoot, "usr/local/bin/dsh"),
+                File(ubuntuRoot, "root/.config/nvm/versions/node/v22.22.2/bin/dsh")
+            )
+            val binaryPath = binaryPaths.firstOrNull { it.exists() }?.absolutePath ?: "not found"
+            val dshHome = getDshHome()
+            AppLogger.e(TAG, "isInstalled check: $isInstalled, binary=$binaryPath, home=$dshHome")
+
+            if (!isInstalled) {
                 AppLogger.d(TAG, "dsh not found, installing...")
                 val installResult = AndroidShellExecutor.executeShellCommand(
                     "bash -c \"npm config set registry https://registry.npmjs.org/ && npm i -g @deepseek-ai/dsh\""
@@ -562,7 +600,9 @@ class DshRunToolExecutor(private val context: Context) : ToolExecutor {
                 )
             } else {
                 val brain = DshBrain.getInstance(context)
-                if (!brain.isRunning()) {
+                // Bypass isRunning check for npm install commands (e.g., dsh_install via dsh_run)
+                val isInstallCommand = command.contains("npm i -g") || command.contains("npm install -g")
+                if (!brain.isRunning() && !isInstallCommand) {
                     ToolResult(
                         toolName = tool.name,
                         success = false,
@@ -652,6 +692,13 @@ class DshStopToolExecutor(private val context: Context) : ToolExecutor {
             val brain = DshBrain.getInstance(context)
             val success = brain.stop()
 
+            // Also try to kill any remaining dsh web processes directly in Ubuntu
+            try {
+                AndroidShellExecutor.executeShellCommand("bash -c \"pkill -f 'dsh web' || true\"")
+            } catch (e: Exception) {
+                // Ignore
+            }
+
             ToolResult(
                 toolName = tool.name,
                 success = success,
@@ -673,7 +720,20 @@ class DshStatusToolExecutor(private val context: Context) : ToolExecutor {
     override fun invoke(tool: AITool): ToolResult {
         return runBlocking {
             val brain = DshBrain.getInstance(context)
-            val running = brain.isRunning()
+            val internalRunning = brain.isRunning()
+
+            // Also check if dsh web is actually responding on the port
+            val port = brain.getWebUrl().substringAfterLast(":").toIntOrNull() ?: 3082
+            val actuallyRunning = try {
+                val result = AndroidShellExecutor.executeShellCommand(
+                    "bash -c \"curl -s -m 3 http://127.0.0.1:$port/ | head -c 100\""
+                )
+                result.success && result.stdout.isNotBlank()
+            } catch (e: Exception) {
+                false
+            }
+
+            val running = internalRunning || actuallyRunning
             val url = if (running) brain.getWebUrl() else "not running"
             val syncStatus = if (running) brain.getSyncStatus() else "sync: stopped"
 
@@ -704,7 +764,17 @@ class DshSyncToolExecutor(private val context: Context) : ToolExecutor {
 
             return@runBlocking when (action) {
                 "status" -> {
-                    val running = brain.isRunning()
+                    val internalRunning = brain.isRunning()
+                    val port = brain.getWebUrl().substringAfterLast(":").toIntOrNull() ?: 3082
+                    val actuallyRunning = try {
+                        val result = AndroidShellExecutor.executeShellCommand(
+                            "bash -c \"curl -s -m 3 http://127.0.0.1:$port/ | head -c 100\""
+                        )
+                        result.success && result.stdout.isNotBlank()
+                    } catch (e: Exception) {
+                        false
+                    }
+                    val running = internalRunning || actuallyRunning
                     val url = if (running) brain.getWebUrl() else "not running"
                     val syncStatus = if (running) brain.getSyncStatus() else "sync: stopped"
                     ToolResult(
