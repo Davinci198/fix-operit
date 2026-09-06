@@ -162,6 +162,67 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /**
+     * Find the actual node binary path dynamically (for PATH)
+     */
+    private fun findNodeBinary(): String {
+        val paths = mutableListOf<String>()
+
+        // Check NVM versions dynamically (any version) - /root
+        val nvmRoot = File("/root/.nvm/versions/node")
+        if (nvmRoot.exists()) {
+            nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val nodePath = File(versionDir, "bin/node")
+                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+            }
+        }
+
+        // Also check .config/nvm - /root
+        val configNvmRoot = File("/root/.config/nvm/versions/node")
+        if (configNvmRoot.exists()) {
+            configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val nodePath = File(versionDir, "bin/node")
+                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+            }
+        }
+
+        // Check NVM versions dynamically (any version) - /home/dsh (ro-dsh mobile)
+        val homeNvmRoot = File("/home/dsh/.nvm/versions/node")
+        if (homeNvmRoot.exists()) {
+            homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val nodePath = File(versionDir, "bin/node")
+                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+            }
+        }
+
+        // Also check .config/nvm - /home/dsh
+        val homeConfigNvmRoot = File("/home/dsh/.config/nvm/versions/node")
+        if (homeConfigNvmRoot.exists()) {
+            homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val nodePath = File(versionDir, "bin/node")
+                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+            }
+        }
+
+        // Standard npm global paths
+        paths.addAll(listOf(
+            "/root/.npm-global/bin",
+            "/home/dsh/.npm-global/bin",
+            "/usr/local/bin",
+            "/home/dsh/.local/bin"
+        ))
+
+        return paths.firstOrNull { File(it).exists() } ?: "/home/dsh/.npm-global/bin"
+    }
+
+    /**
+     * Build the PATH string for shell commands
+     */
+    private fun buildShellPath(): String {
+        val nodeBin = findNodeBinary()
+        return "PATH=$nodeBin:/root/.npm-global/bin:/home/dsh/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
+    }
+
+    /**
      * Check if dsh is installed in Ubuntu environment
      * Checks filesystem paths in the Ubuntu root
      */
@@ -221,8 +282,8 @@ class DshBrain private constructor(private val context: Context) {
 
             // Build command to start dsh web with --no-open
             // DSH doesn't support --host 0.0.0.0 for safety, use 127.0.0.1 with --trusted-host
-            val command = "$dshBinary web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
-            val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
+            val command = "DSH_PERMISSION_MODE=danger-full-access $dshBinary web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
+            val fullCommand = "bash -c ${escapeForShell("${buildShellPath()}; $command")}"
 
             AppLogger.d(TAG, "Starting dsh web: $fullCommand")
 
@@ -366,7 +427,7 @@ class DshBrain private constructor(private val context: Context) {
         }
 
         // Execute command directly in Ubuntu
-        val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
+        val fullCommand = "bash -c ${escapeForShell("${buildShellPath()}; $command")}"
         val result = AndroidShellExecutor.executeShellCommand(fullCommand)
 
         return if (result.success) {
