@@ -14,6 +14,7 @@ import com.ai.assistance.operit.util.AppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ class DshBrain private constructor(private val context: Context) {
     private var monitorJob: Job? = null
     private var shellProcess: ShellProcess? = null
     private var syncObserverJob: Job? = null
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val syncChannel = Channel<SyncMessage>(SYNC_CHANNEL_BUFFER)
     private val processedMessageIds = ConcurrentHashMap<String, Long>()
     private val originId = UUID.randomUUID().toString()
