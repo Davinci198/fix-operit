@@ -411,18 +411,21 @@ jobs:
           fi
           # Explicit heap override: gradle.properties is tuned for ARM64 phone (4g);
           # CI runners need more heap for the full Kotlin compile (OOM fix, PR #9).
-          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC"
+          # Capture full output to file for failure analysis
+          ./gradlew "${tasks[@]}" --stacktrace --no-build-cache --no-daemon -Dorg.gradle.jvmargs="-Xmx7g -Xms2g -XX:MaxMetaspaceSize=1g -XX:+UseG1GC" 2>&1 | tee build_output.log
+          # Extract compilation errors for quick debugging
+          grep -A 20 "Unresolved reference\|error:" build_output.log > compilation_errors.log 2>/dev/null || true
 
 
       - name: Upload failure logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: failure-logs-pr44-${{ github.run_id }}
+          name: failure-logs-${{ github.run_id }}
           if-no-files-found: warn
           path: |
-            app/build/
-            **/*.log
+            build_output.log
+            compilation_errors.log
             app/build/reports/
           retention-days: 7
 
