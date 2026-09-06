@@ -172,7 +172,10 @@ class DshBrain private constructor(private val context: Context) {
         if (nvmRoot.exists()) {
             nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) nodePath.parent?.let { parentFile -> paths.add(parentFile.absolutePath) }
+                if (nodePath.exists()) {
+                    val parentFile = nodePath.parent
+                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                }
             }
         }
 
@@ -181,7 +184,10 @@ class DshBrain private constructor(private val context: Context) {
         if (configNvmRoot.exists()) {
             configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) nodePath.parent?.let { parentFile -> paths.add(parentFile.absolutePath) }
+                if (nodePath.exists()) {
+                    val parentFile = nodePath.parent
+                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                }
             }
         }
 
@@ -190,7 +196,10 @@ class DshBrain private constructor(private val context: Context) {
         if (homeNvmRoot.exists()) {
             homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) nodePath.parent?.let { parentFile -> paths.add(parentFile.absolutePath) }
+                if (nodePath.exists()) {
+                    val parentFile = nodePath.parent
+                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                }
             }
         }
 
@@ -199,7 +208,10 @@ class DshBrain private constructor(private val context: Context) {
         if (homeConfigNvmRoot.exists()) {
             homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) nodePath.parent?.let { parentFile -> paths.add(parentFile.absolutePath) }
+                if (nodePath.exists()) {
+                    val parentFile = nodePath.parent
+                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                }
             }
         }
 
