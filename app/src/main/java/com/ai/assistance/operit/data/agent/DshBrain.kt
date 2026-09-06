@@ -91,28 +91,74 @@ class DshBrain private constructor(private val context: Context) {
     private var dshSessionFilePath: String = ""
 
     /**
-     * Get Ubuntu root filesystem path dynamically
+     * Get DSH home directory from environment
      */
-    private fun getUbuntuRoot(): File {
-        val candidates = listOf(
-            File(context.filesDir, "usr/var/lib/proot-distro/installed-rootfs/ubuntu"),
-            File("/data/user/0/com.ai.assistance.operit.clone/files/usr/var/lib/proot-distro/installed-rootfs/ubuntu"),
-            File("/data/data/com.ai.assistance.operit/files/usr/var/lib/proot-distro/installed-rootfs/ubuntu")
-        )
-        return candidates.firstOrNull { it.exists() } ?: candidates[0]
+    suspend fun getDshHome(): String {
+        val result = AndroidShellExecutor.executeShellCommand("bash -c 'echo \$DSH_HOME'")
+        return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/home/dsh"
+    }
+
+    /**
+     * Get sync file paths dynamically
+     */
+    suspend fun getSyncPaths(context: Context): Pair<String, String> {
+        val dshHome = getDshHome()
+        val dshSessionFile = "$dshHome/.dsh/profiles/web/sessions/$SESSION_ID.json"
+        val operitSyncFile = "${context.filesDir.absolutePath}/$SYNC_FILE_NAME"
+        return Pair(operitSyncFile, dshSessionFile)
     }
 
     /**
      * Find the actual dsh binary path dynamically
      */
     private fun findDshBinary(): String {
-        val paths = listOf(
-            "/root/.nvm/versions/node/v22.22.2/bin/dsh",
+        val paths = mutableListOf<String>()
+
+        // Check NVM versions dynamically (any version) - /root
+        val nvmRoot = File("/root/.nvm/versions/node")
+        if (nvmRoot.exists()) {
+            nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val dshPath = File(versionDir, "bin/dsh")
+                if (dshPath.exists()) paths.add(dshPath.absolutePath)
+            }
+        }
+
+        // Also check .config/nvm - /root
+        val configNvmRoot = File("/root/.config/nvm/versions/node")
+        if (configNvmRoot.exists()) {
+            configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val dshPath = File(versionDir, "bin/dsh")
+                if (dshPath.exists()) paths.add(dshPath.absolutePath)
+            }
+        }
+
+        // Check NVM versions dynamically (any version) - /home/dsh (ro-dsh mobile)
+        val homeNvmRoot = File("/home/dsh/.nvm/versions/node")
+        if (homeNvmRoot.exists()) {
+            homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val dshPath = File(versionDir, "bin/dsh")
+                if (dshPath.exists()) paths.add(dshPath.absolutePath)
+            }
+        }
+
+        // Also check .config/nvm - /home/dsh
+        val homeConfigNvmRoot = File("/home/dsh/.config/nvm/versions/node")
+        if (homeConfigNvmRoot.exists()) {
+            homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
+                val dshPath = File(versionDir, "bin/dsh")
+                if (dshPath.exists()) paths.add(dshPath.absolutePath)
+            }
+        }
+
+        // Standard npm global paths
+        paths.addAll(listOf(
             "/root/.npm-global/bin/dsh",
+            "/home/dsh/.npm-global/bin/dsh",
             "/usr/local/bin/dsh",
-            "/root/.config/nvm/versions/node/v22.22.2/bin/dsh"
-        )
-        return paths.firstOrNull { File(it).exists() } ?: "/root/.npm-global/bin/dsh"
+            "/home/dsh/.local/bin/dsh"
+        ))
+
+        return paths.firstOrNull { File(it).exists() } ?: "/home/dsh/.npm-global/bin/dsh"
     }
 
     /**
@@ -155,16 +201,9 @@ class DshBrain private constructor(private val context: Context) {
         try {
             // Check if dsh is installed
             val isInstalled = isDshInstalled()
-            val ubuntuRoot = getUbuntuRoot()
-            val binaryPaths = listOf(
-                File(ubuntuRoot, "root/.npm-global/bin/dsh"),
-                File(ubuntuRoot, "root/.nvm/versions/node/v22.22.2/bin/dsh"),
-                File(ubuntuRoot, "usr/local/bin/dsh"),
-                File(ubuntuRoot, "root/.config/nvm/versions/node/v22.22.2/bin/dsh")
-            )
-            val binaryPath = binaryPaths.firstOrNull { it.exists() }?.absolutePath ?: "not found"
+            val dshBinary = findDshBinary()
             val dshHome = getDshHome()
-            AppLogger.e(TAG, "isInstalled check: $isInstalled, binary=$binaryPath, home=$dshHome")
+            AppLogger.e(TAG, "isInstalled check: $isInstalled, binary=$dshBinary, home=$dshHome")
 
             if (!isInstalled) {
                 AppLogger.d(TAG, "dsh not found, installing...")
@@ -179,9 +218,6 @@ class DshBrain private constructor(private val context: Context) {
 
             // Ensure sync directories exist
             setupSyncFiles()
-
-            // Find actual dsh binary path
-            val dshBinary = findDshBinary()
 
             // Build command to start dsh web with --no-open
             // DSH doesn't support --host 0.0.0.0 for safety, use 127.0.0.1 with --trusted-host
