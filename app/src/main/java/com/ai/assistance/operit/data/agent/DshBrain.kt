@@ -26,6 +26,8 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.toPath
 
 /**
  * DshBrain - Minimal wrapper to run DeepSeek Harness (dsh) in ro-operit's Ubuntu environment.
@@ -173,7 +175,7 @@ class DshBrain private constructor(private val context: Context) {
             nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
+                    nodePath.parent?.let { parent -> paths.add(parent.toPath().absolutePathString()) }
                 }
             }
         }
@@ -184,7 +186,7 @@ class DshBrain private constructor(private val context: Context) {
             configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
+                    nodePath.parent?.let { parent -> paths.add(parent.toPath().absolutePathString()) }
                 }
             }
         }
@@ -195,7 +197,7 @@ class DshBrain private constructor(private val context: Context) {
             homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
+                    nodePath.parent?.let { parent -> paths.add(parent.toPath().absolutePathString()) }
                 }
             }
         }
@@ -206,7 +208,7 @@ class DshBrain private constructor(private val context: Context) {
             homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
+                    nodePath.parent?.let { parent -> paths.add(parent.toPath().absolutePathString()) }
                 }
             }
         }
