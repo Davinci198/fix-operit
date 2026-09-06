@@ -50,8 +50,6 @@ class DshBrain private constructor(private val context: Context) {
         private const val SYNC_ORIGIN_OPERIT = "operit_dev_chat"
         private const val SYNC_CHANNEL_BUFFER = 100
 
-        private const val DSH_ABS = "/root/.npm-global/bin/dsh"
-
         fun getInstance(context: Context): DshBrain {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: DshBrain(context.applicationContext).also { INSTANCE = it }
@@ -105,11 +103,24 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /**
+     * Find the actual dsh binary path dynamically
+     */
+    private fun findDshBinary(): String {
+        val paths = listOf(
+            "/root/.nvm/versions/node/v22.22.2/bin/dsh",
+            "/root/.npm-global/bin/dsh",
+            "/usr/local/bin/dsh",
+            "/root/.config/nvm/versions/node/v22.22.2/bin/dsh"
+        )
+        return paths.firstOrNull { File(it).exists() } ?: "/root/.npm-global/bin/dsh"
+    }
+
+    /**
      * Check if dsh is installed in Ubuntu environment
      * Checks filesystem paths in the Ubuntu root
      */
     fun isDshInstalled(): Boolean {
-        return File(DSH_ABS).exists() || File("/usr/local/bin/dsh").exists()
+        return findDshBinary() != "/root/.npm-global/bin/dsh" || File("/root/.npm-global/bin/dsh").exists()
     }
 
     data class SyncMessage(
@@ -169,9 +180,12 @@ class DshBrain private constructor(private val context: Context) {
             // Ensure sync directories exist
             setupSyncFiles()
 
+            // Find actual dsh binary path
+            val dshBinary = findDshBinary()
+
             // Build command to start dsh web with --no-open
             // DSH doesn't support --host 0.0.0.0 for safety, use 127.0.0.1 with --trusted-host
-            val command = "${DSH_ABS} web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
+            val command = "$dshBinary web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
             val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
 
             AppLogger.d(TAG, "Starting dsh web: $fullCommand")
