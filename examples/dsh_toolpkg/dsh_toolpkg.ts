@@ -127,7 +127,7 @@ export async function dsh_start(params: { port?: number; host?: string } = {}) {
     });
     return { success: true, url, port, host };
   } else {
-    const error = result?.error || 'Unknown error';
+    const error = result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)';
     complete({
       success: false,
       message: `❌ DSH 启动失败: ${error}`,
@@ -148,7 +148,7 @@ export async function dsh_stop() {
     });
     return { success: true };
   } else {
-    const error = result?.error || 'Unknown error';
+    const error = result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)';
     complete({
       success: false,
       message: `❌ DSH 停止失败: ${error}`,
@@ -172,7 +172,7 @@ export async function dsh_status() {
     });
     return { success: true, running, url };
   } else {
-    const error = result?.error || 'Unknown error';
+    const error = result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)';
     complete({
       success: false,
       message: `❌ 状态检查失败: ${error}`,
@@ -205,7 +205,7 @@ export async function dsh_run(params: { command: string }) {
     });
     return { success: true, output, command };
   } else {
-    const error = result?.error || 'Unknown error';
+    const error = result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)';
     complete({
       success: false,
       message: `❌ 执行失败: ${error}`,
@@ -231,7 +231,7 @@ export async function dsh_webview_url() {
     const url = `http://127.0.0.1:${DSH_DEFAULT_PORT}`;
     complete({
       success: false,
-      message: `DSH not running: ${result?.error || 'Unknown error'}`,
+      message: `DSH not running: ${result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)'}`,
       data: { url }
     });
     return { success: false, data: { url }, error: result?.error };
@@ -252,7 +252,7 @@ export async function dsh_install() {
     });
     return { success: true, output: result.result };
   } else {
-    const error = result?.error || 'Unknown error';
+    const error = result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)';
     complete({
       success: false,
       message: `❌ DSH 安装失败: ${error}`,
@@ -288,7 +288,7 @@ export async function dsh_sync(params: { action: string; message?: string }) {
     });
     return { success: true, ...result };
   } else {
-    const error = result?.error || 'Unknown error';
+    const error = result?.error ? result.error : 'Eroare nepropagata din Kotlin (verifica DshBrain / toolCall)';
     complete({
       success: false,
       message: `❌ 同步 ${action} 失败: ${error}`,
