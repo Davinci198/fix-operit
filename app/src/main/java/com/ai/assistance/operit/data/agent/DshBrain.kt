@@ -172,7 +172,7 @@ class DshBrain private constructor(private val context: Context) {
         if (nvmRoot.exists()) {
             nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+                if (nodePath.exists()) nodePath.parent?.let { paths.add(it.absolutePath) }
             }
         }
 
@@ -181,7 +181,7 @@ class DshBrain private constructor(private val context: Context) {
         if (configNvmRoot.exists()) {
             configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+                if (nodePath.exists()) nodePath.parent?.let { paths.add(it.absolutePath) }
             }
         }
 
@@ -190,7 +190,7 @@ class DshBrain private constructor(private val context: Context) {
         if (homeNvmRoot.exists()) {
             homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+                if (nodePath.exists()) nodePath.parent?.let { paths.add(it.absolutePath) }
             }
         }
 
@@ -199,7 +199,7 @@ class DshBrain private constructor(private val context: Context) {
         if (homeConfigNvmRoot.exists()) {
             homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) paths.add(nodePath.parent?.absolutePath ?: "")
+                if (nodePath.exists()) nodePath.parent?.let { paths.add(it.absolutePath) }
             }
         }
 
