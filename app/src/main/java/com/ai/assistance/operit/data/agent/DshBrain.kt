@@ -112,52 +112,14 @@ class DshBrain private constructor(private val context: Context) {
      * Find the actual dsh binary path dynamically
      */
     private fun findDshBinary(): String {
-        val paths = mutableListOf<String>()
-
-        // Check NVM versions dynamically (any version) - /root
-        val nvmRoot = File("/root/.nvm/versions/node")
-        if (nvmRoot.exists()) {
-            nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val dshPath = File(versionDir, "bin/dsh")
-                if (dshPath.exists()) paths.add(dshPath.absolutePath)
-            }
-        }
-
-        // Also check .config/nvm - /root
-        val configNvmRoot = File("/root/.config/nvm/versions/node")
-        if (configNvmRoot.exists()) {
-            configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val dshPath = File(versionDir, "bin/dsh")
-                if (dshPath.exists()) paths.add(dshPath.absolutePath)
-            }
-        }
-
-        // Check NVM versions dynamically (any version) - /home/dsh (ro-dsh mobile)
-        val homeNvmRoot = File("/home/dsh/.nvm/versions/node")
-        if (homeNvmRoot.exists()) {
-            homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val dshPath = File(versionDir, "bin/dsh")
-                if (dshPath.exists()) paths.add(dshPath.absolutePath)
-            }
-        }
-
-        // Also check .config/nvm - /home/dsh
-        val homeConfigNvmRoot = File("/home/dsh/.config/nvm/versions/node")
-        if (homeConfigNvmRoot.exists()) {
-            homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val dshPath = File(versionDir, "bin/dsh")
-                if (dshPath.exists()) paths.add(dshPath.absolutePath)
-            }
-        }
-
-        // Standard npm global paths
-        paths.addAll(listOf(
+        // Simplified: only check standard binary paths
+        // This eliminates Kotlin file scanning compilation errors (.absolutePath smart-cast)
+        val paths = listOf(
             "/root/.npm-global/bin/dsh",
             "/home/dsh/.npm-global/bin/dsh",
             "/usr/local/bin/dsh",
             "/home/dsh/.local/bin/dsh"
-        ))
-
+        )
         return paths.firstOrNull { File(it).exists() } ?: "/home/dsh/.npm-global/bin/dsh"
     }
 
