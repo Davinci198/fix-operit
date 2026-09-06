@@ -174,7 +174,7 @@ class DshBrain private constructor(private val context: Context) {
             nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(Paths.get(parent.absolutePath).toAbsolutePath().toString()) }
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
@@ -185,7 +185,7 @@ class DshBrain private constructor(private val context: Context) {
             configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(Paths.get(parent.absolutePath).toAbsolutePath().toString()) }
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
@@ -196,7 +196,7 @@ class DshBrain private constructor(private val context: Context) {
             homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(Paths.get(parent.absolutePath).toAbsolutePath().toString()) }
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
@@ -207,7 +207,7 @@ class DshBrain private constructor(private val context: Context) {
             homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(Paths.get(parent.absolutePath).toAbsolutePath().toString()) }
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
