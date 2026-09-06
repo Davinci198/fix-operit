@@ -167,48 +167,39 @@ class DshBrain private constructor(private val context: Context) {
     private fun findNodeBinary(): String {
         val paths = mutableListOf<String>()
 
+        // Helper to add parent directory of node binary
+        fun addNodeParent(versionDir: File) {
+            val nodePath = File(versionDir, "bin/node")
+            if (nodePath.exists()) {
+                val parentFile = nodePath.parent
+                if (parentFile != null) {
+                    paths.add(parentFile.getAbsolutePath())
+                }
+            }
+        }
+
         // Check NVM versions dynamically (any version) - /root
         val nvmRoot = File("/root/.nvm/versions/node")
         if (nvmRoot.exists()) {
-            nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.getAbsolutePath()) }
-                }
-            }
+            nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { addNodeParent(it) }
         }
 
         // Also check .config/nvm - /root
         val configNvmRoot = File("/root/.config/nvm/versions/node")
         if (configNvmRoot.exists()) {
-            configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.getAbsolutePath()) }
-                }
-            }
+            configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { addNodeParent(it) }
         }
 
         // Check NVM versions dynamically (any version) - /home/dsh (ro-dsh mobile)
         val homeNvmRoot = File("/home/dsh/.nvm/versions/node")
         if (homeNvmRoot.exists()) {
-            homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.getAbsolutePath()) }
-                }
-            }
+            homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { addNodeParent(it) }
         }
 
         // Also check .config/nvm - /home/dsh
         val homeConfigNvmRoot = File("/home/dsh/.config/nvm/versions/node")
         if (homeConfigNvmRoot.exists()) {
-            homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
-                val nodePath = File(versionDir, "bin/node")
-                if (nodePath.exists()) {
-                    nodePath.parent?.let { parent -> paths.add(parent.getAbsolutePath()) }
-                }
-            }
+            homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { addNodeParent(it) }
         }
 
         // Standard npm global paths
