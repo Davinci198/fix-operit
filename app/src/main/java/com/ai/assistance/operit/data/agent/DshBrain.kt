@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference
  * DshBrain - Minimal wrapper to run DeepSeek Harness (dsh) in ro-operit's Ubuntu environment.
  *
  * Runs `dsh web --host 127.0.0.1 --port 3082 --no-open` directly in the existing Ubuntu
- * environment (Termux/proot-distro) that ro-operit provides, and exposes it via:
+ * container that ro-operit provides (no proot-distro wrapper needed), and exposes it via:
  * - WebView at http://127.0.0.1:3082
  * - Tools: dsh_start, dsh_stop, dsh_run, dsh_status, dsh_sync for AI to control the dsh session
  * - Bidirectional chat sync between Operit Dev Chat and DSH Web UI via shared sync file
@@ -162,6 +162,29 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /**
+     * Find the actual node binary path dynamically (for PATH)
+     */
+    private fun findNodeBinary(): String {
+        // Simplified: only check standard npm global paths
+        // This avoids Kotlin file scanning compilation issues
+        val paths = listOf(
+            "/root/.npm-global/bin",
+            "/home/dsh/.npm-global/bin",
+            "/usr/local/bin",
+            "/home/dsh/.local/bin"
+        )
+        return paths.firstOrNull { File(it).exists() } ?: "/home/dsh/.npm-global/bin"
+    }
+
+    /**
+     * Build the PATH string for shell commands
+     */
+    private fun buildShellPath(): String {
+        val nodeBin = findNodeBinary()
+        return "PATH=$nodeBin:/root/.npm-global/bin:/home/dsh/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
+    }
+
+    /**
      * Check if dsh is installed in Ubuntu environment
      * Checks filesystem paths in the Ubuntu root
      */
@@ -221,8 +244,8 @@ class DshBrain private constructor(private val context: Context) {
 
             // Build command to start dsh web with --no-open
             // DSH doesn't support --host 0.0.0.0 for safety, use 127.0.0.1 with --trusted-host
-            val command = "$dshBinary web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
-            val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
+            val command = "DSH_PERMISSION_MODE=danger-full-access $dshBinary web --host 127.0.0.1 --port $port --no-open --trusted-host 127.0.0.1:$port --trusted-host localhost:$port"
+            val fullCommand = "bash -c ${escapeForShell("${buildShellPath()}; $command")}"
 
             AppLogger.d(TAG, "Starting dsh web: $fullCommand")
 
@@ -366,7 +389,7 @@ class DshBrain private constructor(private val context: Context) {
         }
 
         // Execute command directly in Ubuntu
-        val fullCommand = "bash -c ${escapeForShell("PATH=/root/.npm-global/bin:/root/.nvm/versions/node/v22.22.2/bin:/usr/local/bin:/usr/bin:/bin; $command")}"
+        val fullCommand = "bash -c ${escapeForShell("${buildShellPath()}; $command")}"
         val result = AndroidShellExecutor.executeShellCommand(fullCommand)
 
         return if (result.success) {
@@ -395,7 +418,7 @@ class DshBrain private constructor(private val context: Context) {
             role = role
         )
 
-        // Write to sync file (both operit and proot paths)
+        // Write to sync file (Ubuntu container paths)
         return try {
             writeSyncMessage(syncMessage)
             // Also append to DSH session file
@@ -511,7 +534,7 @@ class DshBrain private constructor(private val context: Context) {
                     AndroidShellExecutor.executeShellCommand(writeCmd)
                 }
 
-                // Use a polling approach since FileObserver doesn't work across proot
+                // Use a polling approach since FileObserver doesn't work across container boundaries
                 while (isRunning.get()) {
                     delay(2000)
                     pollDshSessionForNewMessages()
@@ -585,7 +608,7 @@ class DshBrain private constructor(private val context: Context) {
             // Write to operit sync file
             FileWriter(syncFile).use { it.write(json.toString(2)) }
 
-            // Also write to proot sync file (symlinked)
+            // Also write to sync file via symlink
             val writeProotCmd = "bash -c ${escapeForShell("cat > /root/dsh_operit_sync.json << 'EOF'\n${json.toString(2)}\nEOF")}"
             AndroidShellExecutor.executeShellCommand(writeProotCmd)
 
