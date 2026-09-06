@@ -173,8 +173,7 @@ class DshBrain private constructor(private val context: Context) {
             nvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    val parentFile = nodePath.parent
-                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
@@ -185,8 +184,7 @@ class DshBrain private constructor(private val context: Context) {
             configNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    val parentFile = nodePath.parent
-                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
@@ -197,8 +195,7 @@ class DshBrain private constructor(private val context: Context) {
             homeNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    val parentFile = nodePath.parent
-                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
@@ -209,8 +206,7 @@ class DshBrain private constructor(private val context: Context) {
             homeConfigNvmRoot.listFiles()?.filter { it.isDirectory }?.forEach { versionDir ->
                 val nodePath = File(versionDir, "bin/node")
                 if (nodePath.exists()) {
-                    val parentFile = nodePath.parent
-                    if (parentFile != null) paths.add(parentFile.absolutePath)
+                    nodePath.parent?.let { parent -> paths.add(parent.absolutePath) }
                 }
             }
         }
