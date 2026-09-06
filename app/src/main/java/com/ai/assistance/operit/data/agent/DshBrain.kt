@@ -41,37 +41,19 @@ class DshBrain private constructor(private val context: Context) {
     companion object {
         @Volatile
         private var INSTANCE: DshBrain? = null
-        private const val TAG = "DshBrain"
-        private const val DEFAULT_PORT = 3082
-        private const val DEFAULT_HOST = "127.0.0.1"
-        private const val SESSION_ID = "super_admin_default_session"
-        private const val SYNC_FILE_NAME = "dsh_operit_sync.json"
-        private const val SYNC_ORIGIN_DSH = "dsh_webui"
-        private const val SYNC_ORIGIN_OPERIT = "operit_dev_chat"
-        private const val SYNC_CHANNEL_BUFFER = 100
+        const val TAG = "DshBrain"
+        const val DEFAULT_PORT = 3082
+        const val DEFAULT_HOST = "127.0.0.1"
+        const val SESSION_ID = "super_admin_default_session"
+        const val SYNC_FILE_NAME = "dsh_operit_sync.json"
+        const val SYNC_ORIGIN_DSH = "dsh_webui"
+        const val SYNC_ORIGIN_OPERIT = "operit_dev_chat"
+        const val SYNC_CHANNEL_BUFFER = 100
 
         fun getInstance(context: Context): DshBrain {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: DshBrain(context.applicationContext).also { INSTANCE = it }
             }
-        }
-
-        /**
-         * Get DSH home directory from environment
-         */
-        suspend fun getDshHome(): String {
-            val result = AndroidShellExecutor.executeShellCommand("bash -c 'echo \$DSH_HOME'")
-            return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/root/.dsh"
-        }
-
-        /**
-         * Get sync file paths dynamically
-         */
-        suspend fun getSyncPaths(context: Context): Pair<String, String> {
-            val dshHome = getDshHome()
-            val dshSessionFile = "$dshHome/profiles/web/sessions/$SESSION_ID.json"
-            val operitSyncFile = "${context.filesDir.absolutePath}/$SYNC_FILE_NAME"
-            return Pair(operitSyncFile, dshSessionFile)
         }
     }
 
@@ -83,7 +65,7 @@ class DshBrain private constructor(private val context: Context) {
     private var monitorJob: Job? = null
     private var shellProcess: ShellProcess? = null
     private var syncObserverJob: Job? = null
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val syncChannel = Channel<SyncMessage>(SYNC_CHANNEL_BUFFER)
     private val processedMessageIds = ConcurrentHashMap<String, Long>()
     private val originId = UUID.randomUUID().toString()
@@ -95,7 +77,7 @@ class DshBrain private constructor(private val context: Context) {
      */
     suspend fun getDshHome(): String {
         val result = AndroidShellExecutor.executeShellCommand("bash -c 'echo \$DSH_HOME'")
-        return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/home/dsh"
+        return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/home/dsh/.dsh"
     }
 
     /**
@@ -103,45 +85,35 @@ class DshBrain private constructor(private val context: Context) {
      */
     suspend fun getSyncPaths(context: Context): Pair<String, String> {
         val dshHome = getDshHome()
-        val dshSessionFile = "$dshHome/.dsh/profiles/web/sessions/$SESSION_ID.json"
+        val dshSessionFile = "$dshHome/profiles/web/sessions/$SESSION_ID.json"
         val operitSyncFile = "${context.filesDir.absolutePath}/$SYNC_FILE_NAME"
         return Pair(operitSyncFile, dshSessionFile)
     }
 
     /**
-     * Find the actual dsh binary path dynamically
+     * Find the actual dsh binary path dynamically - FIXED to check via shell (Ubuntu container)
      */
-    private fun findDshBinary(): String {
-        // Simplified: only check standard binary paths
-        // This eliminates Kotlin file scanning compilation errors (.absolutePath smart-cast)
-        val paths = listOf(
-            "/root/.npm-global/bin/dsh",
-            "/home/dsh/.npm-global/bin/dsh",
-            "/usr/local/bin/dsh",
-            "/home/dsh/.local/bin/dsh"
+    private suspend fun findDshBinary(): String? {
+        val result = AndroidShellExecutor.executeShellCommand(
+            "bash -c 'for p in /home/dsh/.npm-global/bin/dsh /root/.npm-global/bin/dsh /usr/local/bin/dsh /home/dsh/.local/bin/dsh; do [ -f \$p ] && echo \$p && exit 0; done; which dsh 2>/dev/null'"
         )
-        return paths.firstOrNull { File(it).exists() } ?: "/home/dsh/.npm-global/bin/dsh"
+        return result.stdout.trim().takeIf { it.isNotBlank() }
     }
 
     /**
-     * Find the actual node binary path dynamically (for PATH)
+     * Find the actual node binary path dynamically (for PATH) - FIXED
      */
-    private fun findNodeBinary(): String {
-        // Simplified: only check standard npm global paths
-        // This avoids Kotlin file scanning compilation issues
-        val paths = listOf(
-            "/root/.npm-global/bin",
-            "/home/dsh/.npm-global/bin",
-            "/usr/local/bin",
-            "/home/dsh/.local/bin"
+    private suspend fun findNodeBinary(): String {
+        val result = AndroidShellExecutor.executeShellCommand(
+            "bash -c 'for p in /home/dsh/.npm-global/bin /root/.npm-global/bin /usr/local/bin; do [ -d \$p ] && echo \$p && exit 0; done; echo /home/dsh/.npm-global/bin'"
         )
-        return paths.firstOrNull { File(it).exists() } ?: "/home/dsh/.npm-global/bin"
+        return result.stdout.trim().takeIf { it.isNotBlank() } ?: "/home/dsh/.npm-global/bin"
     }
 
     /**
      * Build the PATH string for shell commands
      */
-    private fun buildShellPath(): String {
+    private suspend fun buildShellPath(): String {
         val nodeBin = findNodeBinary()
         return "PATH=$nodeBin:/root/.npm-global/bin:/home/dsh/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
     }
@@ -150,8 +122,8 @@ class DshBrain private constructor(private val context: Context) {
      * Check if dsh is installed in Ubuntu environment
      * Checks filesystem paths in the Ubuntu root
      */
-    fun isDshInstalled(): Boolean {
-        return findDshBinary() != "/root/.npm-global/bin/dsh" || File("/root/.npm-global/bin/dsh").exists()
+    suspend fun isDshInstalled(): Boolean {
+        return findDshBinary() != null
     }
 
     data class SyncMessage(
@@ -179,7 +151,7 @@ class DshBrain private constructor(private val context: Context) {
         this.host.set(host)
 
         // Initialize sync paths
-        val paths = DshBrain.getSyncPaths(context)
+        val paths = getSyncPaths(context)
         operitSyncFilePath = paths.first
         dshSessionFilePath = paths.second
 
@@ -278,11 +250,11 @@ class DshBrain private constructor(private val context: Context) {
         // Fallback check via pgrep and curl
         return@runBlocking try {
             val portNum = port.get()
-            val pgrepCmd = """bash -c 'pgrep -f "dsh.*web"'"""
+            val pgrepCmd = "bash -c 'pgrep -f \"dsh.*web\"'"
             val pgrepResult = AndroidShellExecutor.executeShellCommand(pgrepCmd)
             val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
             if (!processRunning) return@runBlocking false
-            val curlCmd = """bash -c 'curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${portNum}/'"""
+            val curlCmd = "bash -c 'curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:${portNum}/'"
             val curlResult = AndroidShellExecutor.executeShellCommand(curlCmd)
             val code = curlResult.stdout.trim()
             code in listOf("200", "401", "303")
@@ -292,30 +264,28 @@ class DshBrain private constructor(private val context: Context) {
     }
 
     /**
-     * Get the URL for the WebView (with token if available)
+     * Get the URL for the WebView (with token if available) - FIXED: reads log via shell from container
      */
     fun getWebUrl(): String {
         val baseUrl = webUrl.get().takeIf { it.isNotBlank() } ?: "http://127.0.0.1:${port.get()}"
-        // Try to extract token from /tmp/dsh.log
         return try {
-            val logFile = File("/tmp/dsh.log")
-            if (logFile.exists()) {
-                val logContent = logFile.readText()
+            val logResult = runBlocking {
+                AndroidShellExecutor.executeShellCommand("bash -c 'cat /tmp/dsh.log 2>/dev/null | tail -n 200'")
+            }
+            if (logResult.success && logResult.stdout.isNotBlank()) {
                 val tokenRegex = Regex("token=([A-Za-z0-9]+)")
-                val match = tokenRegex.find(logContent)
+                val match = tokenRegex.find(logResult.stdout)
                 if (match != null) {
                     val token = match.groupValues[1]
                     val portNum = port.get()
                     "http://127.0.0.1:$portNum/?token=$token"
                 } else {
-                    AppLogger.w(TAG, "Token not found in /tmp/dsh.log, using base URL")
                     baseUrl
                 }
             } else {
                 baseUrl
             }
         } catch (e: Exception) {
-            AppLogger.w(TAG, "Failed to extract token from log: ${e.message}")
             baseUrl
         }
     }
@@ -629,13 +599,13 @@ class DshBrain private constructor(private val context: Context) {
             // If /api/health doesn't exist, try root with pgrep and curl fallback
             try {
                 // Check process via pgrep
-                val pgrepCmd = """bash -c 'pgrep -f "dsh.*web"'"""
+                val pgrepCmd = "bash -c 'pgrep -f \"dsh.*web\"'"
                 val pgrepResult = AndroidShellExecutor.executeShellCommand(pgrepCmd)
                 val processRunning = pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
                 if (processRunning) return true
 
                 // Try curl for HTTP code
-                val cmd = """bash -c 'curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${port}/'"""
+                val cmd = "bash -c 'curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:${port}/'"
                 val curlResult = AndroidShellExecutor.executeShellCommand(cmd)
                 val code = curlResult.stdout.trim()
                 if (code in listOf("200", "401", "303")) return true
@@ -804,7 +774,7 @@ class DshStatusToolExecutor(private val context: Context) : ToolExecutor {
             val port = brain.getWebUrl().substringAfterLast(":").toIntOrNull() ?: 3082
             val processRunning = try {
                 val pgrepResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c \"pgrep -f \"dsh.*web\" \""
+                    "bash -c 'pgrep -f \"dsh.*web\"'"
                 )
                 pgrepResult.success && pgrepResult.stdout.trim().isNotBlank()
             } catch (e: Exception) {
@@ -814,7 +784,7 @@ class DshStatusToolExecutor(private val context: Context) : ToolExecutor {
             // Check HTTP response code via curl
             val httpCodeRunning = try {
                 val curlResult = AndroidShellExecutor.executeShellCommand(
-                    "bash -c \"curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:$port/\""
+                    "bash -c 'curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:$port/'"
                 )
                 val code = curlResult.stdout.trim()
                 code in listOf("200", "401", "303")
